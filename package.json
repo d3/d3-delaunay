@@ -7,8 +7,8 @@
     "delaunay",
     "geometry"
   ],
-  "homepage": "https://github.com/mbostock/voronator",
-  "repository": "https://github.com/mbostock/voronator",
+  "homepage": "https://github.com/observablehq/voronator",
+  "repository": "https://github.com/observablehq/voronator",
   "license": "ISC",
   "author": {
     "name": "Mike Bostock",
