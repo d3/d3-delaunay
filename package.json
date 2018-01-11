@@ -1,0 +1,21 @@
+{
+  "name": "voronator",
+  "version": "0.0.0",
+  "description": "Compute the Voronoi diagram of a set of two-dimensional points.",
+  "keywords": [
+    "voronoi",
+    "delaunay",
+    "geometry"
+  ],
+  "homepage": "https://github.com/mbostock/voronator",
+  "repository": "https://github.com/mbostock/voronator",
+  "license": "ISC",
+  "author": {
+    "name": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike"
+  },
+  "module": "index",
+  "dependencies": {
+    "delaunator": "^1.0.5"
+  }
+}
