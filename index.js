@@ -45,7 +45,7 @@ export default class Voronoi {
     for (let i = 0, m = halfedges.length; i < m; ++i) {
       const j = halfedges[i];
       if (j < 0) continue;
-      cell_connect(cells[triangles[i]], Math.floor(i / 3), Math.floor(j / 3));
+      cell_connect(cells[triangles[i]].points, Math.floor(i / 3), Math.floor(j / 3));
     }
 
     // Compute circumcenters.
