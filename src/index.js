@@ -6,13 +6,18 @@ Object.assign(Delaunay.prototype, {
     return new Voronoi(this, bounds);
   },
   path: function(context) {
-    const {coords, halfedges, triangles} = this;
+    const {coords, halfedges, hull, triangles} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
       context.moveTo(coords[triangles[i] * 2 + 0], coords[triangles[i] * 2 + 1]);
       context.lineTo(coords[triangles[j] * 2 + 0], coords[triangles[j] * 2 + 1]);
     }
+    let node = hull;
+    do {
+      context.moveTo(node.x, node.y);
+      context.lineTo(node.next.x, node.next.y);
+    } while ((node = node.next) !== hull);
   }
 });
 
