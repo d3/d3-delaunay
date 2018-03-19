@@ -16,7 +16,7 @@
   },
   "main": "dist/voronator.js",
   "unpkg": "dist/voronator.min.js",
-  "module": "index.js",
+  "module": "src/index.js",
   "devDependencies": {
     "rollup": "^0.57.1",
     "rollup-plugin-uglify": "^3.0.0"
