@@ -25,6 +25,7 @@
     "rollup-plugin-uglify": "^3.0.0"
   },
   "scripts": {
-    "prepublishOnly": "mkdir -p dist && rollup -c && rollup -c rollup.config.min.js"
+    "prepublishOnly": "mkdir -p dist && rollup -c && rollup -c rollup.config.min.js",
+    "postpublish": "git push && git push --tags"
   }
 }
