@@ -70,20 +70,20 @@ export default class Voronoi {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
       context.moveTo(
-        this.circumcenters[Math.floor(i / 3) * 2 + 0],
-        this.circumcenters[Math.floor(i / 3) * 2 + 1]
+        circumcenters[Math.floor(i / 3) * 2 + 0],
+        circumcenters[Math.floor(i / 3) * 2 + 1]
       );
       context.lineTo(
-        this.circumcenters[Math.floor(j / 3) * 2 + 0],
-        this.circumcenters[Math.floor(j / 3) * 2 + 1]
+        circumcenters[Math.floor(j / 3) * 2 + 0],
+        circumcenters[Math.floor(j / 3) * 2 + 1]
       );
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
       const cell = cells[i];
       if (cell.v0) {
         let p0 = [
-          circumcenters[cell.triangles[i] * 2 + 0],
-          circumcenters[cell.triangles[i] * 2 + 1]
+          circumcenters[cell.triangles[0] * 2 + 0],
+          circumcenters[cell.triangles[0] * 2 + 1]
         ];
         let p1 = this._project(p0, cell.v0);
         if (p1) {
