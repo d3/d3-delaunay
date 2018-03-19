@@ -5,14 +5,18 @@ Object.assign(Delaunay.prototype, {
   voronoi: function(bounds) {
     return new Voronoi(this, bounds);
   },
-  path: function(context) {
-    const {coords, halfedges, hull, triangles} = this;
+  render: function(context) {
+    const {coords, halfedges, triangles} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
       context.moveTo(coords[triangles[i] * 2 + 0], coords[triangles[i] * 2 + 1]);
       context.lineTo(coords[triangles[j] * 2 + 0], coords[triangles[j] * 2 + 1]);
     }
+    this.renderHull(context);
+  },
+  renderHull: function(context) {
+    const {hull} = this;
     let node = hull;
     do {
       context.moveTo(node.x, node.y);
@@ -33,7 +37,7 @@ export class Voronoi {
         this.v0 = null; // Starting edge vector if hull cell.
         this.vn = null; // Ending edge vector if hull cell.
       }
-      path(context) {
+      render(context) {
         const {triangles, v0, vn} = this;
         if (!triangles) return; // Coincident point.
         let points = new Array(triangles.length); // TODO Zip as [x0, y0, …].
