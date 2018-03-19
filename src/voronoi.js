@@ -198,7 +198,7 @@ export default class Voronoi {
         case 0b1001: e0 = 0b0001; continue; // bottom-left
         case 0b0001: e0 = 0b0101, p = [this.xmin, this.ymin]; break; // left
       }
-      if (contains(points, p)) {
+      if (containsFinite(points, p)) {
         P.push(p);
       }
     }
@@ -238,7 +238,7 @@ export default class Voronoi {
 
 // TODO Represent points zipped as [x0, y0, x1, y1, …].
 // TODO Change signature to (points, x, y).
-function contains(points, [x, y]) {
+function containsFinite(points, [x, y]) {
   let n = points.length, x0, y0, [x1, y1] = points[n - 1];
   for (let i = 0; i < n; ++i) {
     x0 = x1, y0 = y1, [x1, y1] = points[i];
