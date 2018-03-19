@@ -1,4 +1,4 @@
-import Cell from "./cell";
+import Cell, {containsFinite, containsInfinite} from "./cell";
 
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
@@ -129,7 +129,7 @@ export default class Voronoi {
     if (P.length > 0) {
       e0 = e1, e1 = this._edgecode(P[0][0], P[0][1]);
       if (e0 && e1) this._edge(points, e0, e1, P);
-    } else if (containsFinite(points, [(this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2])) {
+    } else if (containsFinite(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       P.push([this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax], [this.xmin, this.ymin]);
     } else {
       return null;
@@ -173,13 +173,13 @@ export default class Voronoi {
               case 0b1001: c0 = 0b0001; continue; // bottom-left
               case 0b0001: c0 = 0b0101, c = [this.xmin, this.ymin]; break; // left
             }
-            if (containsInfinite(polygon, c)) {
+            if (containsInfinite(polygon, c[0], c[1])) {
               P.splice(i, 0, c), ++n, ++i;
             }
           }
         }
       }
-    } else if (containsInfinite(polygon, [(this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2])) {
+    } else if (containsInfinite(polygon, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       P.push([this.xmin, this.ymin], [this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax]);
     } else {
       return null;
@@ -201,7 +201,7 @@ export default class Voronoi {
         case 0b1001: e0 = 0b0001; continue; // bottom-left
         case 0b0001: e0 = 0b0101, p = [this.xmin, this.ymin]; break; // left
       }
-      if (containsFinite(points, p)) {
+      if (containsFinite(points, p[0], p[1])) {
         P.push(p);
       }
     }
@@ -237,33 +237,4 @@ export default class Voronoi {
         | (y < this.ymin ? 0b0100
         : y > this.ymax ? 0b1000 : 0b0000);
   }
-}
-
-// TODO Represent points zipped as [x0, y0, x1, y1, …].
-// TODO Change signature to (points, x, y).
-function containsFinite(points, [x, y]) {
-  let n = points.length, x0, y0, [x1, y1] = points[n - 1];
-  for (let i = 0; i < n; ++i) {
-    x0 = x1, y0 = y1, [x1, y1] = points[i];
-    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// TODO Represent points zipped as [x0, y0, x1, y1, …].
-// TODO Change signature to (polygon, x, y).
-// TODO Inline the definition of clockwise.
-function containsInfinite({points, v0, vn}, p) {
-  let n = points.length, p0, p1 = points[0];
-  if (clockwise(p, [p1[0] + v0[0], p1[1] + v0[1]], p1)) return false;
-  for (let i = 1; i < n; ++i) if (clockwise(p, p0 = p1, p1 = points[i])) return false;
-  if (clockwise(p, p1, [p1[0] + vn[0], p1[1] + vn[1]])) return false;
-  return true;
-}
-
-// TODO Inline into containsInfinite.
-function clockwise([x0, y0], [x1, y1], [x2, y2]) {
-  return (x1 - x0) * (y2 - y0) < (y1 - y0) * (x2 - x0);
 }
