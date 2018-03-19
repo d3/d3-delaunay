@@ -25,11 +25,17 @@ Object.assign(Delaunay.prototype, {
   }
 });
 
-// TODO Add voronoi.path([context]).
-// TODO Add cell.contains(x, y).
-// TODO Make cell.path(context)’s context optional and generate SVG.
 export class Voronoi {
-  constructor({coords, halfedges, hull, triangles, trianglesLen}, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
+  constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
+    const {coords, halfedges, hull, triangles, trianglesLen} = delaunay;
+    this.delaunay = delaunay;
+    this._project = project; // TODO Remove.
+    this.xmin = xmin = +xmin;
+    this.xmax = xmax = +xmax;
+    this.ymin = ymin = +ymin;
+    this.ymax = ymax = +ymax;
+
+    if (!(xmax >= xmin) || !(ymax >= ymin)) throw new Error("invalid bounds");
 
     class Cell {
       constructor() {
@@ -250,6 +256,36 @@ export class Voronoi {
           : x > xmax ? 0b0010 : 0b0000)
           | (y < ymin ? 0b0100
           : y > ymax ? 0b1000 : 0b0000);
+    }
+  }
+  render(context) {
+    const {halfedges} = this.delaunay;
+    const {cells, circumcenters} = this;
+    for (let i = 0, n = halfedges.length; i < n; ++i) {
+      const j = halfedges[i];
+      if (j < 0 || j < i) continue;
+      context.moveTo(
+        this.circumcenters[Math.floor(i / 3) * 2 + 0],
+        this.circumcenters[Math.floor(i / 3) * 2 + 1]
+      );
+      context.lineTo(
+        this.circumcenters[Math.floor(j / 3) * 2 + 0],
+        this.circumcenters[Math.floor(j / 3) * 2 + 1]
+      );
+    }
+    for (let i = 0, n = cells.length; i < n; ++i) {
+      const cell = cells[i];
+      if (cell.v0) {
+        let p0 = [
+          circumcenters[cell.triangles[i] * 2 + 0],
+          circumcenters[cell.triangles[i] * 2 + 1]
+        ];
+        let p1 = this._project(p0, cell.v0);
+        if (p1) {
+          context.moveTo(p0[0], p0[1]);
+          context.lineTo(p1[0], p1[1]);
+        }
+      }
     }
   }
 }
