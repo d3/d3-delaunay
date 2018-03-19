@@ -1,3 +1,6 @@
+// TODO Add voronoi.path([context]).
+// TODO Add cell.contains(x, y).
+// TODO Make cell.path(context)’s context optional and generate SVG.
 export default class Voronoi {
   constructor({coords, halfedges, hull, triangles, trianglesLen}, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
 
@@ -19,7 +22,6 @@ export default class Voronoi {
         }
         points = v0 ? clipInfinite({points, v0, vn}) : clip(points); // TODO Avoid restructuring.
         if (!points) return;
-        // if (!points.length) return;
         context.moveTo(points[0][0], points[0][1]);
         for (let i = 1, n = points.length; i < n; ++i) { // TODO Avoid last closing coordinate.
           context.lineTo(points[i][0], points[i][1]);
@@ -82,7 +84,6 @@ export default class Voronoi {
 
     // TODO Construct P lazily; do not copy if no clipping is needed.
     // TODO Represent points zipped as [x0, y0, x1, y1, …].
-    // TODO (In the Cell API, render to context.moveTo, context.lineTo.)
     function clip(points) {
       let n = points.length, P = [], S;
       let p0, p1 = points[n - 1];
@@ -134,7 +135,7 @@ export default class Voronoi {
     }
 
     // TODO Represent points zipped as [x0, y0, x1, y1, …].
-    // TODO (In the Cell API, render to context.moveTo, context.lineTo.)
+    // TODO Consolidate corner traversal code using edge?
     function clipInfinite(polygon) {
       let P = polygon.points.slice(), p;
       if (p = project(P[0], polygon.v0)) P.unshift(p);
@@ -170,6 +171,7 @@ export default class Voronoi {
     }
 
     // TODO Represent points zipped as [x0, y0, x1, y1, …].
+    // TODO Allow containsInfinite instead of contains for clipInfinite?
     function edge(points, e0, e1, P) {
       while (e0 !== e1) {
         let p;
