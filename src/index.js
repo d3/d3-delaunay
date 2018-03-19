@@ -1,7 +1,25 @@
+import Delaunay from "delaunator";
+export {default as Delaunay} from "delaunator";
+
+Object.assign(Delaunay.prototype, {
+  voronoi: function(bounds) {
+    return new Voronoi(this, bounds);
+  },
+  path: function(context) {
+    const {coords, halfedges, triangles} = this;
+    for (let i = 0, n = halfedges.length; i < n; ++i) {
+      const j = halfedges[i];
+      if (j < 0 || j < i) continue;
+      context.moveTo(coords[triangles[i] * 2 + 0], coords[triangles[i] * 2 + 1]);
+      context.lineTo(coords[triangles[j] * 2 + 0], coords[triangles[j] * 2 + 1]);
+    }
+  }
+});
+
 // TODO Add voronoi.path([context]).
 // TODO Add cell.contains(x, y).
 // TODO Make cell.path(context)’s context optional and generate SVG.
-export default class Voronoi {
+export class Voronoi {
   constructor({coords, halfedges, hull, triangles, trianglesLen}, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
 
     class Cell {
