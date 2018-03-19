@@ -93,6 +93,9 @@ export default class Voronoi {
       }
     }
   }
+  renderBounds(context) {
+    context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
+  }
   _clip(points, v0, vn) {
     return v0
         ? this._clipInfinite({points, v0, vn}) // TODO Avoid restructuring.
