@@ -71,13 +71,12 @@ export default class Delaunay {
     const {points, halfedges, triangles} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
-      if (j < 0 || j < i) continue;
+      if (i < j) continue;
       const ti = triangles[i] * 2;
-      const tj = triangles[j] * 2;
+      const tj = triangles[j < 0 ? i + 1 : j] * 2;
       context.moveTo(points[ti], points[ti + 1]);
       context.lineTo(points[tj], points[tj + 1]);
     }
-    this.renderHull(context);
   }
   renderHull(context) {
     const {hull} = this;

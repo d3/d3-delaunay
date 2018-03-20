@@ -16,15 +16,15 @@ The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
-For example, to render the interior edges of the Delaunay triangulation:
+The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = [*halfedges*[*i*]] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*halfedges*[*i*] / 3⌋. If *halfedges*[*i*] is -1, then triangle ⌊*i* / 3⌋ is an exterior triangle, having an edge from triangle vertex *i* to triangle vertex *i* + 1 on the convex [hull](#delaunay_hull). For example, to render the edges of the Delaunay triangulation:
 
 ```js
 const {points, halfedges, triangles} = delaunay;
 for (let i = 0, n = halfedges.length; i < n; ++i) {
   const j = halfedges[i];
-  if (j < 0 || j < i) continue;
+  if (i < j) continue;
   const ti = triangles[i] * 2;
-  const tj = triangles[j] * 2;
+  const tj = triangles[j < 0 ? i + 1 : j] * 2;
   context.moveTo(points[ti], points[ti + 1]);
   context.lineTo(points[tj], points[tj + 1]);
 }
