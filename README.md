@@ -20,15 +20,15 @@ The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
-The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = *halfedges*[*i*] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*j* / 3⌋. If *j* is negative, then triangle ⌊*i* / 3⌋ is an exterior triangle, having an edge from triangle vertex *i* to triangle vertex *i* + 1 on the [convex hull](#delaunay_hull). For example, to render the edges of the Delaunay triangulation:
+The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = *halfedges*[*i*] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*j* / 3⌋. If *j* is negative, then triangle ⌊*i* / 3⌋ is an exterior triangle on the [convex hull](#delaunay_hull). For example, to render the internal edges of the Delaunay triangulation:
 
 ```js
 const {points, halfedges, triangles} = delaunay;
 for (let i = 0, n = halfedges.length; i < n; ++i) {
   const j = halfedges[i];
-  if (i < j) continue;
+  if (j < i) continue;
   const ti = triangles[i] * 2;
-  const tj = triangles[j < 0 ? i + 1 : j] * 2;
+  const tj = triangles[j] * 2;
   context.moveTo(points[ti], points[ti + 1]);
   context.lineTo(points[tj], points[tj + 1]);
 }
