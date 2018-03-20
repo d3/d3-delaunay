@@ -45,7 +45,7 @@ export default class Cell {
     let points = new Array(triangles.length); // TODO Zip as [x0, y0, …].
     for (let i = 0, n = triangles.length; i < n; ++i) {
       points[i] = [
-        circumcenters[triangles[i] * 2 + 0],
+        circumcenters[triangles[i] * 2],
         circumcenters[triangles[i] * 2 + 1]
       ];
     }
