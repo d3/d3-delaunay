@@ -1,6 +1,8 @@
 # Voronator
 
-<img alt="Voronoi diagram" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/spectral.png" width="932" height="600">
+<img alt="Georgy Feodosevich Voronoy as “The Voronator”" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronator.jpg">
+
+Illustration: Tom MacWright
 
 ## API Reference
 
@@ -66,13 +68,19 @@ See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
+<img alt="delaunay.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-mesh.png">
+
 Renders the edges of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
+<img alt="delaunay.renderHull" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-hull.png">
+
 Renders the convex hull of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+
+<img alt="delaunay.renderTriangle" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-triangle.png">
 
 Renders triangle *i* of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
@@ -131,9 +139,13 @@ The node after this node on the convex hull.
 
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
+<img alt="voronoi.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-mesh.png">
+
 …
 
 <a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+
+<img alt="voronoi.renderBounds" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-bounds.png">
 
 Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
 
@@ -156,6 +168,8 @@ Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *v
 …
 
 <a href="#cell_render" name="cell_render">#</a> <i>cell</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
+
+<img alt="cell.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/spectral.png">
 
 …
 
