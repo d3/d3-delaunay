@@ -42,7 +42,7 @@ export default class Cell {
   }
   points() {
     const {triangles, voronoi: {circumcenters}} = this;
-    let points = new Float64Array(triangles.length * 2);
+    const points = new Float64Array(triangles.length * 2);
     for (let i = 0, n = triangles.length; i < n; ++i) {
       points[i * 2] = circumcenters[triangles[i] * 2];
       points[i * 2 + 1] = circumcenters[triangles[i] * 2 + 1];
@@ -51,7 +51,7 @@ export default class Cell {
   }
   render(context) {
     const {v0, vn} = this;
-    let points = this.voronoi._clip(this.points(), v0, vn);
+    const points = this.voronoi._clip(this.points(), v0, vn);
     if (points === null) return;
     context.moveTo(points[0], points[1]);
     for (let i = 2, n = points.length; i < n; i += 2) { // TODO Avoid last closing coordinate.
@@ -60,7 +60,7 @@ export default class Cell {
     context.closePath();
   }
   contains(x, y) {
-    let points = this.points();
+    const points = this.points();
     return this.v0 === null
         ? containsFinite(points, x, y)
         : containsInfinite(points, this.v0, this.vn, x, y);
@@ -68,7 +68,8 @@ export default class Cell {
 }
 
 export function containsFinite(points, x, y) {
-  let n = points.length, x0, y0, x1 = points[n - 2], y1 = points[n - 1];
+  const n = points.length;
+  let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
   for (let i = 0; i < n; i += 2) {
     x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
     if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) {
@@ -79,7 +80,8 @@ export function containsFinite(points, x, y) {
 }
 
 export function containsInfinite(points, [v0x, v0y], [vnx, vny], x, y) {
-  let n = points.length, x0, y0, x1 = points[0], y1 = points[1];
+  const n = points.length;
+  let x0, y0, x1 = points[0], y1 = points[1];
   if ((x0 + v0x - x) * (y1 - y) < (y0 + v0y - y) * (x1 - x)) return false;
   for (let i = 2; i < n; i += 2) {
     x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];

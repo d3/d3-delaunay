@@ -1,85 +1,31 @@
 import Cell, {containsFinite, containsInfinite} from "./cell";
 
 export default class Voronoi {
-  constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
-    const {coords, halfedges, hull, triangles} = delaunay;
+  constructor(cells, circumcenters, delaunay, xmin, ymin, xmax, ymax) {
+    if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
+    this.cells = cells;
+    this.circumcenters = circumcenters;
     this.delaunay = delaunay;
-    this.xmin = xmin = +xmin;
-    this.xmax = xmax = +xmax;
-    this.ymin = ymin = +ymin;
-    this.ymax = ymax = +ymax;
-
-    if (!(xmax >= xmin) || !(ymax >= ymin)) throw new Error("invalid bounds");
-
-    // Compute cell topology.
-    const cells = this.cells = new Array(coords.length / 2);
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      cells[i] = new Cell(this);
-    }
-    for (let i = 0, m = halfedges.length; i < m; ++i) {
-      cells[triangles[i]]._connect(Math.floor(i / 3), Math.floor(halfedges[i] / 3));
-    }
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      const cell = cells[i];
-      cell.triangles = cell.triangles[0];
-    }
-
-    // Compute circumcenters.
-    const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
-    for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
-      const x1 = coords[triangles[i] * 2];
-      const y1 = coords[triangles[i] * 2 + 1];
-      const x2 = coords[triangles[i + 1] * 2];
-      const y2 = coords[triangles[i + 1] * 2 + 1];
-      const x3 = coords[triangles[i + 2] * 2];
-      const y3 = coords[triangles[i + 2] * 2 + 1];
-      const a2 = x1 - x2;
-      const a3 = x1 - x3;
-      const b2 = y1 - y2;
-      const b3 = y1 - y3;
-      const d1 = x1 * x1 + y1 * y1;
-      const d2 = d1 - x2 * x2 - y2 * y2;
-      const d3 = d1 - x3 * x3 - y3 * y3;
-      const ab = (a3 * b2 - a2 * b3) * 2;
-      circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
-      circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
-    }
-
-    // Compute exterior cell rays.
-    {
-      let node = hull;
-      do {
-        const {x: x1, y: y1, t: i, next: {x: x2, y: y2, t: j}} = node;
-        const cx = circumcenters[Math.floor(i / 3) * 2];
-        const cy = circumcenters[Math.floor(i / 3) * 2 + 1];
-        const dx = (x1 + x2) / 2 - cx;
-        const dy = (y1 + y2) / 2 - cy;
-        const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
-        cells[triangles[i]].vn = cells[triangles[j]].v0 = [k * dx, k * dy];
-      } while ((node = node.next) !== hull);
-    }
+    this.xmax = xmax, this.xmin = xmin;
+    this.ymax = ymax, this.ymin = ymin;
   }
   render(context) {
-    const {halfedges} = this.delaunay;
-    const {cells, circumcenters} = this;
+    const {cells, circumcenters, delaunay: {halfedges}} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
-      context.moveTo(
-        circumcenters[Math.floor(i / 3) * 2],
-        circumcenters[Math.floor(i / 3) * 2 + 1]
-      );
-      context.lineTo(
-        circumcenters[Math.floor(j / 3) * 2],
-        circumcenters[Math.floor(j / 3) * 2 + 1]
-      );
+      const ti = Math.floor(i / 3) * 2;
+      const tj = Math.floor(j / 3) * 2;
+      context.moveTo(circumcenters[ti], circumcenters[ti + 1]);
+      context.lineTo(circumcenters[tj], circumcenters[tj + 1]);
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
       const cell = cells[i];
       if (cell.v0) {
-        let x0 = circumcenters[cell.triangles[0] * 2];
-        let y0 = circumcenters[cell.triangles[0] * 2 + 1];
-        let p = this._project(x0, y0, cell.v0);
+        const t0 = cell.triangles[0] * 2;
+        const x0 = circumcenters[t0];
+        const y0 = circumcenters[t0 + 1];
+        const p = this._project(x0, y0, cell.v0);
         if (p) {
           context.moveTo(x0, y0);
           context.lineTo(p[0], p[1]);
@@ -91,12 +37,11 @@ export default class Voronoi {
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
   }
   _clip(points, v0, vn) {
-    return v0
-        ? this._clipInfinite(points, v0, vn)
-        : this._clipFinite(points);
+    return v0 ? this._clipInfinite(points, v0, vn) : this._clipFinite(points);
   }
   _clipFinite(points) {
-    let n = points.length, P = null, S;
+    const n = points.length;
+    let P = null, S;
     let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
     let c0, c1 = this._regioncode(x1, y1);
     let e0, e1;
@@ -108,7 +53,7 @@ export default class Voronoi {
         if (P) P.push(x1, y1);
         else P = [x1, y1];
       } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
-        let [sx0, sy0, sx1, sy1] = S;
+        const [sx0, sy0, sx1, sy1] = S;
         if (c0) {
           e0 = e1, e1 = this._edgecode(sx0, sy0);
           if (e0 && e1) this._edge(points, e0, e1, P);

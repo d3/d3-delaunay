@@ -17,15 +17,23 @@
   "main": "dist/voronator.js",
   "unpkg": "dist/voronator.min.js",
   "module": "src/index.js",
+  "@std/esm": {
+    "esm": "js",
+    "cjs": true
+  },
   "devDependencies": {
+    "@observablehq/tape": "~0.0.1",
+    "@std/esm": "^0.15.0",
     "delaunator": "^1.0.5",
     "rollup": "^0.57.1",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-uglify": "^3.0.0"
+    "rollup-plugin-uglify": "^3.0.0",
+    "tape": "4"
   },
   "scripts": {
-    "prepublishOnly": "mkdir -p dist && rollup -c && rollup -c rollup.config.min.js",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push && git push --tags",
+    "prepublishOnly": "yarn test && mkdir -p dist && rollup -c && rollup -c rollup.config.min.js",
+    "test": "tape -r @std/esm 'test/**/*-test.js'"
   }
 }
