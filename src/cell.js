@@ -18,6 +18,10 @@ export default class Cell {
   }
   _connect(i, j) {
     const {triangles} = this;
+    if (j < 0) {
+      if (!triangles.length) triangles.push([Math.floor(i / 3)]);
+      return;
+    }
     for (let n = triangles.length, a = 0; a < n; ++a) {
       let sa = triangles[a];
       if (sa[0] === j) {
@@ -68,7 +72,6 @@ export default class Cell {
 }
 
 // TODO Represent points zipped as [x0, y0, x1, y1, …].
-// TODO Change signature to (points, x, y).
 export function containsFinite(points, x, y) {
   let n = points.length, x0, y0, [x1, y1] = points[n - 1];
   for (let i = 0; i < n; ++i) {
@@ -81,7 +84,7 @@ export function containsFinite(points, x, y) {
 }
 
 // TODO Represent points zipped as [x0, y0, x1, y1, …].
-// TODO Change signature to (polygon, x, y).
+// TODO Change signature to (points, v0, vn, x, y).
 // TODO Inline the definition of clockwise.
 export function containsInfinite({points, v0, vn}, x, y) {
   let n = points.length, p0, p1 = points[0];
