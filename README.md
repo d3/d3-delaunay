@@ -6,6 +6,18 @@
 
 [Insert description here.]
 
+## Installing
+
+If you use NPM, `npm install voronator`; for Yarn, `yarn add voronator`. Otherwise, download the [latest release](https://github.com/observablehq/voronator/releases/latest). You can also load directly from [unpkg](https://unpkg.com/voronator/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `voronator` global is exported.
+
+```js
+import {Delaunay} from "voronator";
+
+const points = [[0, 0], [0, 1], [1, 0], [1, 1]];
+const delaunay = Delaunay.from(points);
+const voronoi = delaunay.voronoi([0, 0, 960, 500]);
+```
+
 ## API Reference
 
 ### Delaunay
