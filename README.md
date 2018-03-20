@@ -4,7 +4,7 @@
   <img alt="Georgy Feodosevich Voronoy as “The Voronator”" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronator.jpg" width="300" />
 </p>
 
-[Insert description here.]
+Voronator is a fast library for computing the 2D [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram). It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is the dual of the Delaunay triangulation, and can be constructed by connecting the circumcenters of adjacent triangles.
 
 ## Installing
 
@@ -104,7 +104,7 @@ Renders triangle *i* of the Delaunay triangulation to the specified *context*. T
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-Returns the [Voronoi tessellation](#voronoi) for the associated [points](#delaunay_points). When rendering, the tessellation will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500].
+Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_points). When rendering, the diagram will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500]. See [To Infinity and Back Again](https://beta.observablehq.com/@mbostock/to-infinity-and-back-again) for an interactive explanation of Voronoi cell clipping.
 
 ### Node
 
@@ -138,7 +138,7 @@ The node after this node on the convex hull.
 
 <a href="#voronoi_cells" name="voronoi_cells">#</a> <i>voronoi</i>.<b>cells</b>
 
-The cells of the Voronoi tessellation as an array of [*Cell*](#cell) instances. The *voronoi*.cells[*i*] represents the area of the plane closest to the input point *i*, *i.e.*, [*points*[2 * *i*], *points*[2 * *i* + 1]] where *points* = *voronoi*.delaunay.points.
+The cells of the Voronoi diagram as an array of [*Cell*](#cell) instances. The *voronoi*.cells[*i*] represents the area of the plane closest to the input point *i*, *i.e.*, [*points*[2 * *i*], *points*[2 * *i* + 1]] where *points* = *voronoi*.delaunay.points.
 
 <a href="#voronoi_circumcenters" name="voronoi_circumcenters">#</a> <i>voronoi</i>.<b>circumcenters</b>
 
@@ -146,14 +146,14 @@ The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delau
 
 <a href="#voronoi_delaunay" name="voronoi_delaunay">#</a> <i>voronoi</i>.<b>delaunay</b>
 
-The Voronoi tessellation’s associated [Delaunay triangulation](#delaunay).
+The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
 <a href="#voronoi_xmax" name="voronoi_xmax">#</a> <i>voronoi</i>.<b>xmax</b><br>
 <a href="#voronoi_ymax" name="voronoi_ymax">#</a> <i>voronoi</i>.<b>ymax</b><br>
 
-The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi tessellation. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
+The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi diagram. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
 
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
@@ -171,7 +171,7 @@ Renders the viewport extent to the specified *context*. The specified *context* 
 
 <a href="#cell_voronoi" name="cell_voronoi">#</a> <i>cell</i>.<b>voronoi</b>
 
-The cell’s associated [Voronoi tessellation](#voronoi).
+The cell’s associated [Voronoi diagram](#voronoi).
 
 <a href="#cell_triangles" name="cell_triangles">#</a> <i>cell</i>.<b>triangles</b>
 
