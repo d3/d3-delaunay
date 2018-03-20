@@ -77,14 +77,12 @@ export default class Voronoi {
     for (let i = 0, n = cells.length; i < n; ++i) {
       const cell = cells[i];
       if (cell.v0) {
-        let p0 = [
-          circumcenters[cell.triangles[0] * 2],
-          circumcenters[cell.triangles[0] * 2 + 1]
-        ];
-        let p1 = this._project(p0, cell.v0);
-        if (p1) {
-          context.moveTo(p0[0], p0[1]);
-          context.lineTo(p1[0], p1[1]);
+        let x0 = circumcenters[cell.triangles[0] * 2];
+        let y0 = circumcenters[cell.triangles[0] * 2 + 1];
+        let p = this._project(x0, y0, cell.v0);
+        if (p) {
+          context.moveTo(x0, y0);
+          context.lineTo(p[0], p[1]);
         }
       }
     }
@@ -100,43 +98,42 @@ export default class Voronoi {
   // TODO Represent points zipped as [x0, y0, x1, y1, …].
   _clipFinite(points) {
     let n = points.length, P = null, S;
-    let p0, p1 = points[n - 1];
-    let c0, c1 = this._regioncode(p1[0], p1[1]);
+    let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
+    let c0, c1 = this._regioncode(x1, y1);
     let e0, e1;
-    for (let i = 0; i < n; ++i) {
-      p0 = p1, p1 = points[i];
-      c0 = c1, c1 = this._regioncode(p1[0], p1[1]);
+    for (let i = 0; i < n; i += 2) {
+      x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
+      c0 = c1, c1 = this._regioncode(x1, y1);
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
-        if (P) P.push(p1);
-        else P = [p1];
-      } else if (S = this._clipSegment(p0, p1, c0, c1)) {
-        let [s0, s1] = S;
+        if (P) P.push(x1, y1);
+        else P = [x1, y1];
+      } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
+        let [sx0, sy0, sx1, sy1] = S;
         if (c0) {
-          e0 = e1, e1 = this._edgecode(s0[0], s0[1]);
+          e0 = e1, e1 = this._edgecode(sx0, sy0);
           if (e0 && e1) this._edge(points, e0, e1, P);
-          if (P) P.push(s0);
-          else P = [s0];
+          if (P) P.push(sx0, sy0);
+          else P = [sx0, sy0];
         }
-        e0 = e1, e1 = this._edgecode(s1[0], s1[1]);
+        e0 = e1, e1 = this._edgecode(sx1, sy1);
         if (e0 && e1) this._edge(points, e0, e1, P);
-        if (P) P.push(s1);
-        else P = [s1];
+        if (P) P.push(sx1, sy1);
+        else P = [sx1, sy1];
       }
     }
     if (P) {
-      e0 = e1, e1 = this._edgecode(P[0][0], P[0][1]);
+      e0 = e1, e1 = this._edgecode(P[0], P[1]);
       if (e0 && e1) this._edge(points, e0, e1, P);
     } else if (containsFinite(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
-      return [[this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax], [this.xmin, this.ymin]];
+      return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
     }
     return P;
   }
-  // TODO Change signature to (x0, y0, x1, y1, …).
   // TODO Update c0 or c1 directly rather than calling regioncode again.
-  _clipSegment([x0, y0], [x1, y1], c0, c1) {
+  _clipSegment(x0, y0, x1, y1, c0, c1) {
     while (true) {
-      if (c0 === 0 && c1 === 0) return [[x0, y0], [x1, y1]];
+      if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
       if (c0 & c1) return;
       let x, y, c = c0 || c1;
       if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
@@ -147,63 +144,58 @@ export default class Voronoi {
       else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
     }
   }
-  // TODO Represent points zipped as [x0, y0, x1, y1, …].
   // TODO Consolidate corner traversal code using edge?
   _clipInfinite(points, v0, vn) {
-    let P = points.slice(), p;
-    if (p = this._project(P[0], v0)) P.unshift(p);
-    if (p = this._project(P[P.length - 1], vn)) P.unshift(p);
+    let P = Array.from(points), p;
+    if (p = this._project(P[0], P[1], v0)) P.unshift(p[0], p[1]);
+    if (p = this._project(P[P.length - 2], P[P.length - 1], vn)) P.unshift(p[0], p[1]);
     if (P = this._clipFinite(P)) {
-      for (let i = 0, n = P.length, c0, c1 = this._edgecode(P[n - 1][0], P[n - 1][1]); i < n; ++i) {
-        c0 = c1, c1 = this._edgecode(P[i][0], P[i][1]);
+      for (let i = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); i < n; i += 2) {
+        c0 = c1, c1 = this._edgecode(P[i], P[i + 1]);
         if (c0 && c1) {
           while (c0 !== c1) {
-            let c;
+            let cx, cy;
             switch (c0) {
               case 0b0101: c0 = 0b0100; continue; // top-left
-              case 0b0100: c0 = 0b0110, c = [this.xmax, this.ymin]; break; // top
+              case 0b0100: c0 = 0b0110, cx = this.xmax, cy = this.ymin; break; // top
               case 0b0110: c0 = 0b0010; continue; // top-right
-              case 0b0010: c0 = 0b1010, c = [this.xmax, this.ymax]; break; // right
+              case 0b0010: c0 = 0b1010, cx = this.xmax, cy = this.ymax; break; // right
               case 0b1010: c0 = 0b1000; continue; // bottom-right
-              case 0b1000: c0 = 0b1001, c = [this.xmin, this.ymax]; break; // bottom
+              case 0b1000: c0 = 0b1001, cx = this.xmin, cy = this.ymax; break; // bottom
               case 0b1001: c0 = 0b0001; continue; // bottom-left
-              case 0b0001: c0 = 0b0101, c = [this.xmin, this.ymin]; break; // left
+              case 0b0001: c0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
             }
-            if (containsInfinite(points, v0, vn, c[0], c[1])) {
-              P.splice(i, 0, c), ++n, ++i;
+            if (containsInfinite(points, v0, vn, cx, cy)) {
+              P.splice(i, 0, cx, cy), n += 2, i += 2;
             }
           }
         }
       }
     } else if (containsInfinite(points, v0, vn, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
-      P.push([this.xmin, this.ymin], [this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax]);
-    } else {
-      return null;
+      P.push(this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax);
     }
     return P;
   }
-  // TODO Represent points zipped as [x0, y0, x1, y1, …].
   // TODO Allow containsInfinite instead of contains for clipInfinite?
   _edge(points, e0, e1, P) {
     while (e0 !== e1) {
-      let p;
+      let cx, cy;
       switch (e0) {
         case 0b0101: e0 = 0b0100; continue; // top-left
-        case 0b0100: e0 = 0b0110, p = [this.xmax, this.ymin]; break; // top
+        case 0b0100: e0 = 0b0110, cx = this.xmax, cy = this.ymin; break; // top
         case 0b0110: e0 = 0b0010; continue; // top-right
-        case 0b0010: e0 = 0b1010, p = [this.xmax, this.ymax]; break; // right
+        case 0b0010: e0 = 0b1010, cx = this.xmax, cy = this.ymax; break; // right
         case 0b1010: e0 = 0b1000; continue; // bottom-right
-        case 0b1000: e0 = 0b1001, p = [this.xmin, this.ymax]; break; // bottom
+        case 0b1000: e0 = 0b1001, cx = this.xmin, cy = this.ymax; break; // bottom
         case 0b1001: e0 = 0b0001; continue; // bottom-left
-        case 0b0001: e0 = 0b0101, p = [this.xmin, this.ymin]; break; // left
+        case 0b0001: e0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
       }
-      if (containsFinite(points, p[0], p[1])) {
-        P.push(p);
+      if (containsFinite(points, cx, cy)) {
+        P.push(cx, cy);
       }
     }
   }
-  // TODO Change signature to (x0, y0, vx, vy).
-  _project([x0, y0], [vx, vy]) {
+  _project(x0, y0, [vx, vy]) {
     let t = Infinity, c, x, y;
     if (vy < 0) { // top
       if (y0 <= this.ymin) return;
