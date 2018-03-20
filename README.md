@@ -14,6 +14,10 @@
 
 Returns the Delaunay triangulation for the given array of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point.
 
+```js
+const delaunay = Delaunay.from([[0, 0], [0, 1], [1, 0], [1, 1]]);
+```
+
 <a href="#delaunay_points" name="delaunay_points">#</a> <i>delaunay</i>.<b>points</b>
 
 The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
