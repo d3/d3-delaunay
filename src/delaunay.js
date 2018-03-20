@@ -29,12 +29,15 @@ export default class Delaunay {
 
     // Compute circumcenters.
     for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
-      const x1 = points[triangles[i] * 2];
-      const y1 = points[triangles[i] * 2 + 1];
-      const x2 = points[triangles[i + 1] * 2];
-      const y2 = points[triangles[i + 1] * 2 + 1];
-      const x3 = points[triangles[i + 2] * 2];
-      const y3 = points[triangles[i + 2] * 2 + 1];
+      const t1 = triangles[i] * 2;
+      const t2 = triangles[i + 1] * 2;
+      const t3 = triangles[i + 2] * 2;
+      const x1 = points[t1];
+      const y1 = points[t1 + 1];
+      const x2 = points[t2];
+      const y2 = points[t2 + 1];
+      const x3 = points[t3];
+      const y3 = points[t3 + 1];
       const a2 = x1 - x2;
       const a3 = x1 - x3;
       const b2 = y1 - y2;
@@ -52,8 +55,9 @@ export default class Delaunay {
       let node = hull;
       do {
         const {x: x1, y: y1, t: i, next: {x: x2, y: y2, t: j}} = node;
-        const cx = circumcenters[Math.floor(i / 3) * 2];
-        const cy = circumcenters[Math.floor(i / 3) * 2 + 1];
+        const ci = Math.floor(i / 3) * 2;
+        const cx = circumcenters[ci];
+        const cy = circumcenters[ci + 1];
         const dx = (x1 + x2) / 2 - cx;
         const dy = (y1 + y2) / 2 - cy;
         const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
@@ -68,8 +72,10 @@ export default class Delaunay {
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
-      context.moveTo(points[triangles[i] * 2], points[triangles[i] * 2 + 1]);
-      context.lineTo(points[triangles[j] * 2], points[triangles[j] * 2 + 1]);
+      const ti = triangles[i] * 2;
+      const tj = triangles[j] * 2;
+      context.moveTo(points[ti], points[ti + 1]);
+      context.lineTo(points[tj], points[tj + 1]);
     }
     this.renderHull(context);
   }
@@ -83,9 +89,12 @@ export default class Delaunay {
   }
   renderTriangle(i, context) {
     const {points, triangles} = this;
-    context.moveTo(points[triangles[i *= 3] * 2], points[triangles[i] * 2 + 1]);
-    context.lineTo(points[triangles[i + 1] * 2], points[triangles[i + 1] * 2 + 1]);
-    context.lineTo(points[triangles[i + 2] * 2], points[triangles[i + 2] * 2 + 1]);
+    const t0 = triangles[i *= 3] * 2;
+    const t1 = triangles[i + 1] * 2;
+    const t2 = triangles[i + 2] * 2;
+    context.moveTo(points[t0], points[t0 + 1]);
+    context.lineTo(points[t1], points[t1 + 1]);
+    context.lineTo(points[t2], points[t2 + 1]);
     context.closePath();
   }
 }

@@ -2,46 +2,81 @@
 
 <img alt="Voronoi diagram" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/spectral.png" width="932" height="600">
 
-
 ## API Reference
 
 ### Delaunay
 
 <a href="#delaunay_from" name="delaunay_from">#</a> Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-…
+Computes and returns the Delaunay triangulation for the given array of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point.
 
 <a href="#delaunay_points" name="delaunay_points">#</a> <i>delaunay</i>.<b>points</b>
 
-…
+The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
-…
+For example, to render the interior edges of the Delaunay triangulation:
+
+```js
+const {points, halfedges, triangles} = delaunay;
+for (let i = 0, n = halfedges.length; i < n; ++i) {
+  const j = halfedges[i];
+  if (j < 0 || j < i) continue;
+  const ti = triangles[i] * 2;
+  const tj = triangles[j] * 2;
+  context.moveTo(points[ti], points[ti + 1]);
+  context.lineTo(points[tj], points[tj + 1]);
+}
+```
+
+See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-…
+The starting [node](#node) of the Delaunay triangulation’s convex hull. For example, to render the exterior edges of the Delaunay triangulation:
+
+```js
+const {hull} = delaunay;
+let node = hull;
+do {
+  context.moveTo(node.x, node.y);
+  context.lineTo(node.next.x, node.next.y);
+} while ((node = node.next) !== hull);
+```
+
+See also [*delaunay*.renderHull](#delaunay_renderHull).
 
 <a href="#delaunay_triangles" name="delaunay_triangles">#</a> <i>delaunay</i>.<b>triangles</b>
 
-…
+The triangle vertex indexes as an Int32Array. Each triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.triangles](#delaunay_triangles) and [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
+
+```js
+const {points, triangles} = delaunay;
+const t0 = triangles[i * 3 + 0] * 2;
+const t1 = triangles[i * 3 + 1] * 2;
+const t2 = triangles[i * 3 + 2] * 2;
+context.moveTo(points[t0], points[t0 + 1]);
+context.lineTo(points[t1], points[t1 + 1]);
+context.lineTo(points[t2], points[t2 + 1]);
+context.closePath();
+```
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-…
+Renders the edges of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo and *context*.lineTo methods.
 
 <a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-…
+Renders the convex hull of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo and *context*.lineTo methods.
 
 <a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-…
+Renders triangle *i* of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods.
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-…
+Returns the [Voronoi tessellation](#voronoi) for the associated [points](#delaunay_points). When rendering, the tessellation will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500].
 
 ### Node
 

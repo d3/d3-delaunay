@@ -44,8 +44,10 @@ export default class Cell {
     const {triangles, voronoi: {circumcenters}} = this;
     const points = new Float64Array(triangles.length * 2);
     for (let i = 0, n = triangles.length; i < n; ++i) {
-      points[i * 2] = circumcenters[triangles[i] * 2];
-      points[i * 2 + 1] = circumcenters[triangles[i] * 2 + 1];
+      const pi = i * 2;
+      const ti = triangles[i] * 2;
+      points[pi] = circumcenters[ti];
+      points[pi + 1] = circumcenters[ti + 1];
     }
     return points;
   }
