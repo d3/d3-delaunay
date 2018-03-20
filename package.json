@@ -32,8 +32,8 @@
     "tape": "4"
   },
   "scripts": {
-    "postpublish": "git push && git push --tags",
-    "prepublishOnly": "yarn test && mkdir -p dist && rollup -c && rollup -c rollup.config.min.js",
+    "postpublish": "git push && git push --tags && zip -j dist/voronator.zip -- LICENSE README.md dist/voronator.js dist/voronator.min.js",
+    "prepublishOnly": "yarn test && rm -rf dist && mkdir dist && rollup -c && rollup -c rollup.config.min.js",
     "test": "tape -r @std/esm 'test/**/*-test.js'"
   }
 }
