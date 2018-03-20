@@ -8,7 +8,7 @@
 
 ## Installing
 
-If you use NPM, `npm install voronator`; for Yarn, `yarn add voronator`. Otherwise, download the [latest release](https://github.com/observablehq/voronator/releases/latest). You can also load directly from [unpkg](https://unpkg.com/voronator/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `voronator` global is exported.
+If you use NPM, `npm install voronator`; for Yarn, `yarn add voronator`. You can download the [latest release](https://github.com/observablehq/voronator/releases/latest) or you can load directly from [unpkg](https://unpkg.com/voronator/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `voronator` global is exported.
 
 ```js
 import {Delaunay} from "voronator";
