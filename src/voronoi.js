@@ -2,7 +2,7 @@ import Cell, {containsFinite, containsInfinite} from "./cell";
 
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
-    const {coords, halfedges, hull, triangles, trianglesLen} = delaunay;
+    const {coords, halfedges, hull, triangles} = delaunay;
     this.delaunay = delaunay;
     this.xmin = xmin = +xmin;
     this.xmax = xmax = +xmax;
@@ -25,8 +25,8 @@ export default class Voronoi {
     }
 
     // Compute circumcenters.
-    const circumcenters = this.circumcenters = new Float64Array(trianglesLen / 3 * 2);
-    for (let i = 0, j = 0, n = trianglesLen; i < n; i += 3, j += 2) {
+    const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
+    for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
       const x1 = coords[triangles[i + 0] * 2 + 0];
       const y1 = coords[triangles[i + 0] * 2 + 1];
       const x2 = coords[triangles[i + 1] * 2 + 0];

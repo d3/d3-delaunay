@@ -16,6 +16,13 @@ Object.assign(Delaunay.prototype, {
     }
     this.renderHull(context);
   },
+  renderTriangle: function(i, context) {
+    const {coords, triangles} = this;
+    context.moveTo(coords[triangles[i *= 3] * 2], coords[triangles[i] * 2 + 1]);
+    context.lineTo(coords[triangles[i + 1] * 2], coords[triangles[i + 1] * 2 + 1]);
+    context.lineTo(coords[triangles[i + 2] * 2], coords[triangles[i + 2] * 2 + 1]);
+    context.closePath();
+  },
   renderHull: function(context) {
     const {hull} = this;
     let node = hull;
