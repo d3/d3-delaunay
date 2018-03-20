@@ -7,9 +7,8 @@ export default class Cell {
   }
   render(context) {
     const {v0, vn} = this;
-    let points;
-    if (!(points = this._points())) return;
-    if (!(points = this.voronoi._clip(points, v0, vn))) return;
+    let points = this.voronoi._clip(this._points(), v0, vn);
+    if (points === null) return;
     context.moveTo(points[0][0], points[0][1]);
     for (let i = 1, n = points.length; i < n; ++i) { // TODO Avoid last closing coordinate.
       context.lineTo(points[i][0], points[i][1]);
@@ -19,7 +18,7 @@ export default class Cell {
   _connect(i, j) {
     const {triangles} = this;
     if (j < 0) {
-      if (!triangles.length) triangles.push([i]);
+      if (triangles.length === 0) triangles.push([i]);
       return;
     }
     for (let n = triangles.length, a = 0; a < n; ++a) {
@@ -53,7 +52,6 @@ export default class Cell {
   }
   _points() {
     const {triangles, voronoi: {circumcenters}} = this;
-    if (!triangles) return null;
     let points = new Array(triangles.length); // TODO Zip as [x0, y0, …].
     for (let i = 0, n = triangles.length; i < n; ++i) {
       points[i] = [
@@ -65,8 +63,8 @@ export default class Cell {
   }
   contains(x, y) {
     let points = this._points();
-    return points === null ? false
-        : this.v0 ? containsInfinite({points, v0: this.v0, vn: this.vn}, x, y)
+    return this.v0
+        ? containsInfinite(points, this.v0, this.vn, x, y)
         : containsFinite(points, x, y);
   }
 }
@@ -84,9 +82,8 @@ export function containsFinite(points, x, y) {
 }
 
 // TODO Represent points zipped as [x0, y0, x1, y1, …].
-// TODO Change signature to (points, v0, vn, x, y).
 // TODO Inline the definition of clockwise.
-export function containsInfinite({points, v0, vn}, x, y) {
+export function containsInfinite(points, v0, vn, x, y) {
   let n = points.length, p0, p1 = points[0];
   if (clockwise(x, y, [p1[0] + v0[0], p1[1] + v0[1]], p1)) return false;
   for (let i = 1; i < n; ++i) if (clockwise(x, y, p0 = p1, p1 = points[i])) return false;

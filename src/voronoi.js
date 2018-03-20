@@ -19,6 +19,10 @@ export default class Voronoi {
     for (let i = 0, m = halfedges.length; i < m; ++i) {
       cells[triangles[i]]._connect(Math.floor(i / 3), Math.floor(halfedges[i] / 3));
     }
+    for (let i = 0, n = cells.length; i < n; ++i) {
+      const cell = cells[i];
+      cell.triangles = cell.triangles[0];
+    }
 
     // Compute circumcenters.
     const circumcenters = this.circumcenters = new Float64Array(trianglesLen / 3 * 2);
@@ -53,12 +57,6 @@ export default class Voronoi {
         const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
         cells[triangles[i]].vn = cells[triangles[j]].v0 = [k * dx, k * dy];
       } while ((node = node.next) !== hull);
-    }
-
-    // Coalesce the cell.
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      const cell = cells[i];
-      cell.triangles = cell.triangles[0];
     }
   }
   render(context) {
@@ -96,7 +94,7 @@ export default class Voronoi {
   }
   _clip(points, v0, vn) {
     return v0
-        ? this._clipInfinite({points, v0, vn}) // TODO Avoid restructuring.
+        ? this._clipInfinite(points, v0, vn)
         : this._clipFinite(points);
   }
   // TODO Construct P lazily; do not copy if no clipping is needed.
@@ -151,10 +149,10 @@ export default class Voronoi {
   }
   // TODO Represent points zipped as [x0, y0, x1, y1, …].
   // TODO Consolidate corner traversal code using edge?
-  _clipInfinite(polygon) {
-    let P = polygon.points.slice(), p;
-    if (p = this._project(P[0], polygon.v0)) P.unshift(p);
-    if (p = this._project(P[P.length - 1], polygon.vn)) P.unshift(p);
+  _clipInfinite(points, v0, vn) {
+    let P = points.slice(), p;
+    if (p = this._project(P[0], v0)) P.unshift(p);
+    if (p = this._project(P[P.length - 1], vn)) P.unshift(p);
     if (P = this._clipFinite(P)) {
       for (let i = 0, n = P.length, c0, c1 = this._edgecode(P[n - 1][0], P[n - 1][1]); i < n; ++i) {
         c0 = c1, c1 = this._edgecode(P[i][0], P[i][1]);
@@ -171,13 +169,13 @@ export default class Voronoi {
               case 0b1001: c0 = 0b0001; continue; // bottom-left
               case 0b0001: c0 = 0b0101, c = [this.xmin, this.ymin]; break; // left
             }
-            if (containsInfinite(polygon, c[0], c[1])) {
+            if (containsInfinite(points, v0, vn, c[0], c[1])) {
               P.splice(i, 0, c), ++n, ++i;
             }
           }
         }
       }
-    } else if (containsInfinite(polygon, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+    } else if (containsInfinite(points, v0, vn, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       P.push([this.xmin, this.ymin], [this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax]);
     } else {
       return null;
