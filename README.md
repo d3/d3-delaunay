@@ -1,10 +1,10 @@
-# Voronator
-
 <p align="center">
   <img alt="Georgy Feodosevich Voronoy as “The Voronator”" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronator.jpg" width="300" />
 </p>
 
-Illustration: Tom MacWright
+<p align="center">
+  <strong>Voronator</strong>
+</p>
 
 ## API Reference
 
