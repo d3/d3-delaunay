@@ -73,13 +73,6 @@ export default class Delaunay {
     }
     this.renderHull(context);
   }
-  renderTriangle(i, context) {
-    const {points, triangles} = this;
-    context.moveTo(points[triangles[i *= 3] * 2], points[triangles[i] * 2 + 1]);
-    context.lineTo(points[triangles[i + 1] * 2], points[triangles[i + 1] * 2 + 1]);
-    context.lineTo(points[triangles[i + 2] * 2], points[triangles[i + 2] * 2 + 1]);
-    context.closePath();
-  }
   renderHull(context) {
     const {hull} = this;
     let node = hull;
@@ -87,6 +80,13 @@ export default class Delaunay {
       context.moveTo(node.x, node.y);
       context.lineTo(node.next.x, node.next.y);
     } while ((node = node.next) !== hull);
+  }
+  renderTriangle(i, context) {
+    const {points, triangles} = this;
+    context.moveTo(points[triangles[i *= 3] * 2], points[triangles[i] * 2 + 1]);
+    context.lineTo(points[triangles[i + 1] * 2], points[triangles[i + 1] * 2 + 1]);
+    context.lineTo(points[triangles[i + 2] * 2], points[triangles[i + 2] * 2 + 1]);
+    context.closePath();
   }
 }
 
