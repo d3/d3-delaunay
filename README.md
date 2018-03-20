@@ -66,15 +66,15 @@ See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-Renders the edges of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo and *context*.lineTo methods.
+Renders the edges of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-Renders the convex hull of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo and *context*.lineTo methods.
+Renders the convex hull of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
-Renders triangle *i* of the Delaunay triangulation to the specified [*context*](https://www.w3.org/TR/2dcontext/#canvaspathmethods). The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods.
+Renders triangle *i* of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
