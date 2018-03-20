@@ -3,15 +3,15 @@ import Delaunator from "delaunator";
 import Voronoi from "./voronoi.js";
 
 export default class Delaunay {
-  constructor(coords, halfedges, hull, triangles) {
-    this.coords = coords;
+  constructor(points, halfedges, hull, triangles) {
+    this.points = points;
     this.halfedges = halfedges;
     this.hull = hull;
     this.triangles = triangles;
   }
   voronoi([xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
-    const {coords, halfedges, hull, triangles} = this;
-    const cells = new Array(coords.length / 2);
+    const {points, halfedges, hull, triangles} = this;
+    const cells = new Array(points.length / 2);
     const circumcenters = new Float64Array(triangles.length / 3 * 2);
     const voronoi = new Voronoi(cells, circumcenters, this, xmin, ymin, xmax, ymax);
 
@@ -29,12 +29,12 @@ export default class Delaunay {
 
     // Compute circumcenters.
     for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
-      const x1 = coords[triangles[i] * 2];
-      const y1 = coords[triangles[i] * 2 + 1];
-      const x2 = coords[triangles[i + 1] * 2];
-      const y2 = coords[triangles[i + 1] * 2 + 1];
-      const x3 = coords[triangles[i + 2] * 2];
-      const y3 = coords[triangles[i + 2] * 2 + 1];
+      const x1 = points[triangles[i] * 2];
+      const y1 = points[triangles[i] * 2 + 1];
+      const x2 = points[triangles[i + 1] * 2];
+      const y2 = points[triangles[i + 1] * 2 + 1];
+      const x3 = points[triangles[i + 2] * 2];
+      const y3 = points[triangles[i + 2] * 2 + 1];
       const a2 = x1 - x2;
       const a3 = x1 - x3;
       const b2 = y1 - y2;
@@ -64,20 +64,20 @@ export default class Delaunay {
     return voronoi;
   }
   render(context) {
-    const {coords, halfedges, triangles} = this;
+    const {points, halfedges, triangles} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < 0 || j < i) continue;
-      context.moveTo(coords[triangles[i] * 2], coords[triangles[i] * 2 + 1]);
-      context.lineTo(coords[triangles[j] * 2], coords[triangles[j] * 2 + 1]);
+      context.moveTo(points[triangles[i] * 2], points[triangles[i] * 2 + 1]);
+      context.lineTo(points[triangles[j] * 2], points[triangles[j] * 2 + 1]);
     }
     this.renderHull(context);
   }
   renderTriangle(i, context) {
-    const {coords, triangles} = this;
-    context.moveTo(coords[triangles[i *= 3] * 2], coords[triangles[i] * 2 + 1]);
-    context.lineTo(coords[triangles[i + 1] * 2], coords[triangles[i + 1] * 2 + 1]);
-    context.lineTo(coords[triangles[i + 2] * 2], coords[triangles[i + 2] * 2 + 1]);
+    const {points, triangles} = this;
+    context.moveTo(points[triangles[i *= 3] * 2], points[triangles[i] * 2 + 1]);
+    context.lineTo(points[triangles[i + 1] * 2], points[triangles[i + 1] * 2 + 1]);
+    context.lineTo(points[triangles[i + 2] * 2], points[triangles[i + 2] * 2 + 1]);
     context.closePath();
   }
   renderHull(context) {
