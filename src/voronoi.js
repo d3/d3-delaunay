@@ -95,7 +95,6 @@ export default class Voronoi {
         ? this._clipInfinite(points, v0, vn)
         : this._clipFinite(points);
   }
-  // TODO Represent points zipped as [x0, y0, x1, y1, …].
   _clipFinite(points) {
     let n = points.length, P = null, S;
     let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
@@ -130,18 +129,17 @@ export default class Voronoi {
     }
     return P;
   }
-  // TODO Update c0 or c1 directly rather than calling regioncode again.
   _clipSegment(x0, y0, x1, y1, c0, c1) {
     while (true) {
       if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
       if (c0 & c1) return;
       let x, y, c = c0 || c1;
-      if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
-      else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;
-      else if (c & 0b0010) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax;
-      else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin;
-      if (c === c0) x0 = x, y0 = y, c0 = this._regioncode(x0, y0);
-      else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
+      if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax, c ^= 0b1000;
+      else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin, c ^= 0b0100;
+      else if (c & 0b0010) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax, c ^= 0b0010;
+      else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin, c ^= 0b0001;
+      if (c0) x0 = x, y0 = y, c0 = c;
+      else x1 = x, y1 = y, c1 = c;
     }
   }
   // TODO Consolidate corner traversal code using edge?
