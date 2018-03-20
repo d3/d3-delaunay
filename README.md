@@ -4,7 +4,7 @@
   <img alt="Georgy Feodosevich Voronoy as “The Voronator”" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronator.jpg" width="300" />
 </p>
 
-Voronator is a fast library for computing the 2D [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram). It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is the dual of the Delaunay triangulation, and can be constructed by connecting the circumcenters of adjacent triangles.
+Voronator is a fast library for computing the [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) of a set of two-dimensional points. It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is the dual of the Delaunay triangulation, and can be constructed by connecting the circumcenters of adjacent triangles.
 
 ## Installing
 
