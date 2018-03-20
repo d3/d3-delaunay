@@ -94,19 +94,19 @@ See [*delaunay*.hull](#delaunay_hull).
 
 <a href="#node_i" name="node_i">#</a> <i>node</i>.<b>i</b>
 
-…
+The index of the input point corresponding to this node. Equivalent to [*delaunay*.triangles](#delaunay_triangles)[[*node*.t](#node_t)].
 
 <a href="#node_x" name="node_x">#</a> <i>node</i>.<b>x</b>
 
-Equivalent to [*delaunay*.points](#delaunay_points)[2 * *node*.i].
+Equivalent to [*delaunay*.points](#delaunay_points)[2 * [*node*.i](#node_i)].
 
 <a href="#node_y" name="node_y">#</a> <i>node</i>.<b>y</b>
 
-Equivalent to [*delaunay*.points](#delaunay_points)[2 * *node*.i + 1].
+Equivalent to [*delaunay*.points](#delaunay_points)[2 * [*node*.i](#node_i) + 1].
 
 <a href="#node_t" name="node_t">#</a> <i>node</i>.<b>t</b>
 
-…
+The index of the triangle vertex corresponding to this node.
 
 <a href="#node_prev" name="node_prev">#</a> <i>node</i>.<b>prev</b>
 
@@ -120,63 +120,59 @@ The node after this node on the convex hull.
 
 <a href="#voronoi_cells" name="voronoi_cells">#</a> <i>voronoi</i>.<b>cells</b>
 
-… <i>voronoi</i>.cells[<i>i</i>] represents the [cell](#cell) for point <i>i</i> in the Delaunay triangulation, *i.e.*, [<i>delaunay</i>.points[2 * <i>i</i>], <i>delaunay</i>.points[2 * <i>i</i> + 1]].
+The cells of the Voronoi tessellation as an array of [*Cell*](#cell) instances. The *voronoi*.cells[*i*] represents the area of the plane closest to the input point *i*, *i.e.*, [*points*[2 * *i*], *points*[2 * *i* + 1]] where *points* = *voronoi*.delaunay.points.
 
 <a href="#voronoi_circumcenters" name="voronoi_circumcenters">#</a> <i>voronoi</i>.<b>circumcenters</b>
 
-…
+The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delaunay triangles as a Float64Array [*cx0*, *cy0*, *cx1*, *cy1*, …]. Each contiguous pair of coordinates *cx*, *cy* is the circumcenter for the corresponding triangle. These circumcenters form the coordinates of the Voronoi cell polygons.
 
 <a href="#voronoi_delaunay" name="voronoi_delaunay">#</a> <i>voronoi</i>.<b>delaunay</b>
 
-… See [#delaunay](Delaunay).
+The Voronoi tessellation’s associated [Delaunay triangulation](#delaunay).
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
 <a href="#voronoi_xmax" name="voronoi_xmax">#</a> <i>voronoi</i>.<b>xmax</b><br>
 <a href="#voronoi_ymax" name="voronoi_ymax">#</a> <i>voronoi</i>.<b>ymax</b><br>
 
-…
+The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi tessellation. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
 
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-mesh.png">
 
-…
+Renders the mesh of Voronoi cells to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.renderBounds" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-bounds.png">
 
-Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
+Renders the viewport extent to the specified *context*. The specified *context* must implement the *context*.rect method from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
 
 ### Cell
 
 <a href="#cell_voronoi" name="cell_voronoi">#</a> <i>cell</i>.<b>voronoi</b>
 
-…
+The cell’s associated [Voronoi tessellation](#voronoi).
 
 <a href="#cell_triangles" name="cell_triangles">#</a> <i>cell</i>.<b>triangles</b>
 
-…
+The triangle indexes [*i0*, *i1*, …] in counterclockwise (TODO verify?) order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell.
 
 <a href="#cell_v0" name="cell_v0">#</a> <i>cell</i>.<b>v0</b>
 
-…
+The start vector [*vx0*, *vy0*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and end vector [*cell*.vn](#cell_vn) if any, the start vector forms the exterior polygon of the cell.
 
 <a href="#cell_vn" name="cell_vn">#</a> <i>cell</i>.<b>vn</b>
 
-…
+The end vector [*vxn*, *vyn*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and start vector [*cell*.v0](#cell_v0) if any, the end vector forms the exterior polygon of the cell.
 
 <a href="#cell_render" name="cell_render">#</a> <i>cell</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
 
 <img alt="cell.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/spectral.png">
 
-…
-
-<a href="#cell_points" name="cell_points">#</a> <i>cell</i>.<b>points</b>() [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
-
-…
+Renders the cell to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
 <a href="#cell_contains" name="cell_contains">#</a> <i>cell</i>.<b>contains</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
 
-…
+Returns true if this cell contains the specified point ⟨*x*, *y*⟩. (This method is *not* affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)

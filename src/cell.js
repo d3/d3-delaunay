@@ -40,7 +40,7 @@ export default class Cell {
     }
     triangles.push([i, j]);
   }
-  points() {
+  _points() {
     const {triangles, voronoi: {circumcenters}} = this;
     const points = new Float64Array(triangles.length * 2);
     for (let i = 0, n = triangles.length; i < n; ++i) {
@@ -53,7 +53,7 @@ export default class Cell {
   }
   render(context) {
     const {v0, vn} = this;
-    const points = this.voronoi._clip(this.points(), v0, vn);
+    const points = this.voronoi._clip(this._points(), v0, vn);
     if (points === null) return;
     context.moveTo(points[0], points[1]);
     for (let i = 2, n = points.length; i < n; i += 2) { // TODO Avoid last closing coordinate.
@@ -62,7 +62,7 @@ export default class Cell {
     context.closePath();
   }
   contains(x, y) {
-    const points = this.points();
+    const points = this._points();
     return this.v0 === null
         ? containsFinite(points, x, y)
         : containsInfinite(points, this.v0, this.vn, x, y);
