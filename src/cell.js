@@ -19,7 +19,7 @@ export default class Cell {
   _connect(i, j) {
     const {triangles} = this;
     if (j < 0) {
-      if (!triangles.length) triangles.push([Math.floor(i / 3)]);
+      if (!triangles.length) triangles.push([i]);
       return;
     }
     for (let n = triangles.length, a = 0; a < n; ++a) {
