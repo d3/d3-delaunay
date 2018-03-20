@@ -1,6 +1,6 @@
 {
   "name": "voronator",
-  "version": "0.0.11",
+  "version": "1.0.0",
   "description": "Compute the Voronoi diagram of a set of two-dimensional points.",
   "keywords": [
     "voronoi",
