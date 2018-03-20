@@ -97,10 +97,9 @@ export default class Voronoi {
         ? this._clipInfinite(points, v0, vn)
         : this._clipFinite(points);
   }
-  // TODO Construct P lazily; do not copy if no clipping is needed.
   // TODO Represent points zipped as [x0, y0, x1, y1, …].
   _clipFinite(points) {
-    let n = points.length, P = [], S;
+    let n = points.length, P = null, S;
     let p0, p1 = points[n - 1];
     let c0, c1 = this._regioncode(p1[0], p1[1]);
     let e0, e1;
@@ -109,26 +108,27 @@ export default class Voronoi {
       c0 = c1, c1 = this._regioncode(p1[0], p1[1]);
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
-        P.push(p1);
+        if (P) P.push(p1);
+        else P = [p1];
       } else if (S = this._clipSegment(p0, p1, c0, c1)) {
         let [s0, s1] = S;
         if (c0) {
           e0 = e1, e1 = this._edgecode(s0[0], s0[1]);
           if (e0 && e1) this._edge(points, e0, e1, P);
-          P.push(s0);
+          if (P) P.push(s0);
+          else P = [s0];
         }
         e0 = e1, e1 = this._edgecode(s1[0], s1[1]);
         if (e0 && e1) this._edge(points, e0, e1, P);
-        P.push(s1);
+        if (P) P.push(s1);
+        else P = [s1];
       }
     }
-    if (P.length > 0) {
+    if (P) {
       e0 = e1, e1 = this._edgecode(P[0][0], P[0][1]);
       if (e0 && e1) this._edge(points, e0, e1, P);
     } else if (containsFinite(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
-      P.push([this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax], [this.xmin, this.ymin]);
-    } else {
-      return null;
+      return [[this.xmax, this.ymin], [this.xmax, this.ymax], [this.xmin, this.ymax], [this.xmin, this.ymin]];
     }
     return P;
   }
