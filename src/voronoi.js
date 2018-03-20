@@ -10,28 +10,26 @@ export default class Voronoi {
     this.ymax = ymax, this.ymin = ymin;
   }
   render(context) {
-    const {cells, circumcenters, delaunay: {halfedges}} = this;
+    const {cells, circumcenters, delaunay: {halfedges, hull}} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
-      if (j < 0 || j < i) continue;
+      if (j < i) continue;
       const ti = Math.floor(i / 3) * 2;
       const tj = Math.floor(j / 3) * 2;
       context.moveTo(circumcenters[ti], circumcenters[ti + 1]);
       context.lineTo(circumcenters[tj], circumcenters[tj + 1]);
     }
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      const cell = cells[i];
-      if (cell.v0) {
-        const t0 = cell.triangles[0] * 2;
-        const x0 = circumcenters[t0];
-        const y0 = circumcenters[t0 + 1];
-        const p = this._project(x0, y0, cell.v0);
-        if (p) {
-          context.moveTo(x0, y0);
-          context.lineTo(p[0], p[1]);
-        }
+    let node = hull;
+    do {
+      const t = Math.floor(node.t / 3) * 2;
+      const x = circumcenters[t];
+      const y = circumcenters[t + 1];
+      const p = this._project(x, y, cells[node.i].vn);
+      if (p) {
+        context.moveTo(x, y);
+        context.lineTo(p[0], p[1]);
       }
-    }
+    } while ((node = node.next) !== hull);
   }
   renderBounds(context) {
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
