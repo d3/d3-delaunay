@@ -16,7 +16,7 @@ The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
-The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = [*halfedges*[*i*]] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*halfedges*[*i*] / 3⌋. If *halfedges*[*i*] is -1, then triangle ⌊*i* / 3⌋ is an exterior triangle, having an edge from triangle vertex *i* to triangle vertex *i* + 1 on the convex [hull](#delaunay_hull). For example, to render the edges of the Delaunay triangulation:
+The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = *halfedges*[*i*] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*halfedges*[*i*] / 3⌋. If *halfedges*[*i*] is negative, then triangle ⌊*i* / 3⌋ is an exterior triangle, having an edge from triangle vertex *i* to triangle vertex *i* + 1 on the convex [hull](#delaunay_hull). For example, to render the edges of the Delaunay triangulation:
 
 ```js
 const {points, halfedges, triangles} = delaunay;
@@ -34,7 +34,7 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-The starting [node](#node) of the Delaunay triangulation’s convex hull. For example, to render the exterior edges of the Delaunay triangulation:
+An arbitrary starting [node](#node) of the Delaunay triangulation’s convex hull. For example, to render the exterior edges of the Delaunay triangulation:
 
 ```js
 const {hull} = delaunay;
@@ -49,7 +49,7 @@ See also [*delaunay*.renderHull](#delaunay_renderHull).
 
 <a href="#delaunay_triangles" name="delaunay_triangles">#</a> <i>delaunay</i>.<b>triangles</b>
 
-The triangle vertex indexes as an Int32Array. Each triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.triangles](#delaunay_triangles) and [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
+The triangle vertex indexes as an Int32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*, …]. Each contiguous triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.triangles](#delaunay_triangles) and [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
 
 ```js
 const {points, triangles} = delaunay;
@@ -61,6 +61,8 @@ context.lineTo(points[t1], points[t1 + 1]);
 context.lineTo(points[t2], points[t2 + 1]);
 context.closePath();
 ```
+
+See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
 
