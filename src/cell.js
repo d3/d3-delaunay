@@ -5,16 +5,6 @@ export default class Cell {
     this.v0 = null; // Starting edge vector if hull cell.
     this.vn = null; // Ending edge vector if hull cell.
   }
-  render(context) {
-    const {v0, vn} = this;
-    let points = this.voronoi._clip(this._points(), v0, vn);
-    if (points === null) return;
-    context.moveTo(points[0][0], points[0][1]);
-    for (let i = 1, n = points.length; i < n; ++i) { // TODO Avoid last closing coordinate.
-      context.lineTo(points[i][0], points[i][1]);
-    }
-    context.closePath();
-  }
   _connect(i, j) {
     const {triangles} = this;
     if (j < 0) {
@@ -50,7 +40,7 @@ export default class Cell {
     }
     triangles.push([i, j]);
   }
-  _points() {
+  points() {
     const {triangles, voronoi: {circumcenters}} = this;
     let points = new Array(triangles.length); // TODO Zip as [x0, y0, …].
     for (let i = 0, n = triangles.length; i < n; ++i) {
@@ -61,8 +51,18 @@ export default class Cell {
     }
     return points;
   }
+  render(context) {
+    const {v0, vn} = this;
+    let points = this.voronoi._clip(this.points(), v0, vn);
+    if (points === null) return;
+    context.moveTo(points[0][0], points[0][1]);
+    for (let i = 1, n = points.length; i < n; ++i) { // TODO Avoid last closing coordinate.
+      context.lineTo(points[i][0], points[i][1]);
+    }
+    context.closePath();
+  }
   contains(x, y) {
-    let points = this._points();
+    let points = this.points();
     return this.v0
         ? containsInfinite(points, this.v0, this.vn, x, y)
         : containsFinite(points, x, y);
