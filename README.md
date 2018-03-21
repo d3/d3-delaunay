@@ -5,6 +5,8 @@
 
 This is a fast, no-dependency library for computing the [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) of a set of two-dimensional points. It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is constructed by connecting the circumcenters of adjacent triangles in the Delaunay triangulation.
 
+For an interactive explanation of how this library works, see [The Delaunay’s Dual](https://beta.observablehq.com/@mbostock/the-delaunays-dual).
+
 ## Installing
 
 To install, `npm install d3-delaunay` or `yarn add d3-delaunay`. You can also download the [latest release](https://github.com/d3/d3-delaunay/releases/latest) or load directly from [unpkg](https://unpkg.com/d3-delaunay/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `d3` global is exported.
