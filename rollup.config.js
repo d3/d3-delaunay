@@ -7,18 +7,22 @@ const name = definition.name;
 const banner = `// ${definition.homepage} Version ${definition.version}. Copyright 2018 Observable, Inc.
 // https://github.com/mapbox/delaunator Version ${require("delaunator/package.json").version}. Copyright 2017, Mapbox, Inc.`;
 
-const output = (file, plugins) => ({
+const config = (file, ...plugins) => ({
   input: "src/index.js",
-  plugins,
+  plugins: [
+    commonjs(),
+    noderesolve(),
+    ...plugins
+  ],
   output: {
-    file,
     banner,
+    file: `dist/${file}`,
     format: "umd",
     name
   }
 });
 
 export default [
-  output(`dist/${name}.js`, [noderesolve(), commonjs()]),
-  output(`dist/${name}.min.js`, [noderesolve(), commonjs(), uglify({output: {preamble: banner}})])
+  config(`${name}.js`),
+  config(`${name}.min.js`, uglify({output: {preamble: banner}}))
 ];
