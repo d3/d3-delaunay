@@ -175,7 +175,7 @@ The cell’s associated [Voronoi diagram](#voronoi).
 
 <a href="#cell_triangles" name="cell_triangles">#</a> <i>cell</i>.<b>triangles</b>
 
-The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell.
+The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
 
 <a href="#cell_v0" name="cell_v0">#</a> <i>cell</i>.<b>v0</b>
 

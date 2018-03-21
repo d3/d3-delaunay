@@ -24,7 +24,7 @@ export default class Delaunay {
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
       const cell = cells[i];
-      cell.triangles = cell.triangles[0];
+      cell.triangles = cell.triangles.length === 1 ? cell.triangles[0] : null;
     }
 
     // Compute circumcenters.
