@@ -21,7 +21,7 @@ const voronoi = delaunay.voronoi([0, 0, 960, 500]);
 
 ### Delaunay
 
-<a href="#delaunay_from" name="delaunay_from">#</a> d3.Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_from" name="delaunay_from">#</a> Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the Delaunay triangulation for the given array of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point.
 
