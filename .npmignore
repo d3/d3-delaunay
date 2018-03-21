@@ -2,3 +2,4 @@
 dist/*.zip
 img/
 test/
+yarn.lock
