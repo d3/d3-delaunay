@@ -25,8 +25,3 @@ tape("voronoi.find(x, y) returns the cell that contains the specified point", te
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi([-1, -1, 2, 2]);
   test.deepEqual(voronoi.find(0.25, 0.25), 0);
 });
-
-tape.only("voronoi.find(x, y) returns -1 if the diagram is empty", test => {
-  let voronoi = Delaunay.from([[0, 0], [1, 1], [2, 2]]).voronoi([-1, -1, 2, 2]);
-  test.deepEqual(voronoi.find(0.25, 0.25), -1);
-});
