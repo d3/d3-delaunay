@@ -157,7 +157,11 @@ The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Vo
 
 <a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
-Returns the index of the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩, or -1 if this Voronoi diagram is empty. (This method is *not* affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+Returns the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is *not* affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+
+<a href="#voronoi_findIndex" name="voronoi_findIndex">#</a> <i>voronoi</i>.<b>findIndex</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+
+Returns the index of the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is *not* affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
