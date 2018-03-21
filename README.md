@@ -155,6 +155,10 @@ The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
 The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi diagram. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
 
+<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+
+Returns the index of the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩, or -1 if this Voronoi diagram is empty. (This method is *not* affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-mesh.png">

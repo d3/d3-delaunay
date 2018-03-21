@@ -9,6 +9,26 @@ export default class Voronoi {
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
   }
+  find(x, y) {
+    const {cells, delaunay: {halfedges, points, triangles}} = this;
+    if (cells.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    let c = 0, c2 = (x - points[0]) ** 2 + (y - points[1]) ** 2;
+    while (true) {
+      let d = c, d2 = c2;
+      for (let T = cells[c].triangles, i = 0, n = T.length; i < n; ++i) {
+        let k = T[i] * 3;
+        switch (c) {
+          case triangles[k]: k = triangles[k + 1]; break;
+          case triangles[k + 1]: k = triangles[k + 2]; break;
+          case triangles[k + 2]: k = triangles[k]; break;
+        }
+        let k2 = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+        if (k2 < d2) d2 = k2, d = k;
+      }
+      if (d === c) return d;
+      c = d, c2 = d2;
+    }
+  }
   render(context) {
     const {cells, circumcenters, delaunay: {halfedges, hull}} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
