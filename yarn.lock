@@ -10,10 +10,6 @@
     tape "4"
     tape-await "~0.1.0"
 
-"@std/esm@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@std/esm/-/esm-0.15.0.tgz#ffbdeb6dd6834daf6bc8fa095a82681e93786529"
-
 "@types/acorn@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@types/acorn/-/acorn-4.0.3.tgz#d1f3e738dde52536f9aad3d3380d14e448820afd"
@@ -127,6 +123,10 @@ es-to-primitive@^1.1.1:
     is-callable "^1.1.1"
     is-date-object "^1.0.1"
     is-symbol "^1.0.1"
+
+esm@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/esm/-/esm-3.0.7.tgz#44ede5534a3e22427176732f260312f777765bb5"
 
 estree-walker@^0.3.0:
   version "0.3.1"

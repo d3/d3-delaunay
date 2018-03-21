@@ -17,13 +17,9 @@
   "main": "dist/voronator.js",
   "unpkg": "dist/voronator.min.js",
   "module": "src/index.js",
-  "@std/esm": {
-    "esm": "js",
-    "cjs": true
-  },
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
-    "@std/esm": "^0.15.0",
+    "esm": "^3.0.7",
     "delaunator": "^1.0.5",
     "rollup": "^0.57.1",
     "rollup-plugin-commonjs": "^9.1.0",
@@ -35,6 +31,6 @@
     "build": "rm -rf dist && mkdir dist && rollup -c",
     "postpublish": "git push && git push --tags && zip -j dist/voronator.zip -- LICENSE README.md dist/voronator.js dist/voronator.min.js",
     "prepublishOnly": "yarn test && yarn build",
-    "test": "tape -r @std/esm 'test/**/*-test.js'"
+    "test": "tape -r esm 'test/**/*-test.js'"
   }
 }
