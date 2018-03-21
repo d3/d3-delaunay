@@ -1,17 +1,16 @@
-# Voronator
+# d3-delaunay
 
-<p align="center">
-  <img alt="Georgy Feodosevich Voronoy as “The Voronator”" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronator.jpg" width="300" />
-</p>
+<p align="center"><img src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronator.jpg" width="300">
+<p align="center">Georgy “The Voronator” Voronoy
 
-Voronator is a fast library for computing the [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) of a set of two-dimensional points. It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is the dual of the Delaunay triangulation, and can be constructed by connecting the circumcenters of adjacent triangles.
+This is a fast, no-dependency library for computing the [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) of a set of two-dimensional points. It is based on [Delaunator](https://github.com/mapbox/delaunator), a fast library for computing the [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) using [sweep algorithms](https://github.com/mapbox/delaunator/blob/master/README.md#papers). The Voronoi diagram is constructed by connecting the circumcenters of adjacent triangles in the Delaunay triangulation.
 
 ## Installing
 
-To install, `npm install voronator` or `yarn add voronator`. You can also download the [latest release](https://github.com/observablehq/voronator/releases/latest) or load directly from [unpkg](https://unpkg.com/voronator/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `voronator` global is exported.
+To install, `npm install d3-delaunay` or `yarn add d3-delaunay`. You can also download the [latest release](https://github.com/d3/d3-delaunay/releases/latest) or load directly from [unpkg](https://unpkg.com/d3-delaunay/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `d3` global is exported.
 
 ```js
-import {Delaunay} from "voronator";
+import {Delaunay} from "d3-delaunay";
 
 const points = [[0, 0], [0, 1], [1, 0], [1, 1]];
 const delaunay = Delaunay.from(points);
@@ -22,7 +21,7 @@ const voronoi = delaunay.voronoi([0, 0, 960, 500]);
 
 ### Delaunay
 
-<a href="#delaunay_from" name="delaunay_from">#</a> Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_from" name="delaunay_from">#</a> d3.Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the Delaunay triangulation for the given array of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point.
 
@@ -84,25 +83,25 @@ context.closePath();
 
 See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
-<a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-<img alt="delaunay.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-mesh.png">
+<img alt="delaunay.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-mesh.png">
 
 Renders the edges of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
-<a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-<img alt="delaunay.renderHull" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-hull.png">
+<img alt="delaunay.renderHull" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-hull.png">
 
 Renders the convex hull of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
-<a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-<img alt="delaunay.renderTriangle" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/delaunay-triangle.png">
+<img alt="delaunay.renderTriangle" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-triangle.png">
 
 Renders triangle *i* of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
-<a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/observablehq/voronator/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_points). When rendering, the diagram will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500]. See [To Infinity and Back Again](https://beta.observablehq.com/@mbostock/to-infinity-and-back-again) for an interactive explanation of Voronoi cell clipping.
 
@@ -155,23 +154,23 @@ The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
 The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi diagram. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
 
-<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 Returns the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
-<a href="#voronoi_findIndex" name="voronoi_findIndex">#</a> <i>voronoi</i>.<b>findIndex</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_findIndex" name="voronoi_findIndex">#</a> <i>voronoi</i>.<b>findIndex</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 Returns the index of the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
-<a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
-<img alt="voronoi.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-mesh.png">
+<img alt="voronoi.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronoi-mesh.png">
 
 Renders the mesh of Voronoi cells to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
-<a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
-<img alt="voronoi.renderBounds" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/voronoi-bounds.png">
+<img alt="voronoi.renderBounds" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronoi-bounds.png">
 
 Renders the viewport extent to the specified *context*. The specified *context* must implement the *context*.rect method from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
 
@@ -193,12 +192,12 @@ The start vector [*vx0*, *vy0*], if the cell’s associated point is on the [con
 
 The end vector [*vxn*, *vyn*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and start vector [*cell*.v0](#cell_v0) if any, the end vector forms the exterior polygon of the cell.
 
-<a href="#cell_render" name="cell_render">#</a> <i>cell</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
+<a href="#cell_render" name="cell_render">#</a> <i>cell</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
 
-<img alt="cell.render" src="https://raw.githubusercontent.com/observablehq/voronator/master/img/spectral.png">
+<img alt="cell.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/spectral.png">
 
 Renders the cell to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
 
-<a href="#cell_contains" name="cell_contains">#</a> <i>cell</i>.<b>contains</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/observablehq/voronator/blob/master/src/cell.js "Source")
+<a href="#cell_contains" name="cell_contains">#</a> <i>cell</i>.<b>contains</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
 
 Returns true if this cell contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)

@@ -16,9 +16,10 @@ const config = (file, ...plugins) => ({
   ],
   output: {
     banner,
+    extend: true,
     file: `dist/${file}`,
     format: "umd",
-    name
+    name: "d3"
   }
 });
 

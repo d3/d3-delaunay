@@ -1,5 +1,5 @@
 {
-  "name": "voronator",
+  "name": "d3-delaunay",
   "version": "1.1.0",
   "description": "Compute the Voronoi diagram of a set of two-dimensional points.",
   "keywords": [
@@ -7,15 +7,15 @@
     "delaunay",
     "geometry"
   ],
-  "homepage": "https://github.com/observablehq/voronator",
-  "repository": "https://github.com/observablehq/voronator",
+  "homepage": "https://github.com/d3/d3-delaunay",
+  "repository": "https://github.com/d3/d3-delaunay",
   "license": "ISC",
   "author": {
     "name": "Mike Bostock",
     "url": "https://bost.ocks.org/mike"
   },
-  "main": "dist/voronator.js",
-  "unpkg": "dist/voronator.min.js",
+  "main": "dist/d3-delaunay.js",
+  "unpkg": "dist/d3-delaunay.min.js",
   "module": "src/index.js",
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && mkdir dist && rollup -c",
-    "postpublish": "git push && git push --tags && zip -j dist/voronator.zip -- LICENSE README.md dist/voronator.js dist/voronator.min.js",
+    "postpublish": "git push && git push --tags && zip -j dist/d3-delaunay.zip -- LICENSE README.md dist/d3-delaunay.js dist/d3-delaunay.min.js",
     "prepublishOnly": "yarn test && yarn build",
     "test": "tape -r esm 'test/**/*-test.js'"
   }
