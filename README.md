@@ -70,7 +70,7 @@ See also [*delaunay*.renderHull](#delaunay_renderHull).
 
 <a href="#delaunay_triangles" name="delaunay_triangles">#</a> <i>delaunay</i>.<b>triangles</b>
 
-The triangle vertex indexes as an Int32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*, …]. Each contiguous triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.triangles](#delaunay_triangles) and [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
+The triangle vertex indexes as an Int32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*, …]. Each contiguous triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
 
 ```js
 const {points, triangles} = delaunay;
