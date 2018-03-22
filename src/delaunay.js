@@ -20,10 +20,33 @@ export default class Delaunay {
       cells[i] = new Cell(voronoi);
     }
     for (let i = 0, m = halfedges.length; i < m; ++i) {
-      cells[triangles[i]]._connect(i, halfedges, triangles);
+      const t = triangles[i]; // Cell vertex.
+      const T = cells[t].triangles;
+      if (T.length) continue; // Already connected.
+      let j = i;
+
+      do { // Walk forward.
+        T.push(Math.floor(j / 3));
+        j = halfedges[j];
+        if (j === -1) break; // Went off the convex hull.
+        j = j % 3 === 2 ? j - 2 : j + 1;
+        if (triangles[j] !== t) break; // Bad triangulation; break early.
+      } while (j !== i);
+
+      if (j !== i) { // Stopped when walking forward; walk backward.
+        j = i;
+        while (true) {
+          j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
+          if (j === -1 || triangles[j] !== t) break;
+          T.unshift(Math.floor(j / 3));
+        }
+      } else {
+        T.push(T[0]); // Close polygon.
+      }
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
-      if (cells[i].triangles.length === 0) cells[i].triangles = null;
+      const cell = cells[i];
+      if (cell.triangles.length === 0) cell.triangles = null;
     }
 
     // Compute circumcenters.
