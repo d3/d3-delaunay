@@ -6,23 +6,20 @@ export default class Cell {
     this.vn = null; // Ending edge vector if hull cell.
   }
   _connect(i, halfedges, triangles) {
-    if (this.triangles.length) return; // already connected
+    if (this.triangles.length) return; // Already connected.
 
-    const t = triangles[i]; // cell vertex
+    const t = triangles[i]; // Cell vertex.
 
-    let j = i; // walk forward
+    let j = i; // Walk forward.
     do {
       this.triangles.push(Math.floor(j / 3));
       j = halfedges[j];
-      if (j === -1) break;
+      if (j === -1) break; // Went off the convex hull.
       j = j % 3 === 2 ? j - 2 : j + 1;
-      if (triangles[j] !== t) { // bad triangulation; break early
-        j = -1;
-        break;
-      }
+      if (triangles[j] !== t) break; // Bad triangulation; break early.
     } while (j !== i);
 
-    if (j === -1) { // got off the hull; walk backward
+    if (j !== i) { // Stopped when walking forward; walk backward.
       j = i;
       while (true) {
         j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
@@ -30,7 +27,7 @@ export default class Cell {
         this.triangles.unshift(Math.floor(j / 3));
       }
     } else {
-      this.triangles.push(this.triangles[0]);
+      this.triangles.push(this.triangles[0]); // Close polygon.
     }
   }
   _points() {
