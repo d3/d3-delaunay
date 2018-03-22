@@ -5,27 +5,32 @@ export default class Cell {
     this.v0 = null; // Starting edge vector if hull cell.
     this.vn = null; // Ending edge vector if hull cell.
   }
-  _connect(i, halfedges) {
-    const {triangles} = this;
-    if (triangles.length) return; // already connected
+  _connect(i, halfedges, triangles) {
+    if (this.triangles.length) return; // already connected
+
+    const t = triangles[i]; // cell vertex
 
     let j = i; // walk forward
     do {
-      triangles.push(Math.floor(j / 3));
+      this.triangles.push(Math.floor(j / 3));
       j = halfedges[j];
       if (j === -1) break;
       j = j % 3 === 2 ? j - 2 : j + 1;
+      if (triangles[j] !== t) { // bad triangulation; break early
+        j = -1;
+        break;
+      }
     } while (j !== i);
 
     if (j === -1) { // got off the hull; walk backward
       j = i;
       while (true) {
         j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
-        if (j === -1) break;
-        triangles.unshift(Math.floor(j / 3));
+        if (j === -1 || triangles[j] !== t) break;
+        this.triangles.unshift(Math.floor(j / 3));
       }
     } else {
-      triangles.push(triangles[0]);
+      this.triangles.push(triangles[0]);
     }
   }
   _points() {

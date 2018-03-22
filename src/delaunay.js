@@ -20,7 +20,7 @@ export default class Delaunay {
       cells[i] = new Cell(voronoi);
     }
     for (let i = 0, m = halfedges.length; i < m; ++i) {
-      cells[triangles[i]]._connect(i, halfedges);
+      cells[triangles[i]]._connect(i, halfedges, triangles);
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
       if (cells[i].triangles.length === 0) cells[i].triangles = null;
