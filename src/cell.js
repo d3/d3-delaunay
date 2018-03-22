@@ -30,7 +30,7 @@ export default class Cell {
         this.triangles.unshift(Math.floor(j / 3));
       }
     } else {
-      this.triangles.push(triangles[0]);
+      this.triangles.push(this.triangles[0]);
     }
   }
   _points() {
