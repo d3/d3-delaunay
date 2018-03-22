@@ -5,40 +5,28 @@ export default class Cell {
     this.v0 = null; // Starting edge vector if hull cell.
     this.vn = null; // Ending edge vector if hull cell.
   }
-  _connect(i, j) {
+  _connect(i, halfedges) {
     const {triangles} = this;
-    if (j < 0) {
-      if (triangles.length === 0) triangles.push([i]);
-      return;
-    }
-    for (let n = triangles.length, a = 0; a < n; ++a) {
-      let sa = triangles[a];
-      if (sa[0] === j) {
-        for (let b = a + 1; b < n; ++b) {
-          let sb = triangles[b];
-          if (sb[sb.length - 1] === i) {
-            triangles.splice(b, 1);
-            triangles[a] = sa = sb.concat(sa);
-            return;
-          }
-        }
-        sa.unshift(i);
-        return;
+    if (triangles.length) return; // already connected
+
+    let j = i; // walk forward
+    do {
+      triangles.push(Math.floor(j / 3));
+      j = halfedges[j];
+      if (j === -1) break;
+      j = j % 3 === 2 ? j - 2 : j + 1;
+    } while (j !== i);
+
+    if (j === -1) { // got off the hull; walk backward
+      j = i;
+      while (true) {
+        j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
+        if (j === -1) break;
+        triangles.unshift(Math.floor(j / 3));
       }
-      if (sa[sa.length - 1] === i) {
-        for (let b = a + 1; b < n; ++b) {
-          let sb = triangles[b];
-          if (sb[0] === j) {
-            triangles.splice(b, 1);
-            triangles[a] = sa = sa.concat(sb);
-            return;
-          }
-        }
-        sa.push(j);
-        return;
-      }
+    } else {
+      triangles.push(triangles[0]);
     }
-    triangles.push([i, j]);
   }
   _points() {
     const {triangles, voronoi: {circumcenters}} = this;

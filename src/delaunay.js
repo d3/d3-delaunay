@@ -20,11 +20,10 @@ export default class Delaunay {
       cells[i] = new Cell(voronoi);
     }
     for (let i = 0, m = halfedges.length; i < m; ++i) {
-      cells[triangles[i]]._connect(Math.floor(i / 3), Math.floor(halfedges[i] / 3));
+      cells[triangles[i]]._connect(i, halfedges);
     }
     for (let i = 0, n = cells.length; i < n; ++i) {
-      const cell = cells[i];
-      cell.triangles = cell.triangles.length === 1 ? cell.triangles[0] : null;
+      if (cells[i].triangles.length === 0) cells[i].triangles = null;
     }
 
     // Compute circumcenters.
