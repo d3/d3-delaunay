@@ -1,11 +1,10 @@
 export default class Voronoi {
-  constructor(delaunay, circumcenters, edges, i0, i1, v, xmin, ymin, xmax, ymax) {
+  constructor(delaunay, circumcenters, edges, index, v, xmin, ymin, xmax, ymax) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
     this.delaunay = delaunay;
     this.circumcenters = circumcenters;
     this.edges = edges;
-    this.i0 = i0;
-    this.i1 = i1;
+    this.index = index;
     this.v = v;
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
@@ -54,12 +53,12 @@ export default class Voronoi {
         : containsFinite(points, x, y);
   }
   find(x, y) {
-    const {delaunay: {points, triangles}, edges, i0, i1} = this;
+    const {delaunay: {points, triangles}, edges, index} = this;
     if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
     let c = 0, c2 = (x - points[0]) ** 2 + (y - points[1]) ** 2;
     while (true) {
       let d = c, d2 = c2;
-      for (let i = i0[c], j = i1[c]; i < j; ++i) {
+      for (let i = index[c * 2], j = index[c * 2 + 1]; i < j; ++i) {
         let k = edges[i] * 3;
         switch (c) {
           case triangles[k]: k = triangles[k + 1]; break;
@@ -74,10 +73,10 @@ export default class Voronoi {
     }
   }
   _cell(i) {
-    const {i0, i1, edges, circumcenters} = this;
-    const t0 = i0[i];
+    const {index, edges, circumcenters} = this;
+    const t0 = index[i * 2];
     if (t0 === -1) return null;
-    const t1 = i1[i];
+    const t1 = index[i * 2 + 1];
     const points = new Float64Array((t1 - t0) * 2);
     for (let t = t0, j = 0; t < t1; ++t, j += 2) {
       const ti = edges[t] * 2;
