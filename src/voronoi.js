@@ -86,7 +86,7 @@ export default class Voronoi {
     }
   }
   render(context) {
-    const {delaunay: {halfedges, hull}, circumcenters, vectors} = this;
+    const {delaunay: {halfedges, hull, triangles}, circumcenters, vectors} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < i) continue;
@@ -96,10 +96,10 @@ export default class Voronoi {
       context.lineTo(circumcenters[tj], circumcenters[tj + 1]);
     }
     for (let i = 0, n = hull.length; i < n; ++i) {
-      const t = hull[i];
-      const x = circumcenters[t * 2];
-      const y = circumcenters[t * 2 + 1];
-      const v = t * 4;
+      const t = Math.floor(hull[i] / 3) * 2;
+      const x = circumcenters[t];
+      const y = circumcenters[t + 1];
+      const v = triangles[hull[i]] * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) {
         context.moveTo(x, y);
