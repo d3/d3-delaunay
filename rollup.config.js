@@ -1,4 +1,3 @@
-import commonjs from "rollup-plugin-commonjs";
 import noderesolve from "rollup-plugin-node-resolve";
 import uglify from "rollup-plugin-uglify";
 
@@ -10,7 +9,6 @@ const banner = `// ${definition.homepage} Version ${definition.version}. Copyrig
 const config = (file, ...plugins) => ({
   input: "src/index.js",
   plugins: [
-    commonjs(),
     noderesolve(),
     ...plugins
   ],

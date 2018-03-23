@@ -122,6 +122,6 @@ export default class Delaunay {
 }
 
 Delaunay.from = function(points, fx, fy) {
-  const {coords, halfedges, hull, triangles} = new Delaunator(points, fx, fy);
+  const {coords, halfedges, hull, triangles} = Delaunator.from(points, fx, fy);
   return new Delaunay(coords, halfedges, hull, triangles);
 };

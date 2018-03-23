@@ -25,10 +25,9 @@
   "module": "src/index.js",
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
+    "delaunator": "^2.0.0",
     "esm": "^3.0.7",
-    "delaunator": "^1.0.5",
     "rollup": "^0.57.1",
-    "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^3.0.0",
     "tape": "4"
