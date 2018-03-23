@@ -12,7 +12,7 @@ export default class Delaunay {
     const {points, halfedges, hull, triangles} = this;
     const edges = new Uint32Array(halfedges.length);
     const index = new Uint32Array(points.length);
-    const v = new Float64Array(points.length * 2);
+    const vectors = new Float64Array(points.length * 2);
     const circumcenters = new Float64Array(triangles.length / 3 * 2);
 
     // Compute cell topology.
@@ -83,12 +83,12 @@ export default class Delaunay {
         const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
         const ti = triangles[i] * 4;
         const tj = triangles[j] * 4;
-        v[ti + 2] = v[tj] = k * dx;
-        v[ti + 3] = v[tj + 1] = k * dy;
+        vectors[ti + 2] = vectors[tj] = k * dx;
+        vectors[ti + 3] = vectors[tj + 1] = k * dy;
       } while ((node = node.next) !== hull);
     }
 
-    return new Voronoi(this, circumcenters, edges, index, v, xmin, ymin, xmax, ymax);
+    return new Voronoi(this, circumcenters, edges, index, vectors, xmin, ymin, xmax, ymax);
   }
   render(context) {
     const {points, halfedges, triangles} = this;
