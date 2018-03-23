@@ -60,7 +60,7 @@ tape("delaunay.voronoi() returns the expected diagram", test => {
   test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5, 0.5, 0.5));
   test.deepEqual(voronoi.edges, Uint32Array.of(0, 0, 1, 1, 0, 1));
   test.deepEqual(voronoi.index, Uint32Array.of(0, 1, 3, 5, 1, 3, 5, 6));
-  test.deepEqual(voronoi.vectors, Float64Array.of(0, -0.5, -0.5, 0, 0.5, 0, 0, -0.5, -0.5, 0, 0, 0.5, 0, 0.5, 0.5, 0));
+  test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, 1, 0));
 });
 
 tape("delaunay.voronoi() skips cells for coincident points", test => {
@@ -68,5 +68,5 @@ tape("delaunay.voronoi() skips cells for coincident points", test => {
   test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5));
   test.deepEqual(voronoi.edges, Uint32Array.of(0, 0, 0));
   test.deepEqual(voronoi.index, Uint32Array.of(0, 1, 2, 3, 1, 2, 0, 0));
-  test.deepEqual(voronoi.vectors, Float64Array.of(0, -0.5, -0.5, 0, 1, 1, 0, -0.5, -0.5, 0, 1, 1, 0, 0, 0, 0));
+  test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, 0, 0, 0));
 });
