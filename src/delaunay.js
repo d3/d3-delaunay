@@ -11,8 +11,8 @@ export default class Delaunay {
   voronoi([xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     const {points, halfedges, hull, triangles} = this;
     const edges = new Uint32Array(halfedges.length);
-    const i0 = new Int32Array(points.length / 2);
-    const i1 = new Int32Array(points.length / 2);
+    const i0 = new Uint32Array(points.length / 2);
+    const i1 = new Uint32Array(points.length / 2);
     const v = new Float64Array(points.length * 2);
     const circumcenters = new Float64Array(triangles.length / 3 * 2);
 
@@ -20,8 +20,8 @@ export default class Delaunay {
     for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
       const t = triangles[i]; // Cell vertex.
       if (i0[t] !== i1[t]) continue; // Already connected.
+      const e0 = i0[t] = e;
       let j = i;
-      let e0 = i0[t] = e;
 
       do { // Walk forward.
         edges[e++] = Math.floor(j / 3);
@@ -32,8 +32,8 @@ export default class Delaunay {
       } while (j !== i);
 
       if (j !== i) { // Stopped when walking forward; walk backward.
+        const e1 = e;
         j = i;
-        let e1 = e;
         while (true) {
           j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
           if (j === -1 || triangles[j] !== t) break;
