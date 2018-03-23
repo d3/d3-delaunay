@@ -72,13 +72,19 @@ export default class Voronoi {
         const ci = Math.floor(i / 3) * 2;
         const cx = circumcenters[ci];
         const cy = circumcenters[ci + 1];
-        const dx = (x1 + x2) / 2 - cx;
-        const dy = (y1 + y2) / 2 - cy;
-        const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const k = dx * (cy - y1) - dy * (cx - x1);
+        let vx, vy;
+        if (k > 0) vx = cx - mx, vy = cy - my;
+        else if (k < 0) vx = mx - cx, vy = my - cy;
+        else vx = -dy, vy = dx;
         const ti = triangles[i] * 4;
         const tj = triangles[j] * 4;
-        vectors[ti + 2] = vectors[tj] = k * dx;
-        vectors[ti + 3] = vectors[tj + 1] = k * dy;
+        vectors[ti + 2] = vectors[tj] = vx;
+        vectors[ti + 3] = vectors[tj + 1] = vy;
       } while ((node = node.next) !== hull);
     }
   }
@@ -148,8 +154,8 @@ export default class Voronoi {
   _cell(i) {
     const {index, edges, circumcenters} = this;
     const t0 = index[i * 2];
-    if (t0 === -1) return null;
     const t1 = index[i * 2 + 1];
+    if (t0 === t1) return null;
     const points = new Float64Array((t1 - t0) * 2);
     for (let t = t0, j = 0; t < t1; ++t, j += 2) {
       const ti = edges[t] * 2;

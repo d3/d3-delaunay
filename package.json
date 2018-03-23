@@ -35,7 +35,7 @@
   "scripts": {
     "build": "rm -rf dist && mkdir dist && rollup -c",
     "postpublish": "git push && git push --tags && zip -j dist/d3-delaunay.zip -- LICENSE README.md dist/d3-delaunay.js dist/d3-delaunay.min.js",
-    "prepublishOnly": "yarn test && yarn build",
+    "prepublishOnly": "yarn build && yarn test",
     "test": "tape -r esm 'test/**/*-test.js'"
   }
 }
