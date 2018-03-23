@@ -1,13 +1,86 @@
 export default class Voronoi {
-  constructor(delaunay, circumcenters, edges, index, vectors, xmin, ymin, xmax, ymax) {
+  constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
-    this.delaunay = delaunay;
-    this.circumcenters = circumcenters;
-    this.edges = edges;
-    this.index = index;
-    this.vectors = vectors;
+    const {points, halfedges, hull, triangles} = this.delaunay = delaunay;
+    const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
+    const edges = this.edges = new Uint32Array(halfedges.length);
+    const index = this.index = new Uint32Array(points.length);
+    const vectors = this.vectors = new Float64Array(points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
+
+    // Compute cell topology.
+    for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
+      const t = triangles[i]; // Cell vertex.
+      if (index[t * 2] !== index[t * 2 + 1]) continue; // Already connected.
+      const e0 = index[t * 2] = e;
+      let j = i;
+
+      do { // Walk forward.
+        edges[e++] = Math.floor(j / 3);
+        j = halfedges[j];
+        if (j === -1) break; // Went off the convex hull.
+        j = j % 3 === 2 ? j - 2 : j + 1;
+        if (triangles[j] !== t) break; // Bad triangulation; break early.
+      } while (j !== i);
+
+      if (j !== i) { // Stopped when walking forward; walk backward.
+        const e1 = e;
+        j = i;
+        while (true) {
+          j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
+          if (j === -1 || triangles[j] !== t) break;
+          edges[e++] = Math.floor(j / 3);
+        }
+        if (e1 < e) {
+          edges.subarray(e0, e1).reverse();
+          edges.subarray(e0, e).reverse();
+        }
+      }
+
+      index[t * 2 + 1] = e;
+    }
+
+    // Compute circumcenters.
+    for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
+      const t1 = triangles[i] * 2;
+      const t2 = triangles[i + 1] * 2;
+      const t3 = triangles[i + 2] * 2;
+      const x1 = points[t1];
+      const y1 = points[t1 + 1];
+      const x2 = points[t2];
+      const y2 = points[t2 + 1];
+      const x3 = points[t3];
+      const y3 = points[t3 + 1];
+      const a2 = x1 - x2;
+      const a3 = x1 - x3;
+      const b2 = y1 - y2;
+      const b3 = y1 - y3;
+      const d1 = x1 * x1 + y1 * y1;
+      const d2 = d1 - x2 * x2 - y2 * y2;
+      const d3 = d1 - x3 * x3 - y3 * y3;
+      const ab = (a3 * b2 - a2 * b3) * 2;
+      circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
+      circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+    }
+
+    // Compute exterior cell rays.
+    {
+      let node = hull;
+      do {
+        const {x: x1, y: y1, t: i, next: {x: x2, y: y2, t: j}} = node;
+        const ci = Math.floor(i / 3) * 2;
+        const cx = circumcenters[ci];
+        const cy = circumcenters[ci + 1];
+        const dx = (x1 + x2) / 2 - cx;
+        const dy = (y1 + y2) / 2 - cy;
+        const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
+        const ti = triangles[i] * 4;
+        const tj = triangles[j] * 4;
+        vectors[ti + 2] = vectors[tj] = k * dx;
+        vectors[ti + 3] = vectors[tj + 1] = k * dy;
+      } while ((node = node.next) !== hull);
+    }
   }
   render(context) {
     const {delaunay: {halfedges, hull}, circumcenters, vectors} = this;
