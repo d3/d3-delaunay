@@ -11,8 +11,8 @@ function pointY(p) {
 
 export default class Delaunay {
   constructor(points) {
-    const {coords, halfedges, hull, triangles} = new Delaunator(points);
-    this.points = coords;
+    const {halfedges, hull, triangles} = new Delaunator(points);
+    this.points = points;
     this.halfedges = halfedges;
     this.hull = hull;
     this.triangles = triangles;
