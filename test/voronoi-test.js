@@ -21,7 +21,8 @@ tape("voronoi.renderCell(i, context) handles midpoint coincident with circumcent
   test.equal((voronoi.renderCell(2, context), context.toString()), `M2,2L-1,2L-1,0.5L0.5,0.5Z`);
 });
 
-// tape("cell.contains(x, y) is false for coincident points", test => {
-//   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
-//   test.equal(voronoi.cells[3].contains(1, 0), false);
-// });
+tape("voronoi.contains(i, x, y) is false for coincident points", test => {
+  let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
+  test.equal(voronoi.contains(3, 1, 0), false);
+  test.equal(voronoi.contains(1, 1, 0), true);
+});
