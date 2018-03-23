@@ -1,16 +1,16 @@
 export default class Voronoi {
-  constructor(delaunay, circumcenters, edges, index, v, xmin, ymin, xmax, ymax) {
+  constructor(delaunay, circumcenters, edges, index, vectors, xmin, ymin, xmax, ymax) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
     this.delaunay = delaunay;
     this.circumcenters = circumcenters;
     this.edges = edges;
     this.index = index;
-    this.v = v;
+    this.vectors = vectors;
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
   }
   render(context) {
-    const {delaunay: {halfedges, hull}, circumcenters, v} = this;
+    const {delaunay: {halfedges, hull}, circumcenters, vectors} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < i) continue;
@@ -24,8 +24,8 @@ export default class Voronoi {
       const t = Math.floor(node.t / 3) * 2;
       const x = circumcenters[t];
       const y = circumcenters[t + 1];
-      const vi = node.i * 4;
-      const p = this._project(x, y, v[vi + 2], v[vi + 3]);
+      const v = node.i * 4;
+      const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) {
         context.moveTo(x, y);
         context.lineTo(p[0], p[1]);
@@ -46,10 +46,11 @@ export default class Voronoi {
     context.closePath();
   }
   contains(i, x, y) {
+    const {vectors: V} = this;
     const points = this._cell(i);
-    const vi = i * 4;
+    const v = i * 4;
     return points === null ? false
-        : v[vi] || v[vi + 1] ? containsInfinite(points, v[vi], v[vi + 1], v[vi + 2], v[vi + 3], x, y)
+        : V[v] || V[v + 1] ? containsInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3], x, y)
         : containsFinite(points, x, y);
   }
   find(x, y) {
@@ -86,10 +87,10 @@ export default class Voronoi {
     return points;
   }
   _clip(points, i) {
-    const {v} = this;
-    const vi = i * 4;
-    return v[vi] || v[vi + 1]
-        ? this._clipInfinite(points, v[vi], v[vi + 1], v[vi + 2], v[vi + 3])
+    const {vectors: V} = this;
+    const v = i * 4;
+    return V[v] || V[v + 1]
+        ? this._clipInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3])
         : this._clipFinite(points);
   }
   _clipFinite(points) {
