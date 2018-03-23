@@ -4,7 +4,8 @@ export default class Voronoi {
     const {points, halfedges, hull, triangles} = this.delaunay = delaunay;
     const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
     const edges = this.edges = new Uint32Array(halfedges.length);
-    const index = this.index = new Uint32Array(points.length);
+    const inside = this.inside = new Uint32Array(points.length);
+    const outside = this.outside = new Int32Array(points.length / 2).fill(-1);
     const vectors = this.vectors = new Float64Array(points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
@@ -12,8 +13,8 @@ export default class Voronoi {
     // Compute cell topology.
     for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
       const t = triangles[i]; // Cell vertex.
-      if (index[t * 2] !== index[t * 2 + 1]) continue; // Already connected.
-      const e0 = index[t * 2] = e;
+      if (inside[t * 2] !== inside[t * 2 + 1]) continue; // Already connected.
+      const e0 = inside[t * 2] = e;
       let j = i;
 
       do { // Walk forward.
@@ -38,7 +39,7 @@ export default class Voronoi {
         }
       }
 
-      index[t * 2 + 1] = e;
+      inside[t * 2 + 1] = e;
     }
 
     // Compute circumcenters.
@@ -64,11 +65,12 @@ export default class Voronoi {
       circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
     }
 
-    // Compute exterior cell rays.
-    for (let n = hull.length, p0, x0, y0, p1 = triangles[hull[n - 1]] * 2, x1 = points[p1], y1 = points[p1 + 1], i = 0; i < n; ++i) {
-      p0 = p1, x0 = x1, y0 = y1, p1 = triangles[hull[i]] * 2, x1 = points[p1], y1 = points[p1 + 1];
-      vectors[p0 * 2 + 2] = vectors[p1 * 2] = y0 - y1;
-      vectors[p0 * 2 + 3] = vectors[p1 * 2 + 1] = x1 - x0;
+    // Compute hull topology and vectors.
+    for (let n = hull.length, p0, x0, y0, p1 = triangles[hull[n - 1]], x1 = points[p1 * 2], y1 = points[p1 * 2 + 1], i = 0; i < n; ++i) {
+      p0 = p1, x0 = x1, y0 = y1, p1 = triangles[hull[i]], x1 = points[p1 * 2], y1 = points[p1 * 2 + 1];
+      vectors[p0 * 4 + 2] = vectors[p1 * 4] = y0 - y1;
+      vectors[p0 * 4 + 3] = vectors[p1 * 4 + 1] = x1 - x0;
+      outside[p1] = i;
     }
   }
   render(context) {
@@ -114,12 +116,12 @@ export default class Voronoi {
         : containsFinite(points, x, y);
   }
   find(x, y) {
-    const {delaunay: {points, triangles}, edges, index} = this;
+    const {delaunay: {points, hull, triangles}, edges, inside, outside} = this;
     if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
     let c = 0, c2 = (x - points[0]) ** 2 + (y - points[1]) ** 2;
     while (true) {
       let d = c, d2 = c2;
-      for (let i = index[c * 2], j = index[c * 2 + 1]; i < j; ++i) {
+      for (let i = inside[c * 2], j = inside[c * 2 + 1]; i < j; ++i) {
         let k = edges[i] * 3;
         switch (c) {
           case triangles[k]: k = triangles[k + 1]; break;
@@ -129,14 +131,24 @@ export default class Voronoi {
         let k2 = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
         if (k2 < d2) d2 = k2, d = k;
       }
+      const h = outside[c];
+      if (h !== -1) {
+        let k, k2;
+        k = triangles[hull[(h + 1) % hull.length]];
+        k2 = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+        if (k2 < d2) d2 = k2, d = k;
+        k = triangles[hull[(h + hull.length - 1) % hull.length]];
+        k2 = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+        if (k2 < d2) d2 = k2, d = k;
+      }
       if (d === c) return d;
       c = d, c2 = d2;
     }
   }
   _cell(i) {
-    const {index, edges, circumcenters} = this;
-    const t0 = index[i * 2];
-    const t1 = index[i * 2 + 1];
+    const {inside, edges, circumcenters} = this;
+    const t0 = inside[i * 2];
+    const t1 = inside[i * 2 + 1];
     if (t0 === t1) return null;
     const points = new Float64Array((t1 - t0) * 2);
     for (let t = t0, j = 0; t < t1; ++t, j += 2) {
