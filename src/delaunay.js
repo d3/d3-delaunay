@@ -65,8 +65,8 @@ function flatArray(points, fx, fy, that) {
   const array = new Float64Array(n * 2);
   for (let i = 0; i < n; ++i) {
     const p = points[i];
-    array[2 * i] = fx.call(that, p, i, points);
-    array[2 * i + 1] = fy.call(that, p, i, points);
+    array[i * 2] = fx.call(that, p, i, points);
+    array[i * 2 + 1] = fy.call(that, p, i, points);
   }
   return array;
 }
