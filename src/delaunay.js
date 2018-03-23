@@ -1,4 +1,3 @@
-import Cell from "./cell.js";
 import Delaunator from "delaunator";
 import Voronoi from "./voronoi.js";
 
@@ -11,22 +10,21 @@ export default class Delaunay {
   }
   voronoi([xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     const {points, halfedges, hull, triangles} = this;
-    const cells = new Array(points.length / 2);
+    const edges = new Uint32Array(halfedges.length);
+    const i0 = new Int32Array(points.length / 2).fill(-1);
+    const i1 = new Int32Array(points.length / 2);
+    const v = new Float64Array(points.length * 2);
     const circumcenters = new Float64Array(triangles.length / 3 * 2);
-    const voronoi = new Voronoi(cells, circumcenters, this, xmin, ymin, xmax, ymax);
 
     // Compute cell topology.
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      cells[i] = new Cell(voronoi);
-    }
-    for (let i = 0, m = halfedges.length; i < m; ++i) {
+    for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
       const t = triangles[i]; // Cell vertex.
-      const T = cells[t].triangles;
-      if (T.length) continue; // Already connected.
+      if (i0[t] !== -1) continue; // Already connected.
       let j = i;
+      let e0 = i0[t] = e;
 
       do { // Walk forward.
-        T.push(Math.floor(j / 3));
+        edges[e++] = Math.floor(j / 3);
         j = halfedges[j];
         if (j === -1) break; // Went off the convex hull.
         j = j % 3 === 2 ? j - 2 : j + 1;
@@ -35,18 +33,19 @@ export default class Delaunay {
 
       if (j !== i) { // Stopped when walking forward; walk backward.
         j = i;
+        let e1 = e;
         while (true) {
           j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
           if (j === -1 || triangles[j] !== t) break;
-          T.unshift(Math.floor(j / 3));
+          edges[e++] = Math.floor(j / 3);
         }
-      } else {
-        T.push(T[0]); // Close polygon.
+        if (e1 < e) {
+          edges.subarray(e0, e1).reverse();
+          edges.subarray(e0, e).reverse();
+        }
       }
-    }
-    for (let i = 0, n = cells.length; i < n; ++i) {
-      const cell = cells[i];
-      if (cell.triangles.length === 0) cell.triangles = null;
+
+      i1[t] = e;
     }
 
     // Compute circumcenters.
@@ -83,11 +82,14 @@ export default class Delaunay {
         const dx = (x1 + x2) / 2 - cx;
         const dy = (y1 + y2) / 2 - cy;
         const k = (x2 - x1) * (cy - y1) > (y2 - y1) * (cx - x1) ? -1 : 1;
-        cells[triangles[i]].vn = cells[triangles[j]].v0 = [k * dx, k * dy];
+        const ti = triangles[i] * 4;
+        const tj = triangles[j] * 4;
+        v[ti + 2] = v[tj] = k * dx;
+        v[ti + 3] = v[tj + 1] = k * dy;
       } while ((node = node.next) !== hull);
     }
 
-    return voronoi;
+    return new Voronoi(this, circumcenters, edges, i0, i1, v, xmin, ymin, xmax, ymax);
   }
   render(context) {
     const {points, halfedges, triangles} = this;
