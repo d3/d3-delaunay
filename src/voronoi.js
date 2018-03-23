@@ -72,15 +72,17 @@ export default class Voronoi {
         const ci = Math.floor(i / 3) * 2;
         const cx = circumcenters[ci];
         const cy = circumcenters[ci + 1];
-        const mx = (x1 + x2) / 2;
-        const my = (y1 + y2) / 2;
         const dx = x2 - x1;
         const dy = y2 - y1;
         const k = dx * (cy - y1) - dy * (cx - x1);
         let vx, vy;
-        if (k > 0) vx = cx - mx, vy = cy - my;
-        else if (k < 0) vx = mx - cx, vy = my - cy;
-        else vx = -dy, vy = dx;
+        if (k === 0) vx = -dy, vy = dx;
+        else {
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+          if (k > 0) vx = cx - mx, vy = cy - my;
+          else vx = mx - cx, vy = my - cy;
+        }
         const ti = triangles[i] * 4;
         const tj = triangles[j] * 4;
         vectors[ti + 2] = vectors[tj] = vx;
