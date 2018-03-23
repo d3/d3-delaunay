@@ -23,9 +23,17 @@ const voronoi = delaunay.voronoi([0, 0, 960, 500]);
 
 ### Delaunay
 
-<a href="#delaunay_from" name="delaunay_from">#</a> Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>]]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#new_Delaunay" name="new_Delaunay">#</a> new <b>Delaunay</b>(<i>points</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-Returns the Delaunay triangulation for the given array of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point.
+Returns the Delaunay triangulation for the given flat array [*x0*, *y0*, *x1*, *y1*, …] of *points*.
+
+```js
+const delaunay = new Delaunay(Float64Array.of(0, 0, 0, 1, 1, 0, 1, 1));
+```
+
+<a href="#delaunay_from" name="delaunay_from">#</a> Delaunay.<b>from</b>(<i>points</i>[, <i>fx</i>[, <i>fy</i>[, <i>that</i>]]]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns the Delaunay triangulation for the given array or iterable of *points*. If *fx* and *fy* are not specified, then *points* is assumed to be an array of two-element arrays of numbers: [[*x0*, *y0*], [*x1*, *y1*], …]. Otherwise, *fx* and *fy* are functions that are invoked for each element in the *points* array in order, and must return the respective *x*- and *y*-coordinate for each point. If *that* is specified, the functions *fx* and *fy* are invoked with *that* as *this*. (See [Array.from](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/from) for reference.)
 
 ```js
 const delaunay = Delaunay.from([[0, 0], [0, 1], [1, 0], [1, 1]]);
@@ -33,7 +41,7 @@ const delaunay = Delaunay.from([[0, 0], [0, 1], [1, 0], [1, 1]]);
 
 <a href="#delaunay_points" name="delaunay_points">#</a> <i>delaunay</i>.<b>points</b>
 
-The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …].
+The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …]. Typically, this is a Float64Array, however you can use any array-like type in the [constructor](#new_Delaunay).
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
@@ -137,17 +145,26 @@ The node after this node on the convex hull.
 
 ### Voronoi
 
-<a href="#voronoi_cells" name="voronoi_cells">#</a> <i>voronoi</i>.<b>cells</b>
+<a href="#voronoi_delaunay" name="voronoi_delaunay">#</a> <i>voronoi</i>.<b>delaunay</b>
 
-The cells of the Voronoi diagram as an array of [*Cell*](#cell) instances. The *voronoi*.cells[*i*] represents the area of the plane closest to the input point *i*, *i.e.*, [*points*[2 * *i*], *points*[2 * *i* + 1]] where *points* = *voronoi*.delaunay.points.
+The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
 <a href="#voronoi_circumcenters" name="voronoi_circumcenters">#</a> <i>voronoi</i>.<b>circumcenters</b>
 
 The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delaunay triangles as a Float64Array [*cx0*, *cy0*, *cx1*, *cy1*, …]. Each contiguous pair of coordinates *cx*, *cy* is the circumcenter for the corresponding triangle. These circumcenters form the coordinates of the Voronoi cell polygons.
 
-<a href="#voronoi_delaunay" name="voronoi_delaunay">#</a> <i>voronoi</i>.<b>delaunay</b>
+<a href="#voronoi_edges" name="voronoi_edges">#</a> <i>voronoi</i>.<b>edges</b>
 
-The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
+… TODO The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
+
+<a href="#voronoi_index" name="voronoi_index">#</a> <i>voronoi</i>.<b>index</b>
+
+… TODO The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
+
+<a href="#voronoi_vectors" name="voronoi_vectors">#</a> <i>voronoi</i>.<b>vectors</b>
+
+… TODO The start vector [*vx0*, *vy0*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and end vector [*cell*.vn](#cell_vn) if any, the start vector forms the exterior polygon of the cell. The end vector [*vxn*, *vyn*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and start vector [*cell*.v0](#cell_v0) if any, the end vector forms the exterior polygon of the cell.
+
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
@@ -158,11 +175,11 @@ The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Vo
 
 <a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
-Returns the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+Returns the index of the cell that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
-<a href="#voronoi_findIndex" name="voronoi_findIndex">#</a> <i>voronoi</i>.<b>findIndex</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_contains" name="voronoi_contains">#</a> <i>voronoi</i>.<b>contains</b>(<i>i</i>, <i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
 
-Returns the index of the [cell](#cell) that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+Returns true if the cell with the specified index *i* contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
@@ -176,30 +193,8 @@ Renders the mesh of Voronoi cells to the specified *context*. The specified *con
 
 Renders the viewport extent to the specified *context*. The specified *context* must implement the *context*.rect method from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
 
-### Cell
-
-<a href="#cell_voronoi" name="cell_voronoi">#</a> <i>cell</i>.<b>voronoi</b>
-
-The cell’s associated [Voronoi diagram](#voronoi).
-
-<a href="#cell_triangles" name="cell_triangles">#</a> <i>cell</i>.<b>triangles</b>
-
-The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
-
-<a href="#cell_v0" name="cell_v0">#</a> <i>cell</i>.<b>v0</b>
-
-The start vector [*vx0*, *vy0*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and end vector [*cell*.vn](#cell_vn) if any, the start vector forms the exterior polygon of the cell.
-
-<a href="#cell_vn" name="cell_vn">#</a> <i>cell</i>.<b>vn</b>
-
-The end vector [*vxn*, *vyn*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and start vector [*cell*.v0](#cell_v0) if any, the end vector forms the exterior polygon of the cell.
-
-<a href="#cell_render" name="cell_render">#</a> <i>cell</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
+<a href="#voronoi_renderCell" name="voronoi_renderCell">#</a> <i>voronoi</i>.<b>renderCell</b>(<i>i</i>, <i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 <img alt="cell.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/spectral.png">
 
-Renders the cell to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
-
-<a href="#cell_contains" name="cell_contains">#</a> <i>cell</i>.<b>contains</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
-
-Returns true if this cell contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+Renders the cell with the specified index *i* to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
