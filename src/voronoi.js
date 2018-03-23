@@ -65,29 +65,23 @@ export default class Voronoi {
     }
 
     // Compute exterior cell rays.
-    {
-      let node = hull;
-      do {
-        const {x: x1, y: y1, t: i, next: {x: x2, y: y2, t: j}} = node;
-        const ci = Math.floor(i / 3) * 2;
-        const cx = circumcenters[ci];
-        const cy = circumcenters[ci + 1];
-        const dx = x2 - x1;
-        const dy = y2 - y1;
-        const k = dx * (cy - y1) - dy * (cx - x1);
-        let vx, vy;
-        if (k === 0) vx = -dy, vy = dx;
-        else {
-          const mx = (x1 + x2) / 2;
-          const my = (y1 + y2) / 2;
-          if (k > 0) vx = cx - mx, vy = cy - my;
-          else vx = mx - cx, vy = my - cy;
-        }
-        const ti = triangles[i] * 4;
-        const tj = triangles[j] * 4;
-        vectors[ti + 2] = vectors[tj] = vx;
-        vectors[ti + 3] = vectors[tj + 1] = vy;
-      } while ((node = node.next) !== hull);
+    for (let n = hull.length, x0, y0, i0, i1 = hull[n - 1], x1 = points[2 * i1], y1 = points[2 * i1 + 1], i = 0; i < n; ++i) {
+      x0 = x1, y0 = y1, i0 = i1, i1 = hull[i], x1 = points[2 * i1], y1 = points[2 * i1 + 1];
+      const cx = circumcenters[2 * i0];
+      const cy = circumcenters[2 * i0 + 1];
+      const dx = x1 - x0;
+      const dy = y1 - y0;
+      const k = dx * (cy - y0) - dy * (cx - x0);
+      let vx, vy;
+      if (k === 0) vx = -dy, vy = dx;
+      else {
+        const mx = (x0 + x1) / 2;
+        const my = (y0 + y1) / 2;
+        if (k > 0) vx = cx - mx, vy = cy - my;
+        else vx = mx - cx, vy = my - cy;
+      }
+      vectors[4 * i0 + 2] = vectors[4 * i1] = vx;
+      vectors[4 * i0 + 3] = vectors[4 * i1 + 1] = vy;
     }
   }
   render(context) {
@@ -100,18 +94,17 @@ export default class Voronoi {
       context.moveTo(circumcenters[ti], circumcenters[ti + 1]);
       context.lineTo(circumcenters[tj], circumcenters[tj + 1]);
     }
-    let node = hull;
-    do {
-      const t = Math.floor(node.t / 3) * 2;
-      const x = circumcenters[t];
-      const y = circumcenters[t + 1];
-      const v = node.i * 4;
+    for (let i = 0, n = hull.length; i < n; ++i) {
+      const t = hull[i];
+      const x = circumcenters[t * 2];
+      const y = circumcenters[t * 2 + 1];
+      const v = t * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) {
         context.moveTo(x, y);
         context.lineTo(p[0], p[1]);
       }
-    } while ((node = node.next) !== hull);
+    }
   }
   renderBounds(context) {
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);

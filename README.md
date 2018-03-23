@@ -63,15 +63,17 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-An arbitrary starting [node](#node) of the Delaunay triangulation’s convex hull. For example, to render the exterior edges of the Delaunay triangulation:
+The convex hull indexes an a Uint32Array [*i0*, *i1*, …]. Each index *i* represents the corresponding input point. For example, to render the exterior edges of the Delaunay triangulation:
 
 ```js
 const {hull} = delaunay;
-let node = hull;
-do {
-  context.moveTo(node.x, node.y);
-  context.lineTo(node.next.x, node.next.y);
-} while ((node = node.next) !== hull);
+const n = hull.length;
+let i0, i1 = hull[n - 1] * 2;
+for (let i = 0; i < n; ++i) {
+  i0 = i1, i1 = hull[i] * 2;
+  context.moveTo(points[i0], points[i0 + 1]);
+  context.lineTo(points[i1], points[i1 + 1]);
+}
 ```
 
 See also [*delaunay*.renderHull](#delaunay_renderHull).
@@ -114,34 +116,6 @@ Renders triangle *i* of the Delaunay triangulation to the specified *context*. T
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_points). When rendering, the diagram will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500]. See [To Infinity and Back Again](https://beta.observablehq.com/@mbostock/to-infinity-and-back-again) for an interactive explanation of Voronoi cell clipping.
-
-### Node
-
-See [*delaunay*.hull](#delaunay_hull).
-
-<a href="#node_i" name="node_i">#</a> <i>node</i>.<b>i</b>
-
-The index of the input point corresponding to this node. Equivalent to [*delaunay*.triangles](#delaunay_triangles)[[*node*.t](#node_t)].
-
-<a href="#node_x" name="node_x">#</a> <i>node</i>.<b>x</b>
-
-Equivalent to [*delaunay*.points](#delaunay_points)[2 * [*node*.i](#node_i)].
-
-<a href="#node_y" name="node_y">#</a> <i>node</i>.<b>y</b>
-
-Equivalent to [*delaunay*.points](#delaunay_points)[2 * [*node*.i](#node_i) + 1].
-
-<a href="#node_t" name="node_t">#</a> <i>node</i>.<b>t</b>
-
-The index of the triangle vertex corresponding to this node.
-
-<a href="#node_prev" name="node_prev">#</a> <i>node</i>.<b>prev</b>
-
-The node before this node on the convex hull.
-
-<a href="#node_next" name="node_next">#</a> <i>node</i>.<b>next</b>
-
-The node after this node on the convex hull.
 
 ### Voronoi
 

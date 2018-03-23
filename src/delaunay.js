@@ -14,7 +14,7 @@ export default class Delaunay {
     const {halfedges, hull, triangles} = new Delaunator(points);
     this.points = points;
     this.halfedges = halfedges;
-    this.hull = hull;
+    this.hull = Uint32Array.from(hullIterable(hull));
     this.triangles = triangles;
   }
   voronoi(bounds) {
@@ -33,12 +33,14 @@ export default class Delaunay {
     this.renderHull(context);
   }
   renderHull(context) {
-    const {hull} = this;
-    let node = hull;
-    do {
-      context.moveTo(node.x, node.y);
-      context.lineTo(node.next.x, node.next.y);
-    } while ((node = node.next) !== hull);
+    const {points, hull} = this;
+    const n = hull.length;
+    let i0, i1 = hull[n - 1] * 2;
+    for (let i = 0; i < n; ++i) {
+      i0 = i1, i1 = hull[i] * 2;
+      context.moveTo(points[i0], points[i0 + 1]);
+      context.lineTo(points[i1], points[i1 + 1]);
+    }
   }
   renderTriangle(i, context) {
     const {points, triangles} = this;
@@ -76,4 +78,10 @@ function* flatIterable(points, fx, fy, that) {
     yield fy.call(that, p, i, points);
     ++i;
   }
+}
+
+function* hullIterable(hull) {
+  let node = hull;
+  do yield node.i;
+  while ((node = node.next) !== hull);
 }
