@@ -33,11 +33,11 @@ export default class Delaunay {
     this.renderHull(context);
   }
   renderHull(context) {
-    const {points, hull} = this;
+    const {points, hull, triangles} = this;
     const n = hull.length;
-    let i0, i1 = hull[n - 1] * 2;
+    let i0, i1 = triangles[hull[n - 1]] * 2;
     for (let i = 0; i < n; ++i) {
-      i0 = i1, i1 = hull[i] * 2;
+      i0 = i1, i1 = triangles[hull[i]] * 2;
       context.moveTo(points[i0], points[i0 + 1]);
       context.lineTo(points[i1], points[i1 + 1]);
     }
@@ -82,6 +82,6 @@ function* flatIterable(points, fx, fy, that) {
 
 function* hullIterable(hull) {
   let node = hull;
-  do yield node.i;
+  do yield node.t;
   while ((node = node.next) !== hull);
 }

@@ -63,14 +63,14 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-The convex hull indexes an a Uint32Array [*i0*, *i1*, …]. Each index *i* represents the corresponding input point. For example, to render the exterior edges of the Delaunay triangulation:
+The convex hull as an a Uint32Array [*i0*, *i1*, …] of triangle vertex indexes. For example, to render the exterior edges of the Delaunay triangulation:
 
 ```js
-const {hull} = delaunay;
+const {hull, triangles} = delaunay;
 const n = hull.length;
-let i0, i1 = hull[n - 1] * 2;
+let i0, i1 = triangles[hull[n - 1]] * 2;
 for (let i = 0; i < n; ++i) {
-  i0 = i1, i1 = hull[i] * 2;
+  i0 = i1, i1 = triangles[hull[i]] * 2;
   context.moveTo(points[i0], points[i0 + 1]);
   context.lineTo(points[i1], points[i1 + 1]);
 }
