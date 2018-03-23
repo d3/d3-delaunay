@@ -11,7 +11,7 @@ export default class Delaunay {
   voronoi([xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     const {points, halfedges, hull, triangles} = this;
     const edges = new Uint32Array(halfedges.length);
-    const i0 = new Int32Array(points.length / 2).fill(-1);
+    const i0 = new Int32Array(points.length / 2);
     const i1 = new Int32Array(points.length / 2);
     const v = new Float64Array(points.length * 2);
     const circumcenters = new Float64Array(triangles.length / 3 * 2);
@@ -19,7 +19,7 @@ export default class Delaunay {
     // Compute cell topology.
     for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
       const t = triangles[i]; // Cell vertex.
-      if (i0[t] !== -1) continue; // Already connected.
+      if (i0[t] !== i1[t]) continue; // Already connected.
       let j = i;
       let e0 = i0[t] = e;
 

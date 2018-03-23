@@ -25,3 +25,13 @@ tape("voronoi.find(x, y) returns the index of the cell that contains the specifi
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi([-1, -1, 2, 2]);
   test.deepEqual(voronoi.find(0.25, 0.25), 0);
 });
+
+// tape("cell.render(context) is a noop for coincident points", test => {
+//   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
+//   test.equal(voronoi.cells[3].render({}), undefined);
+// });
+
+// tape("cell.contains(x, y) is false for coincident points", test => {
+//   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
+//   test.equal(voronoi.cells[3].contains(1, 0), false);
+// });
