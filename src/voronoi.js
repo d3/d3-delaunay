@@ -36,9 +36,8 @@ export default class Voronoi {
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
   }
   renderCell(i, context) {
-    let points;
-    if ((points = this._cell(i)) === null) return;
-    if ((points = this._clip(points, i)) === null) return;
+    const points = this._clip(i);
+    if (points === null) return;
     context.moveTo(points[0], points[1]);
     for (let i = 2, n = points.length; i < n; i += 2) {
       context.lineTo(points[i], points[i + 1]);
@@ -86,7 +85,9 @@ export default class Voronoi {
     }
     return points;
   }
-  _clip(points, i) {
+  _clip(i) {
+    const points = this._cell(i);
+    if (points === null) return null;
     const {vectors: V} = this;
     const v = i * 4;
     return V[v] || V[v + 1]
