@@ -65,24 +65,10 @@ export default class Voronoi {
     }
 
     // Compute exterior cell rays.
-    for (let n = hull.length, v0, p0, x0, y0, v1 = hull[n - 1], p1 = triangles[v1] * 2, x1 = points[p1], y1 = points[p1 + 1], i = 0; i < n; ++i) {
-      v0 = v1, p0 = p1, x0 = x1, y0 = y1, v1 = hull[i], p1 = triangles[v1] * 2, x1 = points[p1], y1 = points[p1 + 1];
-      const ci = Math.floor(v0 / 3) * 2;
-      const cx = circumcenters[ci];
-      const cy = circumcenters[ci + 1];
-      const dx = x1 - x0;
-      const dy = y1 - y0;
-      const k = dx * (cy - y0) - dy * (cx - x0);
-      let vx, vy;
-      if (k === 0) vx = -dy, vy = dx;
-      else {
-        const mx = (x0 + x1) / 2;
-        const my = (y0 + y1) / 2;
-        if (k > 0) vx = cx - mx, vy = cy - my;
-        else vx = mx - cx, vy = my - cy;
-      }
-      vectors[p0 * 2 + 2] = vectors[p1 * 2] = vx;
-      vectors[p0 * 2 + 3] = vectors[p1 * 2 + 1] = vy;
+    for (let n = hull.length, p0, x0, y0, p1 = triangles[hull[n - 1]] * 2, x1 = points[p1], y1 = points[p1 + 1], i = 0; i < n; ++i) {
+      p0 = p1, x0 = x1, y0 = y1, p1 = triangles[hull[i]] * 2, x1 = points[p1], y1 = points[p1 + 1];
+      vectors[p0 * 2 + 2] = vectors[p1 * 2] = y0 - y1;
+      vectors[p0 * 2 + 3] = vectors[p1 * 2 + 1] = x1 - x0;
     }
   }
   render(context) {
