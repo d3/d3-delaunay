@@ -113,32 +113,32 @@ export default class Voronoi {
         : V[v] || V[v + 1] ? containsInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3], x, y)
         : containsFinite(points, x, y);
   }
-  find(x, y) {
+  find(x, y, i = 0) {
     const {delaunay: {halfedges, points, triangles}, edges, index} = this;
     if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
-    let c = 0, c2 = (x - points[0]) ** 2 + (y - points[1]) ** 2;
+    let di = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     while (true) {
-      const i0 = index[c * 2];
-      const i1 = index[c * 2 + 1];
-      let d = c, d2 = c2;
-      for (let i = i0; i < i1; ++i) {
-        let k = edges[i] * 3;
-        switch (c) {
+      const j0 = index[i * 2];
+      const j1 = index[i * 2 + 1];
+      let c = i, dc = di;
+      for (let j = j0; j < j1; ++j) {
+        let k = edges[j] * 3;
+        switch (i) {
           case triangles[k]: k = triangles[k + 1]; break;
           case triangles[k + 1]: k = triangles[k + 2]; break;
           case triangles[k + 2]: k = triangles[k]; break;
         }
-        let k2 = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-        if (k2 < d2) d2 = k2, d = k;
+        let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+        if (dk < dc) dc = dk, c = k;
       }
-      if (halfedges[edges[i0] * 3] === -1) console.warn("hull edge! edges[i0] * 3");
-      if (halfedges[edges[i0] * 3 + 1] === -1) console.warn("hull edge! edges[i0] * 3 + 1");
-      if (halfedges[edges[i0] * 3 + 2] === -1) console.warn("hull edge! edges[i0] * 3 + 2");
-      if (halfedges[edges[i1] * 3] === -1) console.warn("hull edge! edges[i1] * 3");
-      if (halfedges[edges[i1] * 3 + 1] === -1) console.warn("hull edge! edges[i1] * 3 + 1");
-      if (halfedges[edges[i1] * 3 + 2] === -1) console.warn("hull edge! edges[i1] * 3 + 2");
-      if (d === c) return d;
-      c = d, c2 = d2;
+      if (halfedges[edges[j0] * 3] === -1) console.warn("hull edge! edges[j0] * 3");
+      if (halfedges[edges[j0] * 3 + 1] === -1) console.warn("hull edge! edges[j0] * 3 + 1");
+      if (halfedges[edges[j0] * 3 + 2] === -1) console.warn("hull edge! edges[j0] * 3 + 2");
+      if (halfedges[edges[j1] * 3] === -1) console.warn("hull edge! edges[j1] * 3");
+      if (halfedges[edges[j1] * 3 + 1] === -1) console.warn("hull edge! edges[j1] * 3 + 1");
+      if (halfedges[edges[j1] * 3 + 2] === -1) console.warn("hull edge! edges[j1] * 3 + 2");
+      if (c === i) return c;
+      i = c, di = dc;
     }
   }
   _cell(i) {

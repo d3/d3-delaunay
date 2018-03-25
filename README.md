@@ -147,9 +147,9 @@ The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delau
 
 The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi diagram. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
 
-<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
-Returns the index of the cell that contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
+Returns the index of the cell that contains the specified point ⟨*x*, *y*⟩. The search is started at the specified point *i*. If *i* is not specified, it defaults to zero. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
 <a href="#voronoi_contains" name="voronoi_contains">#</a> <i>voronoi</i>.<b>contains</b>(<i>i</i>, <i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
 
