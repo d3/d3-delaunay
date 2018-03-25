@@ -121,22 +121,24 @@ export default class Voronoi {
       const j0 = index[i * 2];
       const j1 = index[i * 2 + 1];
       let c = i, dc = di;
+      let k = edges[j0] * 3;
+      switch (i) { // Test previous point on triangle (for hull).
+        case triangles[k]: k = triangles[k + 2]; break;
+        case triangles[k + 1]: k = triangles[k]; break;
+        case triangles[k + 2]: k = triangles[k + 1]; break;
+      }
+      let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+      if (dk < dc) dc = dk, c = k;
       for (let j = j0; j < j1; ++j) {
-        let k = edges[j] * 3;
-        switch (i) {
+        k = edges[j] * 3;
+        switch (i) { // Test next point on triangle.
           case triangles[k]: k = triangles[k + 1]; break;
           case triangles[k + 1]: k = triangles[k + 2]; break;
           case triangles[k + 2]: k = triangles[k]; break;
         }
-        let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+        dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
         if (dk < dc) dc = dk, c = k;
       }
-      if (halfedges[edges[j0] * 3] === -1) console.warn("hull edge! edges[j0] * 3");
-      if (halfedges[edges[j0] * 3 + 1] === -1) console.warn("hull edge! edges[j0] * 3 + 1");
-      if (halfedges[edges[j0] * 3 + 2] === -1) console.warn("hull edge! edges[j0] * 3 + 2");
-      if (halfedges[edges[j1] * 3] === -1) console.warn("hull edge! edges[j1] * 3");
-      if (halfedges[edges[j1] * 3 + 1] === -1) console.warn("hull edge! edges[j1] * 3 + 1");
-      if (halfedges[edges[j1] * 3 + 2] === -1) console.warn("hull edge! edges[j1] * 3 + 2");
       if (c === i) return c;
       i = c, di = dc;
     }
