@@ -23,9 +23,11 @@
   "main": "dist/d3-delaunay.js",
   "unpkg": "dist/d3-delaunay.min.js",
   "module": "src/index.js",
+  "dependencies": {
+    "delaunator": "^2.0.0"
+  },
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
-    "delaunator": "^2.0.0",
     "esm": "^3.0.7",
     "rollup": "^0.57.1",
     "rollup-plugin-node-resolve": "^3.3.0",
