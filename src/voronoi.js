@@ -179,7 +179,7 @@ export default class Voronoi {
   }
   _clipFinite(points) {
     const n = points.length;
-    let P = null, S;
+    let P = null;
     let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
     let c0, c1 = this._regioncode(x1, y1);
     let e0, e1;
@@ -190,8 +190,21 @@ export default class Voronoi {
         e0 = e1, e1 = 0;
         if (P) P.push(x1, y1);
         else P = [x1, y1];
-      } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
-        const [sx0, sy0, sx1, sy1] = S;
+      } else {
+        let S, sx0, sy0, sx1, sy1;
+        if (c0 === 0) {
+          if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
+            [sx0, sy0, sx1, sy1] = S;
+          } else {
+            continue;
+          }
+        } else {
+          if (S = this._clipSegment(x1, y1, x0, y0, c1, c0)) {
+            [sx1, sy1, sx0, sy0] = S;
+          } else {
+            continue;
+          }
+        }
         if (c0) {
           e0 = e1, e1 = this._edgecode(sx0, sy0);
           if (e0 && e1) this._edge(points, e0, e1, P);
