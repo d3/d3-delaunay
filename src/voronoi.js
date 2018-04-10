@@ -78,8 +78,11 @@ export default class Voronoi {
       if (j < i) continue;
       const ti = Math.floor(i / 3) * 2;
       const tj = Math.floor(j / 3) * 2;
-      context.moveTo(circumcenters[ti], circumcenters[ti + 1]);
-      context.lineTo(circumcenters[tj], circumcenters[tj + 1]);
+      const xi = circumcenters[ti];
+      const yi = circumcenters[ti + 1];
+      const xj = circumcenters[tj];
+      const yj = circumcenters[tj + 1];
+      this._renderSegment(xi, yi, xj, yj, context);
     }
     for (let i = 0, n = hull.length; i < n; ++i) {
       const t = Math.floor(hull[i] / 3) * 2;
@@ -87,10 +90,7 @@ export default class Voronoi {
       const y = circumcenters[t + 1];
       const v = triangles[hull[i]] * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
-      if (p) {
-        context.moveTo(x, y);
-        context.lineTo(p[0], p[1]);
-      }
+      if (p) this._renderSegment(x, y, p[0], p[1], context);
     }
   }
   renderBounds(context) {
@@ -104,6 +104,18 @@ export default class Voronoi {
       context.lineTo(points[i], points[i + 1]);
     }
     context.closePath();
+  }
+  _renderSegment(x0, y0, x1, y1, context) {
+    let S;
+    const c0 = this._regioncode(x0, y0);
+    const c1 = this._regioncode(x1, y1);
+    if (c0 === 0 && c1 === 0) {
+      context.moveTo(x0, y0);
+      context.lineTo(x1, y1);
+    } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
+      context.moveTo(S[0], S[1]);
+      context.lineTo(S[2], S[3]);
+    }
   }
   contains(i, x, y) {
     const {vectors: V} = this;
