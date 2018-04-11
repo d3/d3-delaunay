@@ -118,20 +118,21 @@ export default class Voronoi {
     }
   }
   contains(i, x, y) {
-    const {delaunay: {points}} = this;
-    if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return false;
+    if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
     return this._step(i, x, y) === i;
   }
   find(x, y, i = 0) {
-    const {delaunay: {points}} = this;
-    if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
-    for (let c; (c = this._step(i, x, y)) !== i; i = c);
-    return i;
+    if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    let c;
+    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+    return c;
   }
   _step(i, x, y) {
     const {delaunay: {points, triangles}, edges, index} = this;
+    if (points.length === 0) return -1; // Empty triangulation.
     const j0 = index[i * 2];
     const j1 = index[i * 2 + 1];
+    if (j0 === j1) return -1; // Coincident point.
     let c = i, k = edges[j0] * 3;
     let dc = (x - points[c * 2]) ** 2 + (y - points[c * 2 + 1]) ** 2;
     switch (i) { // Test previous point on triangle (for hull).
@@ -239,7 +240,7 @@ export default class Voronoi {
   _clipInfinite(i, points, vx0, vy0, vxn, vyn) {
     let P = Array.from(points), p;
     if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
-    if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
+    if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.unshift(p[0], p[1]);
     if (P = this._clipFinite(i, P)) {
       for (let j = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); j < n; j += 2) {
         c0 = c1, c1 = this._edgecode(P[j], P[j + 1]);
