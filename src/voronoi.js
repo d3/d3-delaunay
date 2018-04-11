@@ -192,19 +192,11 @@ export default class Voronoi {
       } else {
         let S, sx0, sy0, sx1, sy1;
         if (c0 === 0) {
-          if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
-            [sx0, sy0, sx1, sy1] = S;
-          } else {
-            continue;
-          }
+          if ((S = this._clipSegment(x0, y0, x1, y1, c0, c1)) === null) continue;
+          [sx0, sy0, sx1, sy1] = S;
         } else {
-          if (S = this._clipSegment(x1, y1, x0, y0, c1, c0)) {
-            [sx1, sy1, sx0, sy0] = S;
-          } else {
-            continue;
-          }
-        }
-        if (c0) {
+          if ((S = this._clipSegment(x1, y1, x0, y0, c1, c0)) === null) continue;
+          [sx1, sy1, sx0, sy0] = S;
           e0 = e1, e1 = this._edgecode(sx0, sy0);
           if (e0 && e1) this._edge(i, e0, e1, P, P.length);
           if (P) P.push(sx0, sy0);
@@ -227,7 +219,7 @@ export default class Voronoi {
   _clipSegment(x0, y0, x1, y1, c0, c1) {
     while (true) {
       if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
-      if (c0 & c1) return;
+      if (c0 & c1) return null;
       let x, y, c = c0 || c1;
       if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
       else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;
@@ -273,17 +265,17 @@ export default class Voronoi {
   _project(x0, y0, vx, vy) {
     let t = Infinity, c, x, y;
     if (vy < 0) { // top
-      if (y0 <= this.ymin) return;
+      if (y0 <= this.ymin) return null;
       if ((c = (this.ymin - y0) / vy) < t) y = this.ymin, x = x0 + (t = c) * vx;
     } else if (vy > 0) { // bottom
-      if (y0 >= this.ymax) return;
+      if (y0 >= this.ymax) return null;
       if ((c = (this.ymax - y0) / vy) < t) y = this.ymax, x = x0 + (t = c) * vx;
     }
     if (vx > 0) { // right
-      if (x0 >= this.xmax) return;
+      if (x0 >= this.xmax) return null;
       if ((c = (this.xmax - x0) / vx) < t) x = this.xmax, y = y0 + (t = c) * vy;
     } else if (vx < 0) { // left
-      if (x0 <= this.xmin) return;
+      if (x0 <= this.xmin) return null;
       if ((c = (this.xmin - x0) / vx) < t) x = this.xmin, y = y0 + (t = c) * vy;
     }
     return [x, y];
