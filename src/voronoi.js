@@ -242,7 +242,7 @@ export default class Voronoi {
   _clipInfinite(points, vx0, vy0, vxn, vyn) {
     let P = Array.from(points), p;
     if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
-    if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.unshift(p[0], p[1]);
+    if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
     if (P = this._clipFinite(P)) {
       for (let i = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); i < n; i += 2) {
         c0 = c1, c1 = this._edgecode(P[i], P[i + 1]);
@@ -260,7 +260,9 @@ export default class Voronoi {
               case 0b0001: c0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
             }
             if (containsOpen(P, cx, cy)) {
-              P.splice(i, 0, cx, cy), n += 2, i += 2;
+              if (i === 0) P.push(cx, cy);
+              else P.splice(i, 0, cx, cy), i += 2;
+              n += 2;
             }
           }
         }
