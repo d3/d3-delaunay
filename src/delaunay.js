@@ -36,7 +36,8 @@ export default class Delaunay {
   }
   renderPoints(context, r = 2) {
     const {points} = this;
-    for (const [x, y] of points) {
+    for (let i = 0, n = points.length; i < n; i += 2) {
+      const x = points[i], y = points[i + 1];
       context.moveTo(x + r, y);
       context.arc(x, y, r, 0, tau);
     }
