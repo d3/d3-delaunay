@@ -118,42 +118,40 @@ export default class Voronoi {
     }
   }
   contains(i, x, y) {
-    const {vectors: V} = this;
-    const points = this._cell(i);
-    const v = i * 4;
-    return points === null ? false
-        : V[v] || V[v + 1] ? containsInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3], x, y)
-        : containsClosed(points, x, y);
+    const {delaunay: {points}} = this;
+    if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return false;
+    return this._step(i, x, y) === i;
   }
   find(x, y, i = 0) {
-    const {delaunay: {halfedges, points, triangles}, edges, index} = this;
+    const {delaunay: {points}} = this;
     if (points.length === 0 || (x = +x, x !== x) || (y = +y, y !== y)) return -1;
-    let di = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
-    while (true) {
-      const j0 = index[i * 2];
-      const j1 = index[i * 2 + 1];
-      let c = i, dc = di;
-      let k = edges[j0] * 3;
-      switch (i) { // Test previous point on triangle (for hull).
-        case triangles[k]: k = triangles[k + 2]; break;
-        case triangles[k + 1]: k = triangles[k]; break;
-        case triangles[k + 2]: k = triangles[k + 1]; break;
-      }
-      let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-      if (dk < dc) dc = dk, c = k;
-      for (let j = j0; j < j1; ++j) {
-        k = edges[j] * 3;
-        switch (i) { // Test next point on triangle.
-          case triangles[k]: k = triangles[k + 1]; break;
-          case triangles[k + 1]: k = triangles[k + 2]; break;
-          case triangles[k + 2]: k = triangles[k]; break;
-        }
-        dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-        if (dk < dc) dc = dk, c = k;
-      }
-      if (c === i) return c;
-      i = c, di = dc;
+    for (let c; (c = this._step(i, x, y)) !== i; i = c);
+    return i;
+  }
+  _step(i, x, y) {
+    const {delaunay: {points, triangles}, edges, index} = this;
+    const j0 = index[i * 2];
+    const j1 = index[i * 2 + 1];
+    let c = i, k = edges[j0] * 3;
+    let dc = (x - points[c * 2]) ** 2 + (y - points[c * 2 + 1]) ** 2;
+    switch (i) { // Test previous point on triangle (for hull).
+      case triangles[k]: k = triangles[k + 2]; break;
+      case triangles[k + 1]: k = triangles[k]; break;
+      case triangles[k + 2]: k = triangles[k + 1]; break;
     }
+    let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+    if (dk < dc) dc = dk, c = k;
+    for (let j = j0; j < j1; ++j) {
+      k = edges[j] * 3;
+      switch (i) { // Test next point on triangle.
+        case triangles[k]: k = triangles[k + 1]; break;
+        case triangles[k + 1]: k = triangles[k + 2]; break;
+        case triangles[k + 2]: k = triangles[k]; break;
+      }
+      dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+      if (dk < dc) dc = dk, c = k;
+    }
+    return c;
   }
   _cell(i) {
     const {index, edges, circumcenters} = this;
@@ -174,10 +172,10 @@ export default class Voronoi {
     const {vectors: V} = this;
     const v = i * 4;
     return V[v] || V[v + 1]
-        ? this._clipInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3])
-        : this._clipFinite(points);
+        ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3])
+        : this._clipFinite(i, points);
   }
-  _clipFinite(points) {
+  _clipFinite(i, points) {
     const n = points.length;
     let P = null;
     let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
@@ -207,20 +205,20 @@ export default class Voronoi {
         }
         if (c0) {
           e0 = e1, e1 = this._edgecode(sx0, sy0);
-          if (e0 && e1) this._edge(points, e0, e1, P);
+          if (e0 && e1) this._edge(i, e0, e1, P, P.length);
           if (P) P.push(sx0, sy0);
           else P = [sx0, sy0];
         }
         e0 = e1, e1 = this._edgecode(sx1, sy1);
-        if (e0 && e1) this._edge(points, e0, e1, P);
+        if (e0 && e1) this._edge(i, e0, e1, P, P.length);
         if (P) P.push(sx1, sy1);
         else P = [sx1, sy1];
       }
     }
     if (P) {
       e0 = e1, e1 = this._edgecode(P[0], P[1]);
-      if (e0 && e1) this._edge(points, e0, e1, P);
-    } else if (containsClosed(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+      if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+    } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
     }
     return P;
@@ -238,42 +236,21 @@ export default class Voronoi {
       else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
     }
   }
-  // TODO Consolidate corner traversal code using edge?
-  _clipInfinite(points, vx0, vy0, vxn, vyn) {
+  _clipInfinite(i, points, vx0, vy0, vxn, vyn) {
     let P = Array.from(points), p;
     if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
     if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
-    if (P = this._clipFinite(P)) {
-      for (let i = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); i < n; i += 2) {
-        c0 = c1, c1 = this._edgecode(P[i], P[i + 1]);
-        if (c0 && c1) {
-          while (c0 !== c1) {
-            let cx, cy;
-            switch (c0) {
-              case 0b0101: c0 = 0b0100; continue; // top-left
-              case 0b0100: c0 = 0b0110, cx = this.xmax, cy = this.ymin; break; // top
-              case 0b0110: c0 = 0b0010; continue; // top-right
-              case 0b0010: c0 = 0b1010, cx = this.xmax, cy = this.ymax; break; // right
-              case 0b1010: c0 = 0b1000; continue; // bottom-right
-              case 0b1000: c0 = 0b1001, cx = this.xmin, cy = this.ymax; break; // bottom
-              case 0b1001: c0 = 0b0001; continue; // bottom-left
-              case 0b0001: c0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
-            }
-            if (containsOpen(P, cx, cy)) {
-              if (i === 0) P.push(cx, cy);
-              else P.splice(i, 0, cx, cy), i += 2;
-              n += 2;
-            }
-          }
-        }
+    if (P = this._clipFinite(i, P)) {
+      for (let j = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); j < n; j += 2) {
+        c0 = c1, c1 = this._edgecode(P[j], P[j + 1]);
+        if (c0 && c1) j = this._edge(i, c0, c1, P, j), n = P.length;
       }
-    } else if (containsInfinite(points, vx0, vy0, vxn, vyn, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
-      P.push(this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax);
+    } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+      P = [this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax];
     }
     return P;
   }
-  // TODO Allow containsInfinite instead of contains for clipInfinite?
-  _edge(points, e0, e1, P) {
+  _edge(i, e0, e1, P, j) {
     while (e0 !== e1) {
       let cx, cy;
       switch (e0) {
@@ -286,10 +263,11 @@ export default class Voronoi {
         case 0b1001: e0 = 0b0001; continue; // bottom-left
         case 0b0001: e0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
       }
-      if (containsClosed(points, cx, cy)) {
-        P.push(cx, cy);
+      if (this.contains(i, cx, cy)) {
+        P.splice(j, 0, cx, cy), j += 2;
       }
     }
+    return j;
   }
   _project(x0, y0, vx, vy) {
     let t = Infinity, c, x, y;
@@ -321,36 +299,4 @@ export default class Voronoi {
         | (y < this.ymin ? 0b0100
         : y > this.ymax ? 0b1000 : 0b0000);
   }
-}
-
-function containsClosed(points, x, y) {
-  const n = points.length;
-  let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
-  for (let i = 0; i < n; i += 2) {
-    x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
-    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) return false;
-  }
-  return true;
-}
-
-function containsOpen(points, x, y) {
-  const n = points.length;
-  let x0, y0, x1 = points[0], y1 = points[1];
-  for (let i = 2; i < n; i += 2) {
-    x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
-    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) return false;
-  }
-  return true;
-}
-
-function containsInfinite(points, vx0, vy0, vxn, vyn, x, y) {
-  const n = points.length;
-  let x0, y0, x1 = points[0], y1 = points[1];
-  if ((x1 + vx0 - x) * (y1 - y) < (y1 + vy0 - y) * (x1 - x)) return false;
-  for (let i = 2; i < n; i += 2) {
-    x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
-    if ((x0 - x) * (y1 - y) < (y0 - y) * (x1 - x)) return false;
-  }
-  if ((x1 - x) * (y1 + vyn - y) < (y1 - y) * (x1 + vxn - x)) return false;
-  return true;
 }
