@@ -323,11 +323,11 @@ function containsFinite(points, x, y) {
 function containsInfinite(points, vx0, vy0, vxn, vyn, x, y) {
   const n = points.length;
   let x0, y0, x1 = points[0], y1 = points[1];
-  if ((x0 + vx0 - x) * (y1 - y) < (y0 + vy0 - y) * (x1 - x)) return false;
+  if ((x1 + vx0 - x) * (y1 - y) < (y1 + vy0 - y) * (x1 - x)) return false;
   for (let i = 2; i < n; i += 2) {
     x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
     if ((x0 - x) * (y1 - y) < (y0 - y) * (x1 - x)) return false;
   }
-  if ((x0 - x) * (y1 + vyn - y) < (y0 - y) * (x1 + vxn - x)) return false;
+  if ((x1 - x) * (y1 + vyn - y) < (y1 - y) * (x1 + vxn - x)) return false;
   return true;
 }
