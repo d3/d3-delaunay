@@ -1,6 +1,8 @@
 import Delaunator from "delaunator";
 import Voronoi from "./voronoi.js";
 
+const tau = 2 * Math.PI;
+
 function pointX(p) {
   return p[0];
 }
@@ -31,6 +33,13 @@ export default class Delaunay {
       context.lineTo(points[tj], points[tj + 1]);
     }
     this.renderHull(context);
+  }
+  renderPoints(context, r = 2) {
+    const {points} = this;
+    for (const [x, y] of points) {
+      context.moveTo(x + r, y);
+      context.arc(x, y, r, 0, tau);
+    }
   }
   renderHull(context) {
     const {points, hull, triangles} = this;
