@@ -123,7 +123,7 @@ export default class Voronoi {
     const v = i * 4;
     return points === null ? false
         : V[v] || V[v + 1] ? containsInfinite(points, V[v], V[v + 1], V[v + 2], V[v + 3], x, y)
-        : containsFinite(points, x, y);
+        : containsClosed(points, x, y);
   }
   find(x, y, i = 0) {
     const {delaunay: {halfedges, points, triangles}, edges, index} = this;
@@ -220,7 +220,7 @@ export default class Voronoi {
     if (P) {
       e0 = e1, e1 = this._edgecode(P[0], P[1]);
       if (e0 && e1) this._edge(points, e0, e1, P);
-    } else if (containsFinite(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+    } else if (containsClosed(points, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
     }
     return P;
@@ -259,7 +259,7 @@ export default class Voronoi {
               case 0b1001: c0 = 0b0001; continue; // bottom-left
               case 0b0001: c0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
             }
-            if (containsInfinite(points, vx0, vy0, vxn, vyn, cx, cy)) {
+            if (containsOpen(P, cx, cy)) {
               P.splice(i, 0, cx, cy), n += 2, i += 2;
             }
           }
@@ -284,7 +284,7 @@ export default class Voronoi {
         case 0b1001: e0 = 0b0001; continue; // bottom-left
         case 0b0001: e0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
       }
-      if (containsFinite(points, cx, cy)) {
+      if (containsClosed(points, cx, cy)) {
         P.push(cx, cy);
       }
     }
@@ -321,14 +321,22 @@ export default class Voronoi {
   }
 }
 
-function containsFinite(points, x, y) {
+function containsClosed(points, x, y) {
   const n = points.length;
   let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
   for (let i = 0; i < n; i += 2) {
     x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
-    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) {
-      return false;
-    }
+    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) return false;
+  }
+  return true;
+}
+
+function containsOpen(points, x, y) {
+  const n = points.length;
+  let x0, y0, x1 = points[0], y1 = points[1];
+  for (let i = 2; i < n; i += 2) {
+    x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
+    if ((x1 - x0) * (y - y0) < (y1 - y0) * (x - x0)) return false;
   }
   return true;
 }
