@@ -1,5 +1,6 @@
 import Delaunator from "delaunator";
 import Path from "./path";
+import Polygon from "./polygon";
 import Voronoi from "./voronoi.js";
 
 const tau = 2 * Math.PI;
@@ -59,6 +60,11 @@ export default class Delaunay {
     }
     return buffer && buffer.value();
   }
+  hullPolygon() {
+    const polygon = new Polygon;
+    this.renderHull(polygon);
+    return polygon.value();
+  }
   renderTriangle(i, context) {
     const buffer = context == null ? context = new Path : undefined;
     const {points, triangles} = this;
@@ -70,6 +76,17 @@ export default class Delaunay {
     context.lineTo(points[t2], points[t2 + 1]);
     context.closePath();
     return buffer && buffer.value();
+  }
+  *trianglePolygons() {
+    const {triangles} = this;
+    for (let i = 0, n = triangles.length / 3; i < n; ++i) {
+      yield this.trianglePolygon(i);
+    }
+  }
+  trianglePolygon(i) {
+    const polygon = new Polygon;
+    this.renderTriangle(i, polygon);
+    return polygon.value();
   }
 }
 

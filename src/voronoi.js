@@ -1,4 +1,5 @@
 import Path from "./path";
+import Polygon from "./polygon";
 
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
@@ -112,6 +113,17 @@ export default class Voronoi {
     }
     context.closePath();
     return buffer && buffer.value();
+  }
+  *cellPolygons() {
+    const {delaunay: {points}} = this;
+    for (let i = 0, n = points.length / 2; i < n; ++i) {
+      yield this.cellPolygon(i);
+    }
+  }
+  cellPolygon(i) {
+    const polygon = new Polygon;
+    this.renderCell(i, polygon);
+    return polygon.value();
   }
   _renderSegment(x0, y0, x1, y1, context) {
     let S;
