@@ -133,16 +133,15 @@ The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delau
 
 <a href="#voronoi_edges" name="voronoi_edges">#</a> <i>voronoi</i>.<b>edges</b>
 
-… TODO The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
+…
 
 <a href="#voronoi_index" name="voronoi_index">#</a> <i>voronoi</i>.<b>index</b>
 
-… TODO The triangle indexes [*i0*, *i1*, …] in counterclockwise order. Together with the start and end vectors [*cell*.v0](#cell_v0) and [*cell*.vn](#cell_vn) if any, the [circumcenters](#voronoi_circumcenters) of these triangles form the exterior polygon of the cell. For coincident points, only the cell associated with the first input point is non-null.
+…
 
 <a href="#voronoi_vectors" name="voronoi_vectors">#</a> <i>voronoi</i>.<b>vectors</b>
 
-… TODO The start vector [*vx0*, *vy0*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and end vector [*cell*.vn](#cell_vn) if any, the start vector forms the exterior polygon of the cell. The end vector [*vxn*, *vyn*], if the cell’s associated point is on the [convex hull](#delaunay_hull) of the Delaunay triangulation. Together with the cell’s [triangle circumcenters](#cell_triangles) and start vector [*cell*.v0](#cell_v0) if any, the end vector forms the exterior polygon of the cell.
-
+…
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
