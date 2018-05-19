@@ -95,27 +95,27 @@ context.closePath();
 
 See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
-<a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 <img alt="delaunay.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-mesh.png">
 
-Renders the edges of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders the edges of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
 
-<a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_renderHull" name="delaunay_renderHull">#</a> <i>delaunay</i>.<b>renderHull</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 <img alt="delaunay.renderHull" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-hull.png">
 
-Renders the convex hull of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders the convex hull of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
 
-<a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_renderTriangle" name="delaunay_renderTriangle">#</a> <i>delaunay</i>.<b>renderTriangle</b>(<i>i</i>[, <i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 <img alt="delaunay.renderTriangle" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/delaunay-triangle.png">
 
-Renders triangle *i* of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders triangle *i* of the Delaunay triangulation to the specified *context*. The specified *context* must implement the *context*.moveTo, *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
 
-<a href="#delaunay_renderPoints" name="delaunay_renderPoints">#</a> <i>delaunay</i>.<b>renderPoints</b>(<i>context</i>[, <i>radius</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+<a href="#delaunay_renderPoints" name="delaunay_renderPoints">#</a> <i>delaunay</i>.<b>renderPoints</b>(\[<i>context</i>\]\[, <i>radius</i>\]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-Renders the input points of the Delaunay triangulation to the specified *context* as circles with the specified *radius*. If *radius* is not specified, it defaults to 2. The specified *context* must implement the *context*.moveTo and *context*.arc methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders the input points of the Delaunay triangulation to the specified *context* as circles with the specified *radius*. If *radius* is not specified, it defaults to 2. The specified *context* must implement the *context*.moveTo and *context*.arc methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
@@ -159,20 +159,20 @@ Returns the index of the cell that contains the specified point ⟨*x*, *y*⟩. 
 
 Returns true if the cell with the specified index *i* contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
-<a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronoi-mesh.png">
 
-Renders the mesh of Voronoi cells to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders the mesh of Voronoi cells to the specified *context*. The specified *context* must implement the *context*.moveTo and *context*.lineTo methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
 
-<a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>(<i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_renderBounds" name="voronoi_renderBounds">#</a> <i>voronoi</i>.<b>renderBounds</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.renderBounds" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronoi-bounds.png">
 
-Renders the viewport extent to the specified *context*. The specified *context* must implement the *context*.rect method from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin).
+Renders the viewport extent to the specified *context*. The specified *context* must implement the *context*.rect method from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). Equivalent to *context*.rect(*voronoi*.xmin, *voronoi*.ymin, *voronoi*.xmax - *voronoi*.xmin, *voronoi*.ymax - *voronoi*.ymin). If a *context* is not specified, an SVG path string is returned instead.
 
-<a href="#voronoi_renderCell" name="voronoi_renderCell">#</a> <i>voronoi</i>.<b>renderCell</b>(<i>i</i>, <i>context</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+<a href="#voronoi_renderCell" name="voronoi_renderCell">#</a> <i>voronoi</i>.<b>renderCell</b>(<i>i</i>[, <i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 <img alt="cell.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/spectral.png">
 
-Renders the cell with the specified index *i* to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods).
+Renders the cell with the specified index *i* to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.

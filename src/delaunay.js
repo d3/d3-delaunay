@@ -1,4 +1,5 @@
 import Delaunator from "delaunator";
+import Path from "./path";
 import Voronoi from "./voronoi.js";
 
 const tau = 2 * Math.PI;
@@ -23,6 +24,7 @@ export default class Delaunay {
     return new Voronoi(this, bounds);
   }
   render(context) {
+    const buffer = context == null ? context = new Path : undefined;
     const {points, halfedges, triangles} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
@@ -33,16 +35,20 @@ export default class Delaunay {
       context.lineTo(points[tj], points[tj + 1]);
     }
     this.renderHull(context);
+    return buffer && buffer.value();
   }
   renderPoints(context, r = 2) {
+    const buffer = context == null ? context = new Path : undefined;
     const {points} = this;
     for (let i = 0, n = points.length; i < n; i += 2) {
       const x = points[i], y = points[i + 1];
       context.moveTo(x + r, y);
       context.arc(x, y, r, 0, tau);
     }
+    return buffer && buffer.value();
   }
   renderHull(context) {
+    const buffer = context == null ? context = new Path : undefined;
     const {points, hull, triangles} = this;
     const n = hull.length;
     let i0, i1 = triangles[hull[n - 1]] * 2;
@@ -51,8 +57,10 @@ export default class Delaunay {
       context.moveTo(points[i0], points[i0 + 1]);
       context.lineTo(points[i1], points[i1 + 1]);
     }
+    return buffer && buffer.value();
   }
   renderTriangle(i, context) {
+    const buffer = context == null ? context = new Path : undefined;
     const {points, triangles} = this;
     const t0 = triangles[i *= 3] * 2;
     const t1 = triangles[i + 1] * 2;
@@ -61,6 +69,7 @@ export default class Delaunay {
     context.lineTo(points[t1], points[t1 + 1]);
     context.lineTo(points[t2], points[t2 + 1]);
     context.closePath();
+    return buffer && buffer.value();
   }
 }
 

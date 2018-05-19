@@ -1,3 +1,5 @@
+import Path from "./path";
+
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
@@ -72,6 +74,7 @@ export default class Voronoi {
     }
   }
   render(context) {
+    const buffer = context == null ? context = new Path : undefined;
     const {delaunay: {halfedges, hull, triangles}, circumcenters, vectors} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
@@ -92,11 +95,15 @@ export default class Voronoi {
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) this._renderSegment(x, y, p[0], p[1], context);
     }
+    return buffer && buffer.value();
   }
   renderBounds(context) {
+    const buffer = context == null ? context = new Path : undefined;
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
+    return buffer && buffer.value();
   }
   renderCell(i, context) {
+    const buffer = context == null ? context = new Path : undefined;
     const points = this._clip(i);
     if (points === null) return;
     context.moveTo(points[0], points[1]);
@@ -104,6 +111,7 @@ export default class Voronoi {
       context.lineTo(points[i], points[i + 1]);
     }
     context.closePath();
+    return buffer && buffer.value();
   }
   _renderSegment(x0, y0, x1, y1, context) {
     let S;
