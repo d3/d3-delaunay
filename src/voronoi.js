@@ -28,13 +28,14 @@ export default class Voronoi {
       } while (j !== i);
 
       if (j !== i) { // Stopped when walking forward; walk backward.
+        const k = halfedges[i % 3 === 0 ? i + 2 : i - 1];
         const e1 = e;
         j = i;
-        while (true) {
+        do {
           j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
           if (j === -1 || triangles[j] !== t) break;
           edges[e++] = Math.floor(j / 3);
-        }
+        } while (j !== k);
         if (e1 < e) {
           edges.subarray(e0, e1).reverse();
           edges.subarray(e0, e).reverse();
