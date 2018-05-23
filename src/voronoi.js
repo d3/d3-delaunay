@@ -116,7 +116,8 @@ export default class Voronoi {
   *cellPolygons() {
     const {delaunay: {points}} = this;
     for (let i = 0, n = points.length / 2; i < n; ++i) {
-      yield this.cellPolygon(i);
+      const cell = this.cellPolygon(i);
+      if (cell) yield cell;
     }
   }
   cellPolygon(i) {
