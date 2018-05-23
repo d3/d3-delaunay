@@ -12,6 +12,6 @@ export default class Polygon {
     this._.push([x, y]);
   }
   value() {
-    return this._;
+    return this._.length ? this._ : null;
   }
 }
