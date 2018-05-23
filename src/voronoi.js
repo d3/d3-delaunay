@@ -22,25 +22,23 @@ export default class Voronoi {
       do { // Walk forward.
         edges[e++] = Math.floor(j / 3);
         j = halfedges[j];
-        if (j === -1) break; // Went off the convex hull.
+        if (j === -1) { // Went off the convex hull; walk backward.
+          const e1 = e;
+          j = i;
+          do {
+            j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
+            if (j === -1 || triangles[j] !== t) break;
+            edges[e++] = Math.floor(j / 3);
+          } while (j !== i);
+          if (e1 < e) {
+            edges.subarray(e0, e1).reverse();
+            edges.subarray(e0, e).reverse();
+          }
+          break;
+        }
         j = j % 3 === 2 ? j - 2 : j + 1;
         if (triangles[j] !== t) break; // Bad triangulation; break early.
       } while (j !== i);
-
-      if (j !== i) { // Stopped when walking forward; walk backward.
-        const k = halfedges[i % 3 === 0 ? i + 2 : i - 1];
-        const e1 = e;
-        j = i;
-        do {
-          j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
-          if (j === -1 || triangles[j] !== t) break;
-          edges[e++] = Math.floor(j / 3);
-        } while (j !== k);
-        if (e1 < e) {
-          edges.subarray(e0, e1).reverse();
-          edges.subarray(e0, e).reverse();
-        }
-      }
 
       index[t * 2 + 1] = e;
     }
