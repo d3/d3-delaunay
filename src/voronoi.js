@@ -264,19 +264,19 @@ export default class Voronoi {
   }
   _edge(i, e0, e1, P, j) {
     while (e0 !== e1) {
-      let cx, cy;
+      let x, y;
       switch (e0) {
         case 0b0101: e0 = 0b0100; continue; // top-left
-        case 0b0100: e0 = 0b0110, cx = this.xmax, cy = this.ymin; break; // top
+        case 0b0100: e0 = 0b0110, x = this.xmax, y = this.ymin; break; // top
         case 0b0110: e0 = 0b0010; continue; // top-right
-        case 0b0010: e0 = 0b1010, cx = this.xmax, cy = this.ymax; break; // right
+        case 0b0010: e0 = 0b1010, x = this.xmax, y = this.ymax; break; // right
         case 0b1010: e0 = 0b1000; continue; // bottom-right
-        case 0b1000: e0 = 0b1001, cx = this.xmin, cy = this.ymax; break; // bottom
+        case 0b1000: e0 = 0b1001, x = this.xmin, y = this.ymax; break; // bottom
         case 0b1001: e0 = 0b0001; continue; // bottom-left
-        case 0b0001: e0 = 0b0101, cx = this.xmin, cy = this.ymin; break; // left
+        case 0b0001: e0 = 0b0101, x = this.xmin, y = this.ymin; break; // left
       }
-      if (this.contains(i, cx, cy)) {
-        P.splice(j, 0, cx, cy), j += 2;
+      if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
+        P.splice(j, 0, x, y), j += 2;
       }
     }
     return j;
