@@ -201,8 +201,8 @@ export default class Voronoi {
     let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
     let c0, c1 = this._regioncode(x1, y1);
     let e0, e1;
-    for (let i = 0; i < n; i += 2) {
-      x0 = x1, y0 = y1, x1 = points[i], y1 = points[i + 1];
+    for (let j = 0; j < n; j += 2) {
+      x0 = x1, y0 = y1, x1 = points[j], y1 = points[j + 1];
       c0 = c1, c1 = this._regioncode(x1, y1);
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
