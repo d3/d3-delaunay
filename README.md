@@ -63,7 +63,7 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-The convex hull as an a Uint32Array [*i0*, *i1*, …] of triangle vertex indexes. For example, to render the exterior edges of the Delaunay triangulation:
+The convex hull as an Uint32Array [*i0*, *i1*, …] of triangle vertex indexes. For example, to render the exterior edges of the Delaunay triangulation:
 
 ```js
 const {hull, triangles} = delaunay;
@@ -133,15 +133,15 @@ The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delau
 
 <a href="#voronoi_edges" name="voronoi_edges">#</a> <i>voronoi</i>.<b>edges</b>
 
-…
+The edges of the Voronoi diagram, as an Uint32Array [*t0*, *t1*, *t2*, …] of Delaunay circumcenters, referenced by the <a href="#voronoi_index">index</a>.
 
 <a href="#voronoi_index" name="voronoi_index">#</a> <i>voronoi</i>.<b>index</b>
 
-…
+The cells of the Voronoi diagram, described as an Uint32Array [*i0*, *j0*, *i1*, *j1*, …]. Each contiguous pair of indices *i*, *j* describes a polygon as a list of *j*-*i* circumcenter references in <a href="#voronoi_edges">edges</a>.
 
 <a href="#voronoi_vectors" name="voronoi_vectors">#</a> <i>voronoi</i>.<b>vectors</b>
 
-…
+An Uint64Array [*vx0*, *vy0*, *wx0*, *wy0*, …] where each non-zero quadruple describes an open (infinite) cell on the outer hull, giving the directions of two open half-lines. 
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
