@@ -165,10 +165,10 @@ export default class Voronoi {
       const t = triangles[e] * 2;
       points.push(circumcenters[t], circumcenters[t + 1]);
       e = e % 3 === 2 ? e - 2 : e + 1;
-      if (triangles[e] !== point) break; // bad triangulation
+      if (triangles[e] !== i) break; // bad triangulation
       e = halfedges[e];
       if (e === -1) {
-        const t = hullIndex[point];
+        const t = hullIndex[i];
         points.push(circumcenters[t], circumcenters[t + 1]);
         break;
       }
