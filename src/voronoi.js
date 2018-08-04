@@ -5,42 +5,24 @@ export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
     const {points, halfedges, hull, triangles} = this.delaunay = delaunay;
+    const halfedgeIndex = this.halfedgeIndex = new Uint32Array(points.length / 2);
+    const hullIndex = this.hullIndex = new Uint32Array(points.length / 2);
     const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
-    const edges = this.edges = new Uint32Array(halfedges.length);
-    const index = this.index = new Uint32Array(points.length);
     const vectors = this.vectors = new Float64Array(points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
 
-    // Compute cell topology.
-    for (let i = 0, e = 0, m = halfedges.length; i < m; ++i) {
-      const t = triangles[i]; // Cell vertex.
-      if (index[t * 2] !== index[t * 2 + 1]) continue; // Already connected.
-      const e0 = index[t * 2] = e;
-      let j = i;
+    // Compute an index from point to halfedge.
+    for (let e = 0, n = halfedges.length; e < n; ++e) {
+      halfedgeIndex[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
+    }
 
-      do { // Walk forward.
-        edges[e++] = Math.floor(j / 3);
-        j = halfedges[j];
-        if (j === -1) { // Went off the convex hull; walk backward.
-          const e1 = e;
-          j = i;
-          do {
-            j = halfedges[j % 3 === 0 ? j + 2 : j - 1];
-            if (j === -1 || triangles[j] !== t) break;
-            edges[e++] = Math.floor(j / 3);
-          } while (j !== i);
-          if (e1 < e) {
-            edges.subarray(e0, e1).reverse();
-            edges.subarray(e0, e).reverse();
-          }
-          break;
-        }
-        j = j % 3 === 2 ? j - 2 : j + 1;
-        if (triangles[j] !== t) break; // Bad triangulation; break early.
-      } while (j !== i);
-
-      index[t * 2 + 1] = e;
+    // For points on the hull, index the incoming halfedge,
+    // and compute an index from hull point to the next hull point.
+    for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
+      i0 = i1, i1 = hull[i];
+      halfedgeIndex[triangles[i1]] = i0;
+      hullIndex[triangles[i0]] = triangles[i1];
     }
 
     // Compute circumcenters.
@@ -137,54 +119,60 @@ export default class Voronoi {
       context.lineTo(S[2], S[3]);
     }
   }
-  contains(i, x, y) {
-    if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
-    return this._step(i, x, y) === i;
-  }
-  find(x, y, i = 0) {
-    if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
-    let c;
-    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
-    return c;
-  }
-  _step(i, x, y) {
-    const {delaunay: {points, triangles}, edges, index} = this;
-    if (points.length === 0) return -1; // Empty triangulation.
-    const j0 = index[i * 2];
-    const j1 = index[i * 2 + 1];
-    if (j0 === j1) return -1; // Coincident point.
-    let c = i, k = edges[j0] * 3;
-    let dc = (x - points[c * 2]) ** 2 + (y - points[c * 2 + 1]) ** 2;
-    switch (i) { // Test previous point on triangle (for hull).
-      case triangles[k]: k = triangles[k + 2]; break;
-      case triangles[k + 1]: k = triangles[k]; break;
-      case triangles[k + 2]: k = triangles[k + 1]; break;
-    }
-    let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-    if (dk < dc) dc = dk, c = k;
-    for (let j = j0; j < j1; ++j) {
-      k = edges[j] * 3;
-      switch (i) { // Test next point on triangle.
-        case triangles[k]: k = triangles[k + 1]; break;
-        case triangles[k + 1]: k = triangles[k + 2]; break;
-        case triangles[k + 2]: k = triangles[k]; break;
-      }
-      dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-      if (dk < dc) dc = dk, c = k;
-    }
-    return c;
-  }
+  // contains(i, x, y) {
+  //   if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
+  //   return this._step(i, x, y) === i;
+  // }
+  // find(x, y, i = 0) {
+  //   if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+  //   let c;
+  //   while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+  //   return c;
+  // }
+  // _step(i, x, y) {
+  //   const {delaunay: {points, triangles}, edges, index} = this;
+  //   if (points.length === 0) return -1; // Empty triangulation.
+  //   const j0 = index[i * 2];
+  //   const j1 = index[i * 2 + 1];
+  //   if (j0 === j1) return -1; // Coincident point.
+  //   let c = i, k = edges[j0] * 3;
+  //   let dc = (x - points[c * 2]) ** 2 + (y - points[c * 2 + 1]) ** 2;
+  //   switch (i) { // Test previous point on triangle (for hull).
+  //     case triangles[k]: k = triangles[k + 2]; break;
+  //     case triangles[k + 1]: k = triangles[k]; break;
+  //     case triangles[k + 2]: k = triangles[k + 1]; break;
+  //   }
+  //   let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+  //   if (dk < dc) dc = dk, c = k;
+  //   for (let j = j0; j < j1; ++j) {
+  //     k = edges[j] * 3;
+  //     switch (i) { // Test next point on triangle.
+  //       case triangles[k]: k = triangles[k + 1]; break;
+  //       case triangles[k + 1]: k = triangles[k + 2]; break;
+  //       case triangles[k + 2]: k = triangles[k]; break;
+  //     }
+  //     dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
+  //     if (dk < dc) dc = dk, c = k;
+  //   }
+  //   return c;
+  // }
   _cell(i) {
-    const {index, edges, circumcenters} = this;
-    const t0 = index[i * 2];
-    const t1 = index[i * 2 + 1];
-    if (t0 === t1) return null;
-    const points = new Float64Array((t1 - t0) * 2);
-    for (let t = t0, j = 0; t < t1; ++t, j += 2) {
-      const ti = edges[t] * 2;
-      points[j] = circumcenters[ti];
-      points[j + 1] = circumcenters[ti + 1];
-    }
+    const {halfedgeIndex, hullIndex, circumcenters, delaunay: {halfedges, triangles}} = this;
+    const e0 = halfedgeIndex[i];
+    const points = [];
+    let e = e0;
+    do {
+      const t = triangles[e] * 2;
+      points.push(circumcenters[t], circumcenters[t + 1]);
+      e = e % 3 === 2 ? e - 2 : e + 1;
+      if (triangles[e] !== point) break; // bad triangulation
+      e = halfedges[e];
+      if (e === -1) {
+        const t = hullIndex[point];
+        points.push(circumcenters[t], circumcenters[t + 1]);
+        break;
+      }
+    } while (e !== e0);
     return points;
   }
   _clip(i) {
