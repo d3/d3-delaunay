@@ -5,8 +5,8 @@ export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
     const {points, halfedges, hull, triangles} = this.delaunay = delaunay;
-    const halfedgeIndex = this.halfedgeIndex = new Uint32Array(points.length / 2);
-    const hullIndex = this.hullIndex = new Uint32Array(points.length / 2);
+    const halfedgeIndex = this.halfedgeIndex = new Int32Array(points.length / 2).fill(-1);
+    const hullIndex = this.hullIndex = new Int32Array(points.length / 2).fill(-1);
     const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
     const vectors = this.vectors = new Float64Array(points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
@@ -131,16 +131,14 @@ export default class Voronoi {
   }
   _step(i, x, y) {
     const {delaunay: {points, halfedges, triangles}, halfedgeIndex, hullIndex} = this;
-    if (points.length === 0) return -1; // empty triangulation
     const e0 = halfedgeIndex[i];
+    if (e0 === -1) return -1; // coincident point
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     let e = e0;
-    let k = 0;
     do {
       const t = triangles[e];
       const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
-      ++k;
       if (dt < dc) dc = dt, c = t;
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
@@ -148,16 +146,16 @@ export default class Voronoi {
       if (e === -1) {
         const t = hullIndex[triangles[i]];
         const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
-        ++k;
         if (dt < dc) dc = dt, c = t;
         break;
       }
     } while (e !== e0);
-    return k < 2 ? -1 : c; // possible coincident point
+    return c;
   }
   _cell(i) {
     const {halfedgeIndex, hullIndex, circumcenters, delaunay: {halfedges, triangles}} = this;
     const e0 = halfedgeIndex[i];
+    if (e0 === -1) return null; // coincident point
     const points = [];
     let e = e0;
     do {
@@ -168,11 +166,11 @@ export default class Voronoi {
       e = halfedges[e];
       if (e === -1) {
         const t = Math.floor(hullIndex[i] / 3);
-        points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
+        if (t !== Math.floor(e0 / 3)) points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
         break;
       }
     } while (e !== e0);
-    return points.length > 2 ? points : null; // possible coincident point
+    return points;
   }
   _clip(i) {
     const points = this._cell(i);
@@ -194,7 +192,7 @@ export default class Voronoi {
       c0 = c1, c1 = this._regioncode(x1, y1);
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
-        if (P) (x1 !== x0 || y1 !== y0) && P.push(x1, y1);
+        if (P) P.push(x1, y1);
         else P = [x1, y1];
       } else {
         let S, sx0, sy0, sx1, sy1;
