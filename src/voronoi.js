@@ -17,8 +17,7 @@ export default class Voronoi {
       halfedgeIndex[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
     }
 
-    // For points on the hull, index the incoming halfedge,
-    // and compute an index from hull point to the next hull point.
+    // For points on the hull, index both the incoming and outgoing halfedges.
     for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
       i0 = i1, i1 = hull[i];
       halfedgeIndex[triangles[i1]] = i0;
