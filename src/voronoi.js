@@ -22,7 +22,7 @@ export default class Voronoi {
     for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
       i0 = i1, i1 = hull[i];
       halfedgeIndex[triangles[i1]] = i0;
-      hullIndex[triangles[i0]] = triangles[i1];
+      hullIndex[triangles[i0]] = i1;
     }
 
     // Compute circumcenters.
@@ -119,61 +119,60 @@ export default class Voronoi {
       context.lineTo(S[2], S[3]);
     }
   }
-  // contains(i, x, y) {
-  //   if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
-  //   return this._step(i, x, y) === i;
-  // }
-  // find(x, y, i = 0) {
-  //   if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
-  //   let c;
-  //   while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
-  //   return c;
-  // }
-  // _step(i, x, y) {
-  //   const {delaunay: {points, triangles}, edges, index} = this;
-  //   if (points.length === 0) return -1; // Empty triangulation.
-  //   const j0 = index[i * 2];
-  //   const j1 = index[i * 2 + 1];
-  //   if (j0 === j1) return -1; // Coincident point.
-  //   let c = i, k = edges[j0] * 3;
-  //   let dc = (x - points[c * 2]) ** 2 + (y - points[c * 2 + 1]) ** 2;
-  //   switch (i) { // Test previous point on triangle (for hull).
-  //     case triangles[k]: k = triangles[k + 2]; break;
-  //     case triangles[k + 1]: k = triangles[k]; break;
-  //     case triangles[k + 2]: k = triangles[k + 1]; break;
-  //   }
-  //   let dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-  //   if (dk < dc) dc = dk, c = k;
-  //   for (let j = j0; j < j1; ++j) {
-  //     k = edges[j] * 3;
-  //     switch (i) { // Test next point on triangle.
-  //       case triangles[k]: k = triangles[k + 1]; break;
-  //       case triangles[k + 1]: k = triangles[k + 2]; break;
-  //       case triangles[k + 2]: k = triangles[k]; break;
-  //     }
-  //     dk = (x - points[k * 2]) ** 2 + (y - points[k * 2 + 1]) ** 2;
-  //     if (dk < dc) dc = dk, c = k;
-  //   }
-  //   return c;
-  // }
+  contains(i, x, y) {
+    if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
+    return this._step(i, x, y) === i;
+  }
+  find(x, y, i = 0) {
+    if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    let c;
+    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+    return c;
+  }
+  _step(i, x, y) {
+    const {delaunay: {points, halfedges, triangles}, halfedgeIndex, hullIndex} = this;
+    if (points.length === 0) return -1; // empty triangulation
+    const e0 = halfedgeIndex[i];
+    let c = i;
+    let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+    let e = e0;
+    let k = 0;
+    do {
+      const t = triangles[e];
+      const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+      ++k;
+      if (dt < dc) dc = dt, c = t;
+      e = e % 3 === 2 ? e - 2 : e + 1;
+      if (triangles[e] !== i) break; // bad triangulation
+      e = halfedges[e];
+      if (e === -1) {
+        const t = hullIndex[triangles[i]];
+        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+        ++k;
+        if (dt < dc) dc = dt, c = t;
+        break;
+      }
+    } while (e !== e0);
+    return k < 2 ? -1 : c; // possible coincident point
+  }
   _cell(i) {
     const {halfedgeIndex, hullIndex, circumcenters, delaunay: {halfedges, triangles}} = this;
     const e0 = halfedgeIndex[i];
     const points = [];
     let e = e0;
     do {
-      const t = triangles[e] * 2;
-      points.push(circumcenters[t], circumcenters[t + 1]);
+      const t = Math.floor(e / 3);
+      points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
       e = halfedges[e];
       if (e === -1) {
-        const t = hullIndex[i];
-        points.push(circumcenters[t], circumcenters[t + 1]);
+        const t = Math.floor(hullIndex[i] / 3);
+        points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
         break;
       }
     } while (e !== e0);
-    return points;
+    return points.length > 2 ? points : null; // possible coincident point
   }
   _clip(i) {
     const points = this._cell(i);
@@ -195,7 +194,7 @@ export default class Voronoi {
       c0 = c1, c1 = this._regioncode(x1, y1);
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
-        if (P) P.push(x1, y1);
+        if (P) (x1 !== x0 || y1 !== y0) && P.push(x1, y1);
         else P = [x1, y1];
       } else {
         let S, sx0, sy0, sx1, sy1;
