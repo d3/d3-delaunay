@@ -58,15 +58,15 @@ tape("delaunay.voronoi([xmin, ymin, xmax, ymax]) uses the specified bounds", tes
 tape("delaunay.voronoi() returns the expected diagram", test => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi();
   test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5, 0.5, 0.5));
-  // test.deepEqual(voronoi.edges, Uint32Array.of(0, 0, 1, 1, 0, 1));
-  // test.deepEqual(voronoi.index, Uint32Array.of(0, 1, 3, 5, 1, 3, 5, 6));
+  test.deepEqual(voronoi.halfedgeIndex, Int32Array.of(2, 4, 0, 3));
+  test.deepEqual(voronoi.hullIndex, Int32Array.of(3, 0, 4, 2));
   test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, 1, 0));
 });
 
 tape("delaunay.voronoi() skips cells for coincident points", test => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
   test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5));
-  // test.deepEqual(voronoi.edges, Uint32Array.of(0, 0, 0));
-  // test.deepEqual(voronoi.index, Uint32Array.of(0, 1, 2, 3, 1, 2, 0, 0));
+  test.deepEqual(voronoi.halfedgeIndex, Int32Array.of(2, 1, 0, -1));
+  test.deepEqual(voronoi.hullIndex, Int32Array.of(1, 0, 2, -1));
   test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, 0, 0, 0));
 });

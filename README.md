@@ -127,21 +127,21 @@ Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_po
 
 The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
+<a href="#voronoi_halfedgeIndex" name="voronoi_halfedgeIndex">#</a> <i>voronoi</i>.<b>halfedgeIndex</b>
+
+…
+
+<a href="#voronoi_hullIndex" name="voronoi_hullIndex">#</a> <i>voronoi</i>.<b>hullIndex</b>
+
+…
+
 <a href="#voronoi_circumcenters" name="voronoi_circumcenters">#</a> <i>voronoi</i>.<b>circumcenters</b>
 
 The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delaunay triangles as a Float64Array [*cx0*, *cy0*, *cx1*, *cy1*, …]. Each contiguous pair of coordinates *cx*, *cy* is the circumcenter for the corresponding triangle. These circumcenters form the coordinates of the Voronoi cell polygons.
 
-<a href="#voronoi_edges" name="voronoi_edges">#</a> <i>voronoi</i>.<b>edges</b>
-
-The edges of the Voronoi diagram, as an Uint32Array [*t0*, *t1*, *t2*, …] of Delaunay circumcenters, referenced by the <a href="#voronoi_index">index</a>.
-
-<a href="#voronoi_index" name="voronoi_index">#</a> <i>voronoi</i>.<b>index</b>
-
-The cells of the Voronoi diagram, described as an Uint32Array [*i0*, *j0*, *i1*, *j1*, …]. Each contiguous pair of indices *i*, *j* describes a polygon as a list of *j*-*i* circumcenter references in <a href="#voronoi_edges">edges</a>.
-
 <a href="#voronoi_vectors" name="voronoi_vectors">#</a> <i>voronoi</i>.<b>vectors</b>
 
-An Uint64Array [*vx0*, *vy0*, *wx0*, *wy0*, …] where each non-zero quadruple describes an open (infinite) cell on the outer hull, giving the directions of two open half-lines. 
+An Uint64Array [*vx0*, *vy0*, *wx0*, *wy0*, …] where each non-zero quadruple describes an open (infinite) cell on the outer hull, giving the directions of two open half-lines.
 
 <a href="#voronoi_xmin" name="voronoi_xmin">#</a> <i>voronoi</i>.<b>xmin</b><br>
 <a href="#voronoi_ymin" name="voronoi_ymin">#</a> <i>voronoi</i>.<b>ymin</b><br>
