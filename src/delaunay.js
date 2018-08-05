@@ -1,6 +1,6 @@
 import Delaunator from "delaunator";
-import Path from "./path";
-import Polygon from "./polygon";
+import Path from "./path.js";
+import Polygon from "./polygon.js";
 import Voronoi from "./voronoi.js";
 
 const tau = 2 * Math.PI;

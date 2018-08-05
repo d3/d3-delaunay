@@ -1,5 +1,5 @@
-import Path from "./path";
-import Polygon from "./polygon";
+import Path from "./path.js";
+import Polygon from "./polygon.js";
 
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
