@@ -60,7 +60,7 @@ export default class Delaunay {
       if (triangles[e] !== i) break; // bad triangulation
       e = halfedges[e];
       if (e === -1) {
-        const t = outedges[triangles[i]];
+        const t = triangles[outedges[i]];
         const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
         if (dt < dc) dc = dt, c = t;
         break;
