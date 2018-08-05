@@ -63,18 +63,7 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-The convex hull as an Uint32Array [*i0*, *i1*, …] of triangle vertex indexes. For example, to render the exterior edges of the Delaunay triangulation:
-
-```js
-const {hull, triangles} = delaunay;
-const n = hull.length;
-let i0, i1 = triangles[hull[n - 1]] * 2;
-for (let i = 0; i < n; ++i) {
-  i0 = i1, i1 = triangles[hull[i]] * 2;
-  context.moveTo(points[i0], points[i0 + 1]);
-  context.lineTo(points[i1], points[i1 + 1]);
-}
-```
+TODO …
 
 See also [*delaunay*.renderHull](#delaunay_renderHull).
 
@@ -94,6 +83,18 @@ context.closePath();
 ```
 
 See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
+
+<a href="#delaunay_inedges" name="delaunay_inedges">#</a> <i>delaunay</i>.<b>inedges</b>
+
+TODO …
+
+<a href="#delaunay_outedges" name="delaunay_outedges">#</a> <i>delaunay</i>.<b>outedges</b>
+
+TODO …
+
+<a href="#delaunay_find" name="delaunay_find">#</a> <i>delaunay</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns the index of the input point that is closest to the specified point ⟨*x*, *y*⟩. The search is started at the specified point *i*. If *i* is not specified, it defaults to zero.
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
@@ -127,14 +128,6 @@ Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_po
 
 The Voronoi diagram’s associated [Delaunay triangulation](#delaunay).
 
-<a href="#voronoi_halfedgeIndex" name="voronoi_halfedgeIndex">#</a> <i>voronoi</i>.<b>halfedgeIndex</b>
-
-…
-
-<a href="#voronoi_hullIndex" name="voronoi_hullIndex">#</a> <i>voronoi</i>.<b>hullIndex</b>
-
-…
-
 <a href="#voronoi_circumcenters" name="voronoi_circumcenters">#</a> <i>voronoi</i>.<b>circumcenters</b>
 
 The [circumcenters](http://mathworld.wolfram.com/Circumcenter.html) of the Delaunay triangles as a Float64Array [*cx0*, *cy0*, *cx1*, *cy1*, …]. Each contiguous pair of coordinates *cx*, *cy* is the circumcenter for the corresponding triangle. These circumcenters form the coordinates of the Voronoi cell polygons.
@@ -149,10 +142,6 @@ An Uint64Array [*vx0*, *vy0*, *wx0*, *wy0*, …] where each non-zero quadruple d
 <a href="#voronoi_ymax" name="voronoi_ymax">#</a> <i>voronoi</i>.<b>ymax</b><br>
 
 The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Voronoi diagram. These values only affect the rendering methods ([*voronoi*.render](#voronoi_render), [*voronoi*.renderBounds](#voronoi_renderBounds), [*cell*.render](#cell_render)).
-
-<a href="#voronoi_find" name="voronoi_find">#</a> <i>voronoi</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
-
-Returns the index of the cell that contains the specified point ⟨*x*, *y*⟩. The search is started at the specified point *i*. If *i* is not specified, it defaults to zero. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
 <a href="#voronoi_contains" name="voronoi_contains">#</a> <i>voronoi</i>.<b>contains</b>(<i>i</i>, <i>x</i>, <i>y</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/cell.js "Source")
 

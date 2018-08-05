@@ -34,11 +34,15 @@ export default class Voronoi {
     }
 
     // Compute exterior cell rays.
-    for (let n = hull.length, p0, x0, y0, p1 = triangles[hull[n - 1]] * 2, x1 = points[p1], y1 = points[p1 + 1], i = 0; i < n; ++i) {
-      p0 = p1, x0 = x1, y0 = y1, p1 = triangles[hull[i]] * 2, x1 = points[p1], y1 = points[p1 + 1];
-      vectors[p0 * 2 + 2] = vectors[p1 * 2] = y0 - y1;
-      vectors[p0 * 2 + 3] = vectors[p1 * 2 + 1] = x1 - x0;
-    }
+    let node = hull;
+    let p0, p1 = node.i * 2;
+    let x0, x1 = node.x;
+    let y0, y1 = node.y;
+    do {
+      node = node.next, p0 = p1, x0 = x1, y0 = y1, p1 = node.i * 4, x1 = node.x, y1 = node.y;
+      vectors[p0 + 2] = vectors[p1] = y0 - y1;
+      vectors[p0 + 3] = vectors[p1 + 1] = x1 - x0;
+    } while (node !== hull);
   }
   render(context) {
     const buffer = context == null ? context = new Path : undefined;
@@ -54,14 +58,16 @@ export default class Voronoi {
       const yj = circumcenters[tj + 1];
       this._renderSegment(xi, yi, xj, yj, context);
     }
-    for (let i = 0, n = hull.length; i < n; ++i) {
-      const t = Math.floor(hull[i] / 3) * 2;
+    let node = hull;
+    do {
+      node = node.next;
+      const t = Math.floor(node.t / 3) * 2;
       const x = circumcenters[t];
       const y = circumcenters[t + 1];
-      const v = triangles[hull[i]] * 4;
+      const v = node.i * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) this._renderSegment(x, y, p[0], p[1], context);
-    }
+    } while (node !== hull);
     return buffer && buffer.value();
   }
   renderBounds(context) {

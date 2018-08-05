@@ -15,11 +15,11 @@ function pointY(p) {
 
 export default class Delaunay {
   constructor(points) {
-    const {halfedges, hull: node, triangles} = new Delaunator(points);
+    const {halfedges, hull, triangles} = new Delaunator(points);
     this.points = points;
     this.halfedges = halfedges;
+    this.hull = hull;
     this.triangles = triangles;
-    const hull = this.hull = Uint32Array.from(hullIterable(node));
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
     const outedges = this.outedges = new Int32Array(points.length / 2).fill(-1);
 
@@ -29,11 +29,12 @@ export default class Delaunay {
     }
 
     // For points on the hull, index both the incoming and outgoing halfedges.
-    for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
-      i0 = i1, i1 = hull[i];
-      inedges[triangles[i1]] = i0;
-      outedges[triangles[i0]] = i1;
-    }
+    let node0, node1 = hull;
+    do {
+      node0 = node1, node1 = node1.next;
+      inedges[node1.i] = node0.t;
+      outedges[node0.i] = node1.t;
+    } while (node1 !== hull);
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
@@ -93,14 +94,11 @@ export default class Delaunay {
   }
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
-    const {points, hull, triangles} = this;
-    const n = hull.length;
-    let i0, i1 = triangles[hull[n - 1]] * 2;
-    for (let i = 0; i < n; ++i) {
-      i0 = i1, i1 = triangles[hull[i]] * 2;
-      context.moveTo(points[i0], points[i0 + 1]);
-      context.lineTo(points[i1], points[i1 + 1]);
-    }
+    const {hull} = this;
+    let node = hull;
+    context.moveTo(node.x, node.y);
+    while (node = node.next, node !== hull) context.lineTo(node.x, node.y);
+    context.closePath();
     return buffer && buffer.value();
   }
   hullPolygon() {
@@ -157,10 +155,4 @@ function* flatIterable(points, fx, fy, that) {
     yield fy.call(that, p, i, points);
     ++i;
   }
-}
-
-function* hullIterable(hull) {
-  let node = hull;
-  do yield node.t;
-  while ((node = node.next) !== hull);
 }
