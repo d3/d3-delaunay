@@ -115,7 +115,7 @@ export default class Voronoi {
     return this.delaunay._step(i, x, y) === i;
   }
   _cell(i) {
-    const {circumcenters, delaunay: {inedges, outedges, halfedges, triangles}} = this;
+    const {circumcenters, delaunay: {inedges, halfedges, triangles}} = this;
     const e0 = inedges[i];
     if (e0 === -1) return null; // coincident point
     const points = [];
@@ -126,12 +126,7 @@ export default class Voronoi {
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
       e = halfedges[e];
-      if (e === -1) {
-        const t = Math.floor(outedges[i] / 3);
-        if (t !== Math.floor(e0 / 3)) points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
-        break;
-      }
-    } while (e !== e0);
+    } while (e !== e0 && e !== -1);
     return points;
   }
   _clip(i) {
