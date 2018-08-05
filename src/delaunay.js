@@ -23,7 +23,7 @@ export default class Delaunay {
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
     const outedges = this.outedges = new Int32Array(points.length / 2).fill(-1);
 
-    // Compute an index from point to halfedge.
+    // Compute an index from each point to an (arbitrary) incoming halfedge.
     for (let e = 0, n = halfedges.length; e < n; ++e) {
       inedges[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
     }
