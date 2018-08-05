@@ -35,7 +35,7 @@ export default class Voronoi {
 
     // Compute exterior cell rays.
     let node = hull;
-    let p0, p1 = node.i * 2;
+    let p0, p1 = node.i * 4;
     let x0, x1 = node.x;
     let y0, y1 = node.y;
     do {
