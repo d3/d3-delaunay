@@ -15,14 +15,57 @@ function pointY(p) {
 
 export default class Delaunay {
   constructor(points) {
-    const {halfedges, hull, triangles} = new Delaunator(points);
+    const {halfedges, hull: node, triangles} = new Delaunator(points);
     this.points = points;
     this.halfedges = halfedges;
-    this.hull = Uint32Array.from(hullIterable(hull));
     this.triangles = triangles;
+    const hull = this.hull = Uint32Array.from(hullIterable(node));
+    const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
+    const outedges = this.outedges = new Int32Array(points.length / 2).fill(-1);
+
+    // Compute an index from point to halfedge.
+    for (let e = 0, n = halfedges.length; e < n; ++e) {
+      inedges[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
+    }
+
+    // For points on the hull, index both the incoming and outgoing halfedges.
+    for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
+      i0 = i1, i1 = hull[i];
+      inedges[triangles[i1]] = i0;
+      outedges[triangles[i0]] = i1;
+    }
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
+  }
+  find(x, y, i = 0) {
+    if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    let c;
+    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+    return c;
+  }
+  _step(i, x, y) {
+    const {points, halfedges, triangles, inedges, outedges} = this;
+    const e0 = inedges[i];
+    if (e0 === -1) return -1; // coincident point
+    let c = i;
+    let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+    let e = e0;
+    do {
+      const t = triangles[e];
+      const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+      if (dt < dc) dc = dt, c = t;
+      e = e % 3 === 2 ? e - 2 : e + 1;
+      if (triangles[e] !== i) break; // bad triangulation
+      e = halfedges[e];
+      if (e === -1) {
+        const t = outedges[triangles[i]];
+        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+        if (dt < dc) dc = dt, c = t;
+        break;
+      }
+    } while (e !== e0);
+    return c;
   }
   render(context) {
     const buffer = context == null ? context = new Path : undefined;

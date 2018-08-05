@@ -4,25 +4,11 @@ import Polygon from "./polygon";
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
-    const {points, halfedges, hull, triangles} = this.delaunay = delaunay;
-    const halfedgeIndex = this.halfedgeIndex = new Int32Array(points.length / 2).fill(-1);
-    const hullIndex = this.hullIndex = new Int32Array(points.length / 2).fill(-1);
+    const {points, hull, triangles} = this.delaunay = delaunay;
     const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
     const vectors = this.vectors = new Float64Array(points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
-
-    // Compute an index from point to halfedge.
-    for (let e = 0, n = halfedges.length; e < n; ++e) {
-      halfedgeIndex[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
-    }
-
-    // For points on the hull, index both the incoming and outgoing halfedges.
-    for (let i = 0, n = hull.length, i0, i1 = hull[n - 1]; i < n; ++i) {
-      i0 = i1, i1 = hull[i];
-      halfedgeIndex[triangles[i1]] = i0;
-      hullIndex[triangles[i0]] = i1;
-    }
 
     // Compute circumcenters.
     for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
@@ -120,40 +106,11 @@ export default class Voronoi {
   }
   contains(i, x, y) {
     if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
-    return this._step(i, x, y) === i;
-  }
-  find(x, y, i = 0) {
-    if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
-    let c;
-    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
-    return c;
-  }
-  _step(i, x, y) {
-    const {delaunay: {points, halfedges, triangles}, halfedgeIndex, hullIndex} = this;
-    const e0 = halfedgeIndex[i];
-    if (e0 === -1) return -1; // coincident point
-    let c = i;
-    let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
-    let e = e0;
-    do {
-      const t = triangles[e];
-      const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
-      if (dt < dc) dc = dt, c = t;
-      e = e % 3 === 2 ? e - 2 : e + 1;
-      if (triangles[e] !== i) break; // bad triangulation
-      e = halfedges[e];
-      if (e === -1) {
-        const t = hullIndex[triangles[i]];
-        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
-        if (dt < dc) dc = dt, c = t;
-        break;
-      }
-    } while (e !== e0);
-    return c;
+    return this.delaunay._step(i, x, y) === i;
   }
   _cell(i) {
-    const {halfedgeIndex, hullIndex, circumcenters, delaunay: {halfedges, triangles}} = this;
-    const e0 = halfedgeIndex[i];
+    const {circumcenters, delaunay: {inedges, outedges, halfedges, triangles}} = this;
+    const e0 = inedges[i];
     if (e0 === -1) return null; // coincident point
     const points = [];
     let e = e0;
@@ -164,7 +121,7 @@ export default class Voronoi {
       if (triangles[e] !== i) break; // bad triangulation
       e = halfedges[e];
       if (e === -1) {
-        const t = Math.floor(hullIndex[i] / 3);
+        const t = Math.floor(outedges[i] / 3);
         if (t !== Math.floor(e0 / 3)) points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
         break;
       }
