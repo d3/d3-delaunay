@@ -52,10 +52,10 @@ const {points, halfedges, triangles} = delaunay;
 for (let i = 0, n = halfedges.length; i < n; ++i) {
   const j = halfedges[i];
   if (j < i) continue;
-  const ti = triangles[i] * 2;
-  const tj = triangles[j] * 2;
-  context.moveTo(points[ti], points[ti + 1]);
-  context.lineTo(points[tj], points[tj + 1]);
+  const ti = triangles[i];
+  const tj = triangles[j];
+  context.moveTo(points[ti * 2], points[ti * 2 + 1]);
+  context.lineTo(points[tj * 2], points[tj * 2 + 1]);
 }
 ```
 
@@ -63,7 +63,14 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-TODO …
+An arbitrary *node* on the convex hull. The convex hull is represented as a linked list of nodes, which each *node* being an object with the following properties:
+
+* *node*.i - the index of the associated point
+* *node*.x - the *x*-coordinate of the associated point
+* *node*.y - the *y*-coordinate of the associated point
+* *node*.t - the index of the (incoming or outgoing?) associated halfedge
+* *node*.next - the next *node* on the hull
+* *node*.prev - the previous *node* on the hull
 
 See also [*delaunay*.renderHull](#delaunay_renderHull).
 
@@ -73,12 +80,12 @@ The triangle vertex indexes as an Int32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*
 
 ```js
 const {points, triangles} = delaunay;
-const t0 = triangles[i * 3 + 0] * 2;
-const t1 = triangles[i * 3 + 1] * 2;
-const t2 = triangles[i * 3 + 2] * 2;
-context.moveTo(points[t0], points[t0 + 1]);
-context.lineTo(points[t1], points[t1 + 1]);
-context.lineTo(points[t2], points[t2 + 1]);
+const t0 = triangles[i * 3 + 0];
+const t1 = triangles[i * 3 + 1];
+const t2 = triangles[i * 3 + 2];
+context.moveTo(points[t0 * 2], points[t0 * 2 + 1]);
+context.lineTo(points[t1 * 2], points[t1 * 2 + 1]);
+context.lineTo(points[t2 * 2], points[t2 * 2 + 1]);
 context.closePath();
 ```
 
@@ -86,15 +93,19 @@ See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 <a href="#delaunay_inedges" name="delaunay_inedges">#</a> <i>delaunay</i>.<b>inedges</b>
 
-TODO …
+An incoming halfedge index for each point. For points on the convex hull, the incoming halfedge is also on the convex hull. TODO …
 
 <a href="#delaunay_outedges" name="delaunay_outedges">#</a> <i>delaunay</i>.<b>outedges</b>
 
-TODO …
+The outgoing halfedge index for each point on the convex hull. TODO …
 
 <a href="#delaunay_find" name="delaunay_find">#</a> <i>delaunay</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the index of the input point that is closest to the specified point ⟨*x*, *y*⟩. The search is started at the specified point *i*. If *i* is not specified, it defaults to zero.
+
+<a href="#delaunay_neighbors" name="delaunay_neighbors">#</a> <i>delaunay</i>.<b>neighbors</b>(<i>i</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns an iterable over the indexes of the neighboring points to the specified point *i*. The iterable is empty if *i* is a coincident point.
 
 <a href="#delaunay_render" name="delaunay_render">#</a> <i>delaunay</i>.<b>render</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
@@ -117,6 +128,18 @@ Renders triangle *i* of the Delaunay triangulation to the specified *context*. T
 <a href="#delaunay_renderPoints" name="delaunay_renderPoints">#</a> <i>delaunay</i>.<b>renderPoints</b>(\[<i>context</i>\]\[, <i>radius</i>\]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Renders the input points of the Delaunay triangulation to the specified *context* as circles with the specified *radius*. If *radius* is not specified, it defaults to 2. The specified *context* must implement the *context*.moveTo and *context*.arc methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
+
+<a href="#delaunay_hullPolygon" name="delaunay_hullPolygon">#</a> <i>delaunay</i>.<b>hullPolygon()</b> [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns the closed polygon [[*x0*, *y0*], [*x1*, *y1*], …, [*x0*, *y0*]] representing the convex hull.
+
+<a href="#delaunay_trianglePolygons" name="delaunay_trianglePolygons">#</a> <i>delaunay</i>.<b>trianglePolygons()</b> [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns an iterable over the [polygons for each triangle](#delaunay_trianglePolygon), in order.
+
+<a href="#delaunay_trianglePolygon" name="delaunay_trianglePolygon">#</a> <i>delaunay</i>.<b>trianglePolygon(<i>i</i>)</b> [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Returns the closed polygon [[*x0*, *y0*], [*x1*, *y1*], [*x2*, *y2*], [*x0*, *y0*]] representing the triangle *i*.
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
@@ -164,3 +187,11 @@ Renders the viewport extent to the specified *context*. The specified *context* 
 <img alt="cell.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/spectral.png">
 
 Renders the cell with the specified index *i* to the specified *context*. The specified *context* must implement the *context*.moveTo , *context*.lineTo and *context*.closePath methods from the [CanvasPathMethods API](https://www.w3.org/TR/2dcontext/#canvaspathmethods). If a *context* is not specified, an SVG path string is returned instead.
+
+<a href="#voronoi_cellPolygons" name="voronoi_cellPolygons">#</a> <i>voronoi</i>.<b>cellPolygons</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+
+Returns an iterable over the [polygons for each cell](#voronoi_cellPolygon), in order.
+
+<a href="#voronoi_cellPolygon" name="voronoi_cellPolygon">#</a> <i>voronoi</i>.<b>cellPolygon</b>(<i>i</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+
+Returns the convex, closed polygon [[*x0*, *y0*], [*x1*, *y1*], …, [*x0*, *y0*]] representing the cell for the specified point *i*.
