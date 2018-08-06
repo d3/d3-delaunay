@@ -45,7 +45,7 @@ The coordinates of the points as an array [*x0*, *y0*, *x1*, *y1*, …]. Typical
 
 <a href="#delaunay_halfedges" name="delaunay_halfedges">#</a> <i>delaunay</i>.<b>halfedges</b>
 
-The half-edge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a half-edge from triangle vertex *j* = *halfedges*[*i*] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*j* / 3⌋. If *j* is negative, then triangle ⌊*i* / 3⌋ is an exterior triangle on the [convex hull](#delaunay_hull). For example, to render the internal edges of the Delaunay triangulation:
+The halfedge indexes as an Int32Array [*j0*, *j1*, …]. For each index 0 ≤ *i* < *halfedges*.length, there is a halfedge from triangle vertex *j* = *halfedges*[*i*] to triangle vertex *i*. Equivalently, this means that triangle ⌊*i* / 3⌋ is adjacent to triangle ⌊*j* / 3⌋. If *j* is negative, then triangle ⌊*i* / 3⌋ is an exterior triangle on the [convex hull](#delaunay_hull). For example, to render the internal edges of the Delaunay triangulation:
 
 ```js
 const {points, halfedges, triangles} = delaunay;
@@ -76,7 +76,7 @@ See also [*delaunay*.renderHull](#delaunay_renderHull).
 
 <a href="#delaunay_triangles" name="delaunay_triangles">#</a> <i>delaunay</i>.<b>triangles</b>
 
-The triangle vertex indexes as an Int32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*, …]. Each contiguous triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
+The triangle vertex indexes as an Uint32Array [*i0*, *j0*, *k0*, *i1*, *j1*, *k1*, …]. Each contiguous triplet of indexes *i*, *j*, *k* forms a counterclockwise triangle. The coordinates of the triangle’s points can be found by going through [*delaunay*.points](#delaunay_points). For example, to render triangle *i*:
 
 ```js
 const {points, triangles} = delaunay;
@@ -93,11 +93,11 @@ See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 <a href="#delaunay_inedges" name="delaunay_inedges">#</a> <i>delaunay</i>.<b>inedges</b>
 
-An incoming halfedge index for each point. For points on the convex hull, the incoming halfedge is also on the convex hull. TODO …
+The incoming halfedge indexes as a Int32Array [*e0*, *e1*, *e2*, …]. For each point *i*, *inedges*[*i*] is the halfedge index *e* of an incoming halfedge. For coincident points, the halfedge index is -1; for points on the convex hull, the incoming halfedge is on the convex hull; for other points, the choice of incoming halfedge is arbitrary. The *inedges* table can be used to traverse the Delaunay triangulation; see also [*delaunay*.neighbors](#delaunay_neighbors).
 
 <a href="#delaunay_outedges" name="delaunay_outedges">#</a> <i>delaunay</i>.<b>outedges</b>
 
-The outgoing halfedge index for each point on the convex hull. TODO …
+The outgoing halfedge indexes as a Int32Array [*e0*, *e1*, *e2*, …]. For each point *i* on the convex hull, *outedges*[*i*] is the halfedge index *e* of the corresponding outgoing halfedge; for other points, the halfedge index is -1. The *outedges* table can be used to traverse the Delaunay triangulation; see also [*delaunay*.neighbors](#delaunay_neighbors).
 
 <a href="#delaunay_find" name="delaunay_find">#</a> <i>delaunay</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
