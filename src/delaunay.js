@@ -39,6 +39,19 @@ export default class Delaunay {
   voronoi(bounds) {
     return new Voronoi(this, bounds);
   }
+  *neighbors(i) {
+    const {inedges, outedges, halfedges, triangles} = this;
+    const e0 = inedges[i];
+    if (e0 === -1) return; // coincident point
+    let e = e0;
+    do {
+      yield triangles[e];
+      e = e % 3 === 2 ? e - 2 : e + 1;
+      if (triangles[e] !== i) return; // bad triangulation
+      e = halfedges[e];
+      if (e === -1) return yield triangles[outedges[i]];
+    } while (e !== e0);
+  }
   find(x, y, i = 0) {
     if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
     let c;
@@ -46,26 +59,14 @@ export default class Delaunay {
     return c;
   }
   _step(i, x, y) {
-    const {points, halfedges, triangles, inedges, outedges} = this;
-    const e0 = inedges[i];
-    if (e0 === -1) return -1; // coincident point
+    const {inedges, points} = this;
+    if (inedges[i] === -1) return -1; // coincident point
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
-    let e = e0;
-    do {
-      const t = triangles[e];
+    for (const t of this.neighbors(i)) {
       const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
       if (dt < dc) dc = dt, c = t;
-      e = e % 3 === 2 ? e - 2 : e + 1;
-      if (triangles[e] !== i) break; // bad triangulation
-      e = halfedges[e];
-      if (e === -1) {
-        const t = triangles[outedges[i]];
-        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
-        if (dt < dc) dc = dt, c = t;
-        break;
-      }
-    } while (e !== e0);
+    }
     return c;
   }
   render(context) {
