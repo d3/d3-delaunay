@@ -28,16 +28,16 @@
   },
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
-    "esm": "^3.0.7",
-    "rollup": "^0.57.1",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-uglify": "^3.0.0",
+    "eslint": "5",
+    "esm": "3",
+    "rollup": "0.64",
+    "rollup-plugin-node-resolve": "3",
+    "rollup-plugin-terser": "1",
     "tape": "4"
   },
   "scripts": {
-    "build": "rm -rf dist && mkdir dist && rollup -c",
-    "postpublish": "git push && git push --tags && zip -j dist/d3-delaunay.zip -- LICENSE README.md dist/d3-delaunay.js dist/d3-delaunay.min.js",
-    "prepublishOnly": "yarn build && yarn test",
-    "test": "tape -r esm 'test/**/*-test.js'"
+    "test": "tape -r esm 'test/**/*-test.js' && eslint src",
+    "prepublishOnly": "yarn test && rm -rf dist && rollup -c",
+    "postpublish": "git push && git push --tags && zip -j dist/${npm_package_name}.zip -- LICENSE README.md dist/${npm_package_name}.js dist/${npm_package_name}.min.js"
   }
 }

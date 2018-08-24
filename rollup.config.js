@@ -1,27 +1,40 @@
 import noderesolve from "rollup-plugin-node-resolve";
-import uglify from "rollup-plugin-uglify";
+import {terser} from "rollup-plugin-terser";
+import * as meta from "./package.json";
 
-const definition = require("./package.json");
-const name = definition.name;
-const banner = `// ${definition.homepage} Version ${definition.version}. Copyright 2018 Observable, Inc.
-// https://github.com/mapbox/delaunator Version ${require("delaunator/package.json").version}. Copyright 2017, Mapbox, Inc.`;
-
-const config = (file, ...plugins) => ({
+const config = {
   input: "src/index.js",
-  plugins: [
-    noderesolve(),
-    ...plugins
-  ],
+  external: Object.keys(meta.dependencies || {}).filter(key => /^d3-/.test(key)),
   output: {
-    banner,
-    extend: true,
-    file: `dist/${file}`,
+    file: `dist/${meta.name}.js`,
+    name: "d3",
     format: "umd",
-    name: "d3"
-  }
-});
+    indent: false,
+    extend: true,
+    banner: `// ${meta.homepage} v${meta.version} Copyright ${(new Date).getFullYear()} ${meta.author.name}
+// https://github.com/mapbox/delaunator v${require("delaunator/package.json").version}. Copyright 2017 Mapbox, Inc.`,
+    globals: Object.assign({}, ...Object.keys(meta.dependencies || {}).filter(key => /^d3-/.test(key)).map(key => ({[key]: "d3"})))
+  },
+  plugins: [
+    noderesolve()
+  ]
+};
 
 export default [
-  config(`${name}.js`),
-  config(`${name}.min.js`, uglify({output: {preamble: banner}}))
+  config,
+  {
+    ...config,
+    output: {
+      ...config.output,
+      file: `dist/${meta.name}.min.js`
+    },
+    plugins: [
+      ...config.plugins,
+      terser({
+        output: {
+          preamble: config.output.banner
+        }
+      })
+    ]
+  }
 ];

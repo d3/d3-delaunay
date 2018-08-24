@@ -1,3 +1,5 @@
+const epsilon = 1e-6;
+
 export default class Path {
   constructor() {
     this._x0 = this._y0 = // start of current subpath
