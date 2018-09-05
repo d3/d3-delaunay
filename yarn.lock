@@ -219,8 +219,8 @@ del@^2.0.2:
     rimraf "^2.2.8"
 
 delaunator@^2.0.0:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-2.0.4.tgz#53a45609d9145930331600272cc50719b6021165"
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-2.0.5.tgz#c2a9ba2cf3d5aaab8fa0aa3ae82426d3fc0aeaf5"
 
 doctrine@^2.1.0:
   version "2.1.0"
@@ -790,8 +790,8 @@ rollup-plugin-terser@2:
     terser "^3.8.2"
 
 rollup@0.65:
-  version "0.65.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.65.0.tgz#280db1252169b68fc3043028346b337dde453fba"
+  version "0.65.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.65.1.tgz#583ea5dc4c6e4d2d1ed9adc60bfaf2178afe9ea9"
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "*"
@@ -803,8 +803,8 @@ run-async@^2.2.0:
     is-promise "^2.1.0"
 
 rxjs@^6.1.0:
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.3.1.tgz#878a1a8c64b8a5da11dcf74b5033fe944cdafb84"
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.3.2.tgz#6a688b16c4e6e980e62ea805ec30648e1c60907f"
   dependencies:
     tslib "^1.9.0"
 
