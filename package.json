@@ -8,7 +8,10 @@
     "geometry"
   ],
   "homepage": "https://github.com/d3/d3-delaunay",
-  "repository": "https://github.com/d3/d3-delaunay",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/d3/d3-delaunay.git"
+  },
   "license": "ISC",
   "author": {
     "name": "Mike Bostock",
