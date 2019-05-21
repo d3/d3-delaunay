@@ -34,19 +34,21 @@ export default class Voronoi {
     }
 
     // Compute exterior cell rays.
-    let node = hull;
-    let p0, p1 = node.i * 4;
-    let x0, x1 = node.x;
-    let y0, y1 = node.y;
-    do {
-      node = node.next, p0 = p1, x0 = x1, y0 = y1, p1 = node.i * 4, x1 = node.x, y1 = node.y;
+    let h = hull[hull.length - 1];
+    let p0, p1 = h * 4;
+    let x0, x1 = points[2 * h];
+    let y0, y1 = points[2 * h + 1];
+    for (let i = 0; i < hull.length; ++i) {
+      h = hull[i];
+      p0 = p1, x0 = x1, y0 = y1;
+      p1 = h * 4, x1 = points[2 * h], y1 = points[2 * h + 1];
       vectors[p0 + 2] = vectors[p1] = y0 - y1;
       vectors[p0 + 3] = vectors[p1 + 1] = x1 - x0;
-    } while (node !== hull);
+    }
   }
   render(context) {
     const buffer = context == null ? context = new Path : undefined;
-    const {delaunay: {halfedges, hull}, circumcenters, vectors} = this;
+    const {delaunay: {halfedges, inedges, hull}, circumcenters, vectors} = this;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < i) continue;
@@ -58,16 +60,15 @@ export default class Voronoi {
       const yj = circumcenters[tj + 1];
       this._renderSegment(xi, yi, xj, yj, context);
     }
-    let node = hull;
-    do {
-      node = node.next;
-      const t = Math.floor(node.t / 3) * 2;
+    for (let i = 0; i < hull.length; ++i) {
+      let h = hull[i];
+      const t = Math.floor(inedges[h] / 3) * 2;
       const x = circumcenters[t];
       const y = circumcenters[t + 1];
-      const v = node.i * 4;
+      const v = h * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) this._renderSegment(x, y, p[0], p[1], context);
-    } while (node !== hull);
+    }
     return buffer && buffer.value();
   }
   renderBounds(context) {

@@ -23,18 +23,16 @@ export default class Delaunay {
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
     const outedges = this.outedges = new Int32Array(points.length / 2).fill(-1);
 
-    // Compute an index from each point to an (arbitrary) incoming halfedge.
+    // Compute an index from each point to an (arbitrary) incoming halfedge
+    // inedges give the first neighbor of each point;
+    // outedges give the last neighbor if on the hull
+    // For this reason, on the hull we give priority to exterior halfedges
     for (let e = 0, n = halfedges.length; e < n; ++e) {
-      inedges[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
+      const p = triangles[e % 3 === 2 ? e - 2 : e + 1],
+        q = triangles[e];
+      if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
+      if (halfedges[e] === -1) outedges[q] = e % 3 === 2 ? e - 2 : e + 1;
     }
-
-    // For points on the hull, index both the incoming and outgoing halfedges.
-    let node0, node1 = hull;
-    do {
-      node0 = node1, node1 = node1.next;
-      inedges[node1.i] = node0.t;
-      outedges[node0.i] = node1.t;
-    } while (node1 !== hull);
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
@@ -95,10 +93,13 @@ export default class Delaunay {
   }
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
-    const {hull} = this;
-    let node = hull;
-    context.moveTo(node.x, node.y);
-    while (node = node.next, node !== hull) context.lineTo(node.x, node.y);
+    const hull = this.hull, points = this.points;
+    let h = hull[hull.length - 1];
+    context.moveTo(points[2 * h], points[2 * h + 1]);
+    for (let i = 0; i < hull.length; ++i) {
+      h = hull[i];
+      context.lineTo(points[2 * h], points[2 * h + 1]);
+    }
     context.closePath();
     return buffer && buffer.value();
   }
