@@ -218,9 +218,10 @@ del@^2.0.2:
     pinkie-promise "^2.0.0"
     rimraf "^2.2.8"
 
-delaunator@^2.0.0:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-2.0.5.tgz#c2a9ba2cf3d5aaab8fa0aa3ae82426d3fc0aeaf5"
+delaunator@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-3.0.2.tgz#62d5d9699cd64a736a2bb9c4d957d662452808d0"
+  integrity sha512-GNSex8jhF1mcqtNAMYvdZ6Ng7YieYNlbOq2xshyZhLc98P8y5O7Vm6buw4A60wGOd9qvK9RcIMm5qoe4PncAPw==
 
 doctrine@^2.1.0:
   version "2.1.0"

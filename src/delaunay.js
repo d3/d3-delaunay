@@ -21,26 +21,24 @@ export default class Delaunay {
     this.hull = hull;
     this.triangles = triangles;
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
-    const outedges = this.outedges = new Int32Array(points.length / 2).fill(-1);
+    const hullIndex = this.hullIndex = new Int32Array(points.length / 2).fill(-1);
 
-    // Compute an index from each point to an (arbitrary) incoming halfedge.
+    // Compute an index from each point to an (arbitrary) incoming halfedge
+    // Used to give the first neighbor of each point; for this reason,
+    // on the hull we give priority to exterior halfedges
     for (let e = 0, n = halfedges.length; e < n; ++e) {
-      inedges[triangles[e % 3 === 2 ? e - 2 : e + 1]] = e;
+      const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
+      if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
     }
-
-    // For points on the hull, index both the incoming and outgoing halfedges.
-    let node0, node1 = hull;
-    do {
-      node0 = node1, node1 = node1.next;
-      inedges[node1.i] = node0.t;
-      outedges[node0.i] = node1.t;
-    } while (node1 !== hull);
+    for (let i = 0; i < hull.length; ++i) {
+      hullIndex[hull[i]] = i;
+    }
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
   }
   *neighbors(i) {
-    const {inedges, outedges, halfedges, triangles} = this;
+    const {inedges, hull, hullIndex, halfedges, triangles} = this;
     const e0 = inedges[i];
     if (e0 === -1) return; // coincident point
     let e = e0;
@@ -49,7 +47,7 @@ export default class Delaunay {
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) return; // bad triangulation
       e = halfedges[e];
-      if (e === -1) return yield triangles[outedges[i]];
+      if (e === -1) return yield hull[(hullIndex[i] + 1) % hull.length];
     } while (e !== e0);
   }
   find(x, y, i = 0) {
@@ -96,10 +94,11 @@ export default class Delaunay {
   }
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
-    const {hull} = this;
-    let node = hull;
-    context.moveTo(node.x, node.y);
-    while (node = node.next, node !== hull) context.lineTo(node.x, node.y);
+    const {hull, points} = this;
+    for (let i = 0, h; i < hull.length; ++i) {
+      h = hull[i];
+      context[i ? "lineTo" : "moveTo"](points[2 * h], points[2 * h + 1]);
+    }
     context.closePath();
     return buffer && buffer.value();
   }
