@@ -60,7 +60,10 @@ export default class Delaunay {
   }
   _step(i, x, y) {
     const {inedges, points} = this;
-    if (inedges[i] === -1) return -1; // coincident point
+    if (inedges[i] === -1) {
+      const l = points.length / 2;
+      return (i + 1 + (l - 1) * Math.random() | 0) % l;
+    }
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     for (const t of this.neighbors(i)) {
