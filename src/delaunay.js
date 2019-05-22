@@ -28,10 +28,14 @@ export default class Delaunay {
     // outedges give the last neighbor if on the hull
     // For this reason, on the hull we give priority to exterior halfedges
     for (let e = 0, n = halfedges.length; e < n; ++e) {
-      const p = triangles[e % 3 === 2 ? e - 2 : e + 1],
-        q = triangles[e];
+      const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
       if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
-      if (halfedges[e] === -1) outedges[q] = e % 3 === 2 ? e - 2 : e + 1;
+    }
+    // hull[i-1] -i-> p --> hull[i+1] -o-> hull[i+2]
+    // the outeredge for p = hull[i] is the inedge for hull[i+2]
+    for (let i = 0; i < hull.length; ++i) {
+      const e = inedges[hull[i]];
+      outedges[hull[i > 1 ? i - 2 : hull.length - 2 + i]] = e;
     }
   }
   voronoi(bounds) {
