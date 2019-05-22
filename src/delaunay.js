@@ -21,7 +21,7 @@ export default class Delaunay {
     this.hull = hull;
     this.triangles = triangles;
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
-    const hullIndex = this.hullIndex = new Int32Array(points.length / 2).fill(-1);
+    this._hullIndex = new Int32Array(points.length / 2).fill(-1);
 
     // Compute an index from each point to an (arbitrary) incoming halfedge
     // Used to give the first neighbor of each point; for this reason,
@@ -30,15 +30,15 @@ export default class Delaunay {
       const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
       if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
     }
-    for (let i = 0; i < hull.length; ++i) {
-      hullIndex[hull[i]] = i;
+    for (let i = 0, n = hull.length; i < n; ++i) {
+      this._hullIndex[hull[i]] = i;
     }
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
   }
   *neighbors(i) {
-    const {inedges, hull, hullIndex, halfedges, triangles} = this;
+    const {inedges, hull, _hullIndex, halfedges, triangles} = this;
     const e0 = inedges[i];
     if (e0 === -1) return; // coincident point
     let e = e0;
@@ -47,7 +47,7 @@ export default class Delaunay {
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) return; // bad triangulation
       e = halfedges[e];
-      if (e === -1) return yield hull[(hullIndex[i] + 1) % hull.length];
+      if (e === -1) return yield hull[(_hullIndex[i] + 1) % hull.length];
     } while (e !== e0);
   }
   find(x, y, i = 0) {
@@ -94,9 +94,11 @@ export default class Delaunay {
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
     const {hull, points} = this;
-    for (let i = 0, h; i < hull.length; ++i) {
-      h = hull[i];
-      context[i ? "lineTo" : "moveTo"](points[2 * h], points[2 * h + 1]);
+    const h0 = hull[0] * 2, n = hull.length;
+    context.moveTo(points[h0], points[h0 + 1]);
+    for (let i = 1; i < n; ++i) {
+      const h = 2 * hull[i];
+      context.lineTo(points[h], points[h + 1]);
     }
     context.closePath();
     return buffer && buffer.value();
