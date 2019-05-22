@@ -94,8 +94,16 @@ tape("delaunay.voronoi() for few points", test => {
 
 tape("delaunay.find(x, y) returns the index of the cell that contains the specified point", test => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
-  test.deepEqual(delaunay.find(49, 49), 0);
-  test.deepEqual(delaunay.find(51, 51), 4);
+  test.equal(delaunay.find(49, 49), 0);
+  test.equal(delaunay.find(51, 51), 4);
+});
+
+tape("delaunay.find(x, y) with coincident point", test => {
+  let delaunay = Delaunay.from([[0, 0], [0, 0], [10,10], [10, -10]]);
+  test.equal(delaunay.find(100,100), 2);
+  test.ok(delaunay.find(0,0,1) > -1);
+  delaunay = Delaunay.from(Array.from({length:1000}, () => [0, 0]).concat([[10,10], [10, -10]]));
+  test.ok(delaunay.find(0,0,1) > -1);
 });
 
 tape("delaunay.find(x, y, i) traverses the convex hull", test => {

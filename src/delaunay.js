@@ -91,13 +91,14 @@ export default class Delaunay {
   }
   find(x, y, i = 0) {
     if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    const i0 = i;
     let c;
-    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+    while ((c = this._step(i, x, y)) >= 0 && c !== i && c !== i0) i = c;
     return c;
   }
   _step(i, x, y) {
     const {inedges, points} = this;
-    if (inedges[i] === -1 || !points.length) return -1; // coincident point
+    if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     for (const t of this.neighbors(i)) {
