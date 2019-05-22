@@ -61,7 +61,7 @@ export default class Voronoi {
       this._renderSegment(xi, yi, xj, yj, context);
     }
     for (let i = 0; i < hull.length; ++i) {
-      let h = hull[i];
+      const h = hull[i];
       const t = Math.floor(inedges[h] / 3) * 2;
       const x = circumcenters[t];
       const y = circumcenters[t + 1];
