@@ -95,10 +95,6 @@ See also [*delaunay*.renderTriangle](#delaunay_renderTriangle).
 
 The incoming halfedge indexes as a Int32Array [*e0*, *e1*, *e2*, …]. For each point *i*, *inedges*[*i*] is the halfedge index *e* of an incoming halfedge. For coincident points, the halfedge index is -1; for points on the convex hull, the incoming halfedge is on the convex hull; for other points, the choice of incoming halfedge is arbitrary. The *inedges* table can be used to traverse the Delaunay triangulation; see also [*delaunay*.neighbors](#delaunay_neighbors).
 
-<a href="#delaunay_outedges" name="delaunay_outedges">#</a> <i>delaunay</i>.<b>outedges</b>
-
-The outgoing halfedge indexes as a Int32Array [*e0*, *e1*, *e2*, …]. For each point *i* on the convex hull, *outedges*[*i*] is the halfedge index *e* of the corresponding outgoing halfedge; for other points, the halfedge index is -1. The *outedges* table can be used to traverse the Delaunay triangulation; see also [*delaunay*.neighbors](#delaunay_neighbors).
-
 <a href="#delaunay_find" name="delaunay_find">#</a> <i>delaunay</i>.<b>find</b>(<i>x</i>, <i>y</i>[, <i>i</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the index of the input point that is closest to the specified point ⟨*x*, *y*⟩. The search is started at the specified point *i*. If *i* is not specified, it defaults to zero.
