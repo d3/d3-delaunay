@@ -63,14 +63,7 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-An arbitrary *node* on the convex hull. The convex hull is represented as a linked list of nodes, which each *node* being an object with the following properties:
-
-* *node*.i - the index of the associated point
-* *node*.x - the *x*-coordinate of the associated point
-* *node*.y - the *y*-coordinate of the associated point
-* *node*.t - the index of the (incoming or outgoing?) associated halfedge
-* *node*.next - the next *node* on the hull
-* *node*.prev - the previous *node* on the hull
+An Int32Array of point indexes that form the convex hull in counterclockwise order.
 
 See also [*delaunay*.renderHull](#delaunay_renderHull).
 
