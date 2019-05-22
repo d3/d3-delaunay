@@ -47,7 +47,7 @@ export default class Delaunay {
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) return; // bad triangulation
       e = halfedges[e];
-      if (e === -1) return yield hull[(hullIndex[i]+1) % hull.length];
+      if (e === -1) return yield hull[(hullIndex[i] + 1) % hull.length];
     } while (e !== e0);
   }
   find(x, y, i = 0) {
@@ -93,12 +93,10 @@ export default class Delaunay {
   }
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
-    const hull = this.hull, points = this.points;
-    let h = hull[hull.length - 1];
-    context.moveTo(points[2 * h], points[2 * h + 1]);
-    for (let i = 0; i < hull.length; ++i) {
+    const {hull, points} = this;
+    for (let i = 0, h; i < hull.length; ++i) {
       h = hull[i];
-      context.lineTo(points[2 * h], points[2 * h + 1]);
+      context[i ? "lineTo" : "moveTo"](points[2 * h], points[2 * h + 1]);
     }
     context.closePath();
     return buffer && buffer.value();
