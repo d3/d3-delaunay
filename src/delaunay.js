@@ -61,7 +61,7 @@ export default class Delaunay {
   }
   _step(i, x, y) {
     const {inedges, points} = this;
-    if (inedges[i] === -1) return (i + 1) % (points.length / 2);
+    if (inedges[i] === -1) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     for (const t of this.neighbors(i)) {
