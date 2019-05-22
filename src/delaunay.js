@@ -54,16 +54,14 @@ export default class Delaunay {
   }
   find(x, y, i = 0) {
     if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+    const i0 = i;
     let c;
-    while ((c = this._step(i, x, y)) >= 0 && c !== i) i = c;
+    while ((c = this._step(i, x, y)) >= 0 && c !== i && c !== i0) i = c;
     return c;
   }
   _step(i, x, y) {
     const {inedges, points} = this;
-    if (inedges[i] === -1) {
-      const l = points.length / 2;
-      return (i + 1 + (l - 1) * Math.random() | 0) % l;
-    }
+    if (inedges[i] === -1) return (i + 1) % (points.length / 2);
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     for (const t of this.neighbors(i)) {
