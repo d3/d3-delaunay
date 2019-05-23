@@ -82,6 +82,16 @@ tape("delaunay.voronoi() skips cells for coincident points", test => {
   test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, 0, 0, 0));
 });
 
+tape("delaunay.voronoi() for few points", test => {
+  let voronoi = Delaunay.from([[0, 0], [1, 0], [1, 0], [1, 0]]).voronoi([-1, -1, 2, 2]);
+  console.warn(voronoi);
+});
+
+tape("delaunay.voronoi() for few points", test => {
+  let voronoi = Delaunay.from([[0, 0]]).voronoi([-1, -1, 2, 2]);
+  console.warn(voronoi);
+});
+
 tape("delaunay.find(x, y) returns the index of the cell that contains the specified point", test => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
   test.deepEqual(delaunay.find(49, 49), 0);

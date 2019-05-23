@@ -29,8 +29,14 @@ export default class Voronoi {
       const d2 = d1 - x2 * x2 - y2 * y2;
       const d3 = d1 - x3 * x3 - y3 * y3;
       const ab = (a3 * b2 - a2 * b3) * 2;
-      circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
-      circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+      // degenerate case (2 points)
+      if (!ab) {
+        circumcenters[j] = (x1 + x3) / 2 + 1e8 * b3;
+        circumcenters[j + 1] = (y1 + y3) / 2 - 1e8 * a3;
+      } else {
+        circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
+        circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+      }
     }
 
     // Compute exterior cell rays.
@@ -132,8 +138,14 @@ export default class Voronoi {
     return points;
   }
   _clip(i) {
+    // degenerate case (1 valid point: return the box)
+    if (i === 0 && this.delaunay.hull.length === 1) {
+      return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+    }
     const points = this._cell(i);
-    if (points === null) return null;
+    if (points === null) {
+      return null;
+    }
     const {vectors: V} = this;
     const v = i * 4;
     return V[v] || V[v + 1]
