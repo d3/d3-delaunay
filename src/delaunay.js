@@ -50,7 +50,7 @@ export default class Delaunay {
     }
     
     // degenerate case: 1 or 2 (distinct) points
-    if (hull.length <= 2) {
+    if (hull.length <= 2 && hull.length > 0) {
       this.triangles = new Int32Array(3).fill(-1);
       this.halfedges = new Int32Array(3).fill(-1);
       this.triangles[0] = hull[0];
