@@ -13,15 +13,50 @@ function pointY(p) {
   return p[1];
 }
 
+function area(hull, points) {
+  let n = hull.length, x0, y0,
+      x1 = points[2 * hull[n - 1]],
+      y1 = points[2 * hull[n - 1] + 1],
+      area = 0;
+
+  for (let i = 0; i < n; i ++) {
+    x0 = x1, y0 = y1;
+    x1 = points[2 * hull[i]];
+    y1 = points[2 * hull[i] + 1];
+    area += y0 * x1 - x0 * y1;
+  }
+
+  return area / 2;
+}
+
+function jitter(x, y, r) {
+  return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
+}
+
 export default class Delaunay {
   constructor(points) {
-    const {halfedges, hull, triangles} = new Delaunator(points);
+    let d = new Delaunator(points),
+      a = area(d.hull, points);
+    if (a < 1e-10 && d.hull && d.hull.length > 2) {
+      this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
+        .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
+      const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
+        bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
+        r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+      for (let i = 0, n = points.length / 2; i < n; ++i) {
+        const p = jitter(points[2 * i], points[2 * i + 1], r);
+        points[2 * i] = p[0];
+        points[2 * i + 1] = p[1];
+      }
+      d = new Delaunator(points);
+    }
+    const {halfedges, hull, triangles} = d;
     this.points = points;
     this.halfedges = halfedges;
     this.hull = hull;
     this.triangles = triangles;
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
-    const hullIndex = this.hullIndex = new Int32Array(points.length / 2).fill(-1);
+    this._hullIndex = new Int32Array(points.length / 2).fill(-1);
 
     // Compute an index from each point to an (arbitrary) incoming halfedge
     // Used to give the first neighbor of each point; for this reason,
@@ -30,24 +65,48 @@ export default class Delaunay {
       const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
       if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
     }
-    for (let i = 0; i < hull.length; ++i) {
-      hullIndex[hull[i]] = i;
+    for (let i = 0, n = hull.length; i < n; ++i) {
+      this._hullIndex[hull[i]] = i;
+    }
+    
+    // degenerate case: 1 or 2 (distinct) points
+    if (hull.length <= 2 && hull.length > 0) {
+      this.triangles = new Int32Array(3).fill(-1);
+      this.halfedges = new Int32Array(3).fill(-1);
+      this.triangles[0] = hull[0];
+      this.triangles[1] = hull[1];
+      this.triangles[2] = hull[1];
+      inedges[hull[0]] = 1;
+      if (hull.length === 2) inedges[hull[1]] = 0;
     }
   }
   voronoi(bounds) {
     return new Voronoi(this, bounds);
   }
   *neighbors(i) {
-    const {inedges, hull, hullIndex, halfedges, triangles} = this;
+    const {inedges, hull, _hullIndex, halfedges, triangles} = this;
+    
+    // degenerate case with several collinear points
+    if (this.collinear) {
+      const l = this.collinear.indexOf(i);
+      if (l > 0) yield this.collinear[l - 1];
+      if (l < this.collinear.length - 1) yield this.collinear[l + 1];
+      return;
+    }
+    
     const e0 = inedges[i];
     if (e0 === -1) return; // coincident point
-    let e = e0;
+    let e = e0, p0 = -1;
     do {
-      yield triangles[e];
+      yield p0 = triangles[e];
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) return; // bad triangulation
       e = halfedges[e];
-      if (e === -1) return yield hull[(hullIndex[i] + 1) % hull.length];
+      if (e === -1) {
+        const p = hull[(_hullIndex[i] + 1) % hull.length];
+        if (p !== p0) yield p; 
+        return;
+      }
     } while (e !== e0);
   }
   find(x, y, i = 0) {
@@ -59,7 +118,7 @@ export default class Delaunay {
   }
   _step(i, x, y) {
     const {inedges, points} = this;
-    if (inedges[i] === -1) return (i + 1) % (points.length >> 1);
+    if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
     for (const t of this.neighbors(i)) {
@@ -95,9 +154,11 @@ export default class Delaunay {
   renderHull(context) {
     const buffer = context == null ? context = new Path : undefined;
     const {hull, points} = this;
-    for (let i = 0, h; i < hull.length; ++i) {
-      h = hull[i];
-      context[i ? "lineTo" : "moveTo"](points[2 * h], points[2 * h + 1]);
+    const h = hull[0] * 2, n = hull.length;
+    context.moveTo(points[h], points[h + 1]);
+    for (let i = 1; i < n; ++i) {
+      const h = 2 * hull[i];
+      context.lineTo(points[h], points[h + 1]);
     }
     context.closePath();
     return buffer && buffer.value();

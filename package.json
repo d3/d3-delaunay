@@ -27,7 +27,7 @@
   "unpkg": "dist/d3-delaunay.min.js",
   "module": "src/index.js",
   "dependencies": {
-    "delaunator": "^3.0.2"
+    "delaunator": "4"
   },
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",

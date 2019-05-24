@@ -63,7 +63,7 @@ See also [*delaunay*.render](#delaunay_render).
 
 <a href="#delaunay_hull" name="delaunay_hull">#</a> <i>delaunay</i>.<b>hull</b>
 
-An Int32Array of point indexes that form the convex hull in counterclockwise order.
+An Int32Array of point indexes that form the convex hull in counterclockwise order. If the points are collinear, returns them ordered.
 
 See also [*delaunay*.renderHull](#delaunay_renderHull).
 
@@ -133,6 +133,8 @@ Returns the closed polygon [[*x0*, *y0*], [*x1*, *y1*], [*x2*, *y2*], [*x0*, *y0
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_points). When rendering, the diagram will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500]. See [To Infinity and Back Again](https://observablehq.com/@mbostock/to-infinity-and-back-again) for an interactive explanation of Voronoi cell clipping.
+
+The Voronoi diagram is returned even in degenerate cases where no triangulation exists — namely 0, 1 or 2 points, and collinear points.
 
 ### Voronoi
 
