@@ -60,12 +60,13 @@ export default class Voronoi {
       const yj = circumcenters[tj + 1];
       this._renderSegment(xi, yi, xj, yj, context);
     }
+    let h0, h1 = hull[hull.length - 1];
     for (let i = 0; i < hull.length; ++i) {
-      const h = hull[i];
-      const t = Math.floor(inedges[h] / 3) * 2;
+      h0 = h1, h1 = hull[i];
+      const t = Math.floor(inedges[h1] / 3) * 2;
       const x = circumcenters[t];
       const y = circumcenters[t + 1];
-      const v = h * 4;
+      const v = h0 * 4;
       const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) this._renderSegment(x, y, p[0], p[1], context);
     }
