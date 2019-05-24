@@ -55,6 +55,7 @@ export default class Voronoi {
   render(context) {
     const buffer = context == null ? context = new Path : undefined;
     const {delaunay: {halfedges, inedges, hull}, circumcenters, vectors} = this;
+    if (hull.length <= 1) return null;
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < i) continue;
