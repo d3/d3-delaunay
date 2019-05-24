@@ -84,12 +84,7 @@ tape("delaunay.voronoi() skips cells for coincident points", test => {
 
 tape("delaunay.voronoi() for few points", test => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [1, 0], [1, 0]]).voronoi([-1, -1, 2, 2]);
-  console.warn(voronoi);
-});
-
-tape("delaunay.voronoi() for few points", test => {
-  let voronoi = Delaunay.from([[0, 0]]).voronoi([-1, -1, 2, 2]);
-  console.warn(voronoi);
+  test.ok(voronoi.delaunay.hull);
 });
 
 tape("delaunay.find(x, y) returns the index of the cell that contains the specified point", test => {
