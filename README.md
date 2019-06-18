@@ -9,7 +9,7 @@ For an interactive explanation of how this library works, see [The Delaunay’s 
 
 ## Installing
 
-To install, `npm install d3-delaunay` or `yarn add d3-delaunay`. You can also download the [latest release](https://github.com/d3/d3-delaunay/releases/latest) or load directly from [unpkg](https://unpkg.com/d3-delaunay/). AMD, CommonJS, ES5 and ES6+ environments are supported. In vanilla, a `d3` global is exported.
+To install, `npm install d3-delaunay` or `yarn add d3-delaunay`. You can also download the [latest release](https://github.com/d3/d3-delaunay/releases/latest) or load directly from [unpkg](https://unpkg.com/d3-delaunay/). AMD, CommonJS, and ES6+ environments are supported. In vanilla, a `d3` global is exported. Older environments are not supported.
 
 ```js
 import {Delaunay} from "d3-delaunay";
