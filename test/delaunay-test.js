@@ -113,6 +113,18 @@ tape("delaunay.find(x, y) returns the index of the cell that contains the specif
   test.equal(delaunay.find(51, 51), 4);
 });
 
+tape("delaunay.update() allows fast updates", test => {
+  let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
+  let circumcenters1 = delaunay.voronoi([-500, -500, 500, 500]).circumcenters;
+  for (let i = 0; i < delaunay.points.length; i++) {
+    delaunay.points[i] = -delaunay.points[i];
+  }
+  delaunay.update();
+  let circumcenters2 = delaunay.voronoi([-500, -500, 500, 500]).circumcenters;
+  test.deepEqual(circumcenters1, Float64Array.from([ 150, -50, -50, 150, 250, 150, 150, 250 ]));
+  test.deepEqual(circumcenters2, Float64Array.from([ -150, 50, -250, -150, 50, -150, -150, -250 ]));
+});
+
 tape("delaunay.find(x, y) with coincident point", test => {
   let delaunay = Delaunay.from([[0, 0], [0, 0], [10,10], [10, -10]]);
   test.equal(delaunay.find(100,100), 2);
