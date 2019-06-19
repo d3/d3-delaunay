@@ -50,11 +50,18 @@ export default class Delaunay {
       }
       d = new Delaunator(points);
     }
-    const {halfedges, hull, triangles} = d;
-    this.points = points;
-    this.halfedges = halfedges;
-    this.hull = hull;
-    this.triangles = triangles;
+    this.delaunator = d;
+    this._init();
+    this.update = () => {
+      this.delaunator.update();
+      this._init();
+    }
+  }
+  _init() {
+    const points = this.points = this.delaunator.coords;
+    const halfedges = this.halfedges = this.delaunator.halfedges;
+    const hull = this.hull = this.delaunator.hull;
+    const triangles = this.triangles = this.delaunator.triangles;
     const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
     this._hullIndex = new Int32Array(points.length / 2).fill(-1);
 

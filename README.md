@@ -130,6 +130,10 @@ Returns an iterable over the [polygons for each triangle](#delaunay_trianglePoly
 
 Returns the closed polygon [[*x0*, *y0*], [*x1*, *y1*], [*x2*, *y2*], [*x0*, *y0*]] representing the triangle *i*.
 
+<a href="#delaunay_update" name="delaunay_update">#</a> <i>delaunay</i>.<b>update</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
+
+Updates the triangulation after the points have been modified in-place — useful for Lloyd’s relaxation.
+
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
 Returns the [Voronoi diagram](#voronoi) for the associated [points](#delaunay_points). When rendering, the diagram will be clipped to the specified *bounds* = [*xmin*, *ymin*, *xmax*, *ymax*]. If *bounds* is not specified, it defaults to [0, 0, 960, 500]. See [To Infinity and Back Again](https://observablehq.com/@mbostock/to-infinity-and-back-again) for an interactive explanation of Voronoi cell clipping.
