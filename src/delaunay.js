@@ -51,6 +51,9 @@ export default class Delaunay {
       d = new Delaunator(points);
     }
     this._delaunator = d;
+    this.inedges = new Int32Array(points.length / 2);
+    this._hullIndex = new Int32Array(points.length / 2);
+    this.points = this._delaunator.coords;
     this._init();
   }
   update() {
@@ -58,12 +61,11 @@ export default class Delaunay {
     this._init();
   }
   _init() {
-    const points = this.points = this._delaunator.coords;
     const halfedges = this.halfedges = this._delaunator.halfedges;
     const hull = this.hull = this._delaunator.hull;
     const triangles = this.triangles = this._delaunator.triangles;
-    const inedges = this.inedges = new Int32Array(points.length / 2).fill(-1);
-    const hullIndex = this._hullIndex = new Int32Array(points.length / 2).fill(-1);
+    const inedges = this.inedges.fill(-1);
+    const hullIndex = this._hullIndex.fill(-1);
 
     // Compute an index from each point to an (arbitrary) incoming halfedge
     // Used to give the first neighbor of each point; for this reason,
