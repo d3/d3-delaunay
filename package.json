@@ -20,7 +20,11 @@
   "contributors": [
     {
       "name": "Vladimir Agafonkin",
-      "url": "http://agafonkin.com/en/"
+      "url": "https://agafonkin.com"
+    },
+    {
+      "name": "Philippe Riviere",
+      "url": "https://illisible.net/philippe-riviere"
     }
   ],
   "main": "dist/d3-delaunay.js",
@@ -33,9 +37,9 @@
     "@observablehq/tape": "~0.0.1",
     "eslint": "5",
     "esm": "3",
-    "rollup": "0.65",
-    "rollup-plugin-node-resolve": "3",
-    "rollup-plugin-terser": "2",
+    "rollup": "1",
+    "rollup-plugin-node-resolve": "5",
+    "rollup-plugin-terser": "3",
     "tape": "4"
   },
   "scripts": {
