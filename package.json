@@ -17,6 +17,10 @@
     "name": "Mike Bostock",
     "url": "https://bost.ocks.org/mike"
   },
+  "files": [
+    "dist/*.js",
+    "src"
+  ],
   "contributors": [
     {
       "name": "Vladimir Agafonkin",
