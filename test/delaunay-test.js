@@ -125,6 +125,27 @@ tape("delaunay.update() allows fast updates", test => {
   test.deepEqual(circumcenters2, Float64Array.from([ -150, 50, -250, -150, 50, -150, -150, -250 ]));
 });
 
+tape("delaunay.update() updates collinear points", test => {
+  const delaunay = new Delaunay(Array.from({ length: 250 }).fill(0));
+  test.equal(delaunay.collinear, undefined);
+  for (let i = 0; i < delaunay.points.length; i++)
+    delaunay.points[i] = (i % 2) ? i : 0;
+  delaunay.update();
+  test.equal(delaunay.collinear.length, 125);
+  for (let i = 0; i < delaunay.points.length; i++)
+    delaunay.points[i] = Math.sin(i);
+  delaunay.update();
+  test.equal(delaunay.collinear, undefined);
+  for (let i = 0; i < delaunay.points.length; i++)
+    delaunay.points[i] = (i % 2) ? i : 0;
+  delaunay.update();
+  test.equal(delaunay.collinear.length, 125);
+  for (let i = 0; i < delaunay.points.length; i++)
+    delaunay.points[i] = 0;
+  delaunay.update();
+  test.equal(delaunay.collinear, undefined);
+});
+
 tape("delaunay.find(x, y) with coincident point", test => {
   let delaunay = Delaunay.from([[0, 0], [0, 0], [10,10], [10, -10]]);
   test.equal(delaunay.find(100,100), 2);

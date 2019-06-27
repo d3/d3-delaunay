@@ -35,22 +35,7 @@ function jitter(x, y, r) {
 
 export default class Delaunay {
   constructor(points) {
-    let d = new Delaunator(points),
-      a = area(d.hull, points);
-    if (a < 1e-10 && d.hull && d.hull.length > 2) {
-      this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
-        .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
-      const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
-        bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-        r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
-      for (let i = 0, n = points.length / 2; i < n; ++i) {
-        const p = jitter(points[2 * i], points[2 * i + 1], r);
-        points[2 * i] = p[0];
-        points[2 * i + 1] = p[1];
-      }
-      d = new Delaunator(points);
-    }
-    this._delaunator = d;
+    this._delaunator = new Delaunator(points);
     this.inedges = new Int32Array(points.length / 2);
     this._hullIndex = new Int32Array(points.length / 2);
     this.points = this._delaunator.coords;
@@ -61,6 +46,25 @@ export default class Delaunay {
     this._init();
   }
   _init() {
+    const d = this._delaunator, points = this.points;
+
+    // check for collinear
+    if (d.hull && d.hull.length > 2 && area(d.hull, points) < 1e-10) {
+      this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
+        .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
+      const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
+        bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
+        r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+      for (let i = 0, n = points.length / 2; i < n; ++i) {
+        const p = jitter(points[2 * i], points[2 * i + 1], r);
+        points[2 * i] = p[0];
+        points[2 * i + 1] = p[1];
+      }
+      this._delaunator = new Delaunator(points);
+    } else {
+      delete this.collinear;
+    }
+
     const halfedges = this.halfedges = this._delaunator.halfedges;
     const hull = this.hull = this._delaunator.hull;
     const triangles = this.triangles = this._delaunator.triangles;
