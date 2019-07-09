@@ -30,3 +30,16 @@ tape("voronoi.update() updates the voronoi", test => {
   const p = voronoi.update().cellPolygon(1); // correct after voronoi.update
   test.deepEqual(p, [[-500, 500], [-500, -140], [-240, -140], [-140, 60], [-140, 500], [-500, 500]]);
 });
+
+tape("voronoi.update() updates a degenerate voronoi", test => {
+  const pts = [10, 10, -290, 10, 10, -290, -290, -290, -90, -90];
+  let delaunay = new Delaunay(Array.from({length: pts.length}).fill(0));
+  let voronoi = delaunay.voronoi([-500, -500, 500, 500]);
+  test.deepEqual(voronoi.cellPolygon(0), [ [ 500, -500 ], [ 500, 500 ], [ -500, 500 ], [ -500, -500 ], [ 500, -500 ] ]);
+  test.equal(voronoi.cellPolygon(1), null);
+  for (let i = 0; i < delaunay.points.length; i++) {
+    delaunay.points[i] = pts[i];
+  }
+  const p = voronoi.update().cellPolygon(1);
+  test.deepEqual(p, [[-500, 500], [-500, -140], [-240, -140], [-140, 60], [-140, 500], [-500, 500]]);
+});
