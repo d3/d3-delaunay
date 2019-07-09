@@ -44,6 +44,7 @@ export default class Delaunay {
   update() {
     this._delaunator.update();
     this._init();
+    return this;
   }
   _init() {
     const d = this._delaunator, points = this.points;
