@@ -21,15 +21,12 @@ tape("voronoi.contains(i, x, y) is false for coincident points", test => {
   test.equal(voronoi.contains(1, 1, 0), true);
 });
 
-tape("delaunay.update() updates the voronoi", test => {
+tape("voronoi.update() updates the voronoi", test => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
+  let voronoi = delaunay.voronoi([-500, -500, 500, 500]);
   for (let i = 0; i < delaunay.points.length; i++) {
     delaunay.points[i] = 10 - delaunay.points[i];
   }
-  let voronoi = delaunay.voronoi([-500, -500, 500, 500]);
-  const p1 = voronoi.cellPolygon(1); // incorrect before delaunay.update
-  delaunay.update();
-  const p2 = voronoi.cellPolygon(1); // correct after delaunay.update
-  test.ok(JSON.stringify(p1) != JSON.stringify(p2));
-  test.deepEqual(p2, [[-500, 500], [-500, -140], [60, -140], [-140, 60], [-140, 500], [-500, 500]]);
+  const p = voronoi.update().cellPolygon(1); // correct after voronoi.update
+  test.deepEqual(p, [[-500, 500], [-500, -140], [-240, -140], [-140, 60], [-140, 500], [-500, 500]]);
 });

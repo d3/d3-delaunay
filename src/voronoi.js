@@ -4,13 +4,23 @@ import Polygon from "./polygon.js";
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
-    const {points, hull, triangles} = this.delaunay = delaunay;
-    const circumcenters = this.circumcenters = new Float64Array(triangles.length / 3 * 2);
-    const vectors = this.vectors = new Float64Array(points.length * 2);
+    this.delaunay = delaunay;
+    this._circumcenters = new Float64Array(delaunay.points.length * 2);
+    this.vectors = new Float64Array(delaunay.points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
+    this._init();
+  }
+  update() {
+    this.delaunay.update();
+    this._init();
+    return this;
+  }
+  _init() {
+    const {delaunay: {points, hull, triangles}, vectors} = this;
 
     // Compute circumcenters.
+    const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
     for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
       const t1 = triangles[i] * 2;
       const t2 = triangles[i + 1] * 2;
