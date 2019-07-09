@@ -132,7 +132,7 @@ Returns the closed polygon [[*x0*, *y0*], [*x1*, *y1*], [*x2*, *y2*], [*x0*, *y0
 
 <a href="#delaunay_update" name="delaunay_update">#</a> <i>delaunay</i>.<b>update</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
-Updates the triangulation after the points have been modified in-place — useful for Lloyd’s relaxation.
+Updates the triangulation after the points have been modified in-place.
 
 <a href="#delaunay_voronoi" name="delaunay_voronoi">#</a> <i>delaunay</i>.<b>voronoi</b>([<i>bounds</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/delaunay.js "Source")
 
@@ -190,3 +190,8 @@ Returns an iterable over the [polygons for each cell](#voronoi_cellPolygon), in 
 <a href="#voronoi_cellPolygon" name="voronoi_cellPolygon">#</a> <i>voronoi</i>.<b>cellPolygon</b>(<i>i</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 Returns the convex, closed polygon [[*x0*, *y0*], [*x1*, *y1*], …, [*x0*, *y0*]] representing the cell for the specified point *i*.
+
+<a href="#voronoi_update" name="voronoi_update">#</a> <i>voronoi</i>.<b>update</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+
+Updates the Voronoi diagram and underlying triangulation after the points have been modified in-place — useful for Lloyd’s relaxation.
+
