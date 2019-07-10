@@ -82,7 +82,7 @@ export default class Delaunay {
     for (let i = 0, n = hull.length; i < n; ++i) {
       hullIndex[hull[i]] = i;
     }
-    
+
     // degenerate case: 1 or 2 (distinct) points
     if (hull.length <= 2 && hull.length > 0) {
       this.triangles = new Int32Array(3).fill(-1);
@@ -99,7 +99,7 @@ export default class Delaunay {
   }
   *neighbors(i) {
     const {inedges, hull, _hullIndex, halfedges, triangles} = this;
-    
+
     // degenerate case with several collinear points
     if (this.collinear) {
       const l = this.collinear.indexOf(i);
@@ -107,7 +107,7 @@ export default class Delaunay {
       if (l < this.collinear.length - 1) yield this.collinear[l + 1];
       return;
     }
-    
+
     const e0 = inedges[i];
     if (e0 === -1) return; // coincident point
     let e = e0, p0 = -1;
@@ -118,7 +118,7 @@ export default class Delaunay {
       e = halfedges[e];
       if (e === -1) {
         const p = hull[(_hullIndex[i] + 1) % hull.length];
-        if (p !== p0) yield p; 
+        if (p !== p0) yield p;
         return;
       }
     } while (e !== e0);
@@ -131,14 +131,27 @@ export default class Delaunay {
     return c;
   }
   _step(i, x, y) {
-    const {inedges, points} = this;
+    const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
     if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
-    for (const t of this.neighbors(i)) {
+    const e0 = inedges[i];
+    let e = e0;
+    do {
+      let t = triangles[e];
       const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
       if (dt < dc) dc = dt, c = t;
-    }
+      e = e % 3 === 2 ? e - 2 : e + 1;
+      if (triangles[e] !== i) break; // bad triangulation
+      e = halfedges[e];
+      if (e === -1) {
+        e = hull[(_hullIndex[i] + 1) % hull.length];
+        if (e !== t) {
+          if ((x - points[e * 2]) ** 2 + (y - points[e * 2 + 1]) ** 2 < dc) return e;
+        }
+        break;
+      }
+    } while (e !== e0);
     return c;
   }
   render(context) {
