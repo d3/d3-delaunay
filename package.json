@@ -39,15 +39,14 @@
   },
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
-    "eslint": "5",
+    "eslint": "6",
     "esm": "3",
     "rollup": "1",
     "rollup-plugin-node-resolve": "5",
-    "rollup-plugin-terser": "5",
-    "tape": "4"
+    "rollup-plugin-terser": "5"
   },
   "scripts": {
-    "test": "tape -r esm 'test/**/*-test.js' && eslint src",
+    "test": "tape -r esm 'test/**/*-test.js' && eslint src test",
     "prepublishOnly": "yarn test && rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags && zip -j dist/${npm_package_name}.zip -- LICENSE README.md dist/${npm_package_name}.js dist/${npm_package_name}.min.js"
   }
