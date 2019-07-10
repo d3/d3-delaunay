@@ -113,6 +113,28 @@ tape("delaunay.find(x, y) returns the index of the cell that contains the specif
   test.equal(delaunay.find(51, 51), 4);
 });
 
+tape("delaunay.find(x, y) works with one or two points", test => {
+  const points = [[0, 1], [0, 2]];
+  const delaunay = Delaunay.from(points);
+  test.equal(points[delaunay.find(0, -1)][1], 1);
+  test.equal(points[delaunay.find(0, 2.2)][1], 2);
+  delaunay.points.fill(0);
+  delaunay.update();
+  test.equal(delaunay.find(0, -1), 0);
+  test.equal(delaunay.find(0, 1.2), 0);
+});
+
+tape("delaunay.find(x, y) works with collinear points", test => {
+  const points = [[0, 1], [0, 2], [0, 4], [0, 0], [0, 3], [0, 4], [0, 4]];
+  const delaunay = Delaunay.from(points);
+  test.equal(points[delaunay.find(0, -1)][1], 0);
+  test.equal(points[delaunay.find(0, 1.2)][1], 1);
+  test.equal(points[delaunay.find(1, 1.9)][1], 2);
+  test.equal(points[delaunay.find(-1, 3.3)][1], 3);
+  test.equal(points[delaunay.find(10, 10)][1], 4);
+  test.equal(points[delaunay.find(10, 10, 0)][1], 4);
+});
+
 tape("delaunay.update() allows fast updates", test => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
   let circumcenters1 = delaunay.voronoi([-500, -500, 500, 500]).circumcenters;
