@@ -54,6 +54,7 @@ export default class Voronoi {
     let p0, p1 = h * 4;
     let x0, x1 = points[2 * h];
     let y0, y1 = points[2 * h + 1];
+    vectors.fill(0);
     for (let i = 0; i < hull.length; ++i) {
       h = hull[i];
       p0 = p1, x0 = x1, y0 = y1;
