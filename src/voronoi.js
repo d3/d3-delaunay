@@ -101,7 +101,8 @@ export default class Voronoi {
     if (points === null) return;
     context.moveTo(points[0], points[1]);
     for (let i = 2, n = points.length; i < n; i += 2) {
-      context.lineTo(points[i], points[i + 1]);
+      if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
+        context.lineTo(points[i], points[i + 1]);
     }
     context.closePath();
     return buffer && buffer.value();
