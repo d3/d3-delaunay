@@ -18,8 +18,8 @@
     "url": "https://bost.ocks.org/mike"
   },
   "files": [
-    "dist/*.js",
-    "src"
+    "dist/**/*.js",
+    "src/**/*.js"
   ],
   "contributors": [
     {
