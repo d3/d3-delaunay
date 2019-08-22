@@ -45,6 +45,8 @@ tape("voronoi.update() updates a degenerate voronoi", test => {
 });
 
 tape("zero-length edges are removed", test => {
-   const voronoi = Delaunay.from([[50, 10], [10, 50], [10, 10], [200, 100]]).voronoi([40, 40, 440, 180]);
-   test.equal(voronoi.cellPolygon(0).length, 4);
+   const voronoi1 = Delaunay.from([[50, 10], [10, 50], [10, 10], [200, 100]]).voronoi([40, 40, 440, 180]);
+   test.equal(voronoi1.cellPolygon(0).length, 4);
+   const voronoi2 = Delaunay.from([[10, 10], [20, 10]]).voronoi([0, 0, 30, 20]);
+   test.deepEqual(voronoi2.cellPolygon(0), [[15, 20], [0, 20], [0, 0], [15, 0], [15, 20]]);
 })
