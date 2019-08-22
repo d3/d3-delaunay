@@ -95,7 +95,7 @@ tape("delaunay.voronoi() for one point returns the bounding rectangle", test => 
 
 tape("delaunay.voronoi() for two points", test => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [1, 0], [1, 0]]).voronoi([-1, -1, 2, 2]);
-  test.equal(voronoi.renderCell(0), "M0.5,2L-1,2L-1,-1L0.5,-1L0.5,2Z");
+  test.equal(voronoi.renderCell(0), "M0.5,2L-1,2L-1,-1L0.5,-1Z");
   test.equal(voronoi.delaunay.find(-1,0), 0);
   test.equal(voronoi.delaunay.find(2,0), 1);
 });
