@@ -100,7 +100,9 @@ export default class Voronoi {
     const points = this._clip(i);
     if (points === null) return;
     context.moveTo(points[0], points[1]);
-    for (let i = 2, n = points.length; i < n; i += 2) {
+    let n = points.length;
+    while (points[0] === points[n-2] && points[1] === points[n-1]) n -= 2;
+    for (let i = 2; i < n; i += 2) {
       if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
         context.lineTo(points[i], points[i + 1]);
     }
