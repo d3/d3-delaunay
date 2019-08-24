@@ -223,12 +223,12 @@ export default class Delaunay {
 Delaunay.from = function(points, fx = pointX, fy = pointY, that) {
   return new Delaunay("length" in points
       ? flatArray(points, fx, fy, that)
-      : Float64Array.from(flatIterable(points, fx, fy, that)));
+      : Float32Array.from(flatIterable(points, fx, fy, that)));
 };
 
 function flatArray(points, fx, fy, that) {
   const n = points.length;
-  const array = new Float64Array(n * 2);
+  const array = new Float32Array(n * 2);
   for (let i = 0; i < n; ++i) {
     const p = points[i];
     array[i * 2] = fx.call(that, p, i, points);

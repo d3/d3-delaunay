@@ -4,7 +4,7 @@ import Context from "./context.js";
 
 tape("Delaunay.from(array)", test => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  test.deepEqual(delaunay.points, Float32Array.of(0, 0, 1, 0, 0, 1, 1, 1));
   test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
   test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
   test.deepEqual(delaunay.inedges, Int32Array.of(2, 4, 0, 3));
@@ -30,7 +30,7 @@ tape("Delaunay.from(iterable)", test => {
     yield [0, 1];
     yield [1, 1];
   })());
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  test.deepEqual(delaunay.points, Float32Array.of(0, 0, 1, 0, 0, 1, 1, 1));
   test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
   test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
@@ -42,14 +42,14 @@ tape("Delaunay.from(iterable, fx, fy)", test => {
     yield {x: 0, y: 1};
     yield {x: 1, y: 1};
   })(), d => d.x, d => d.y);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  test.deepEqual(delaunay.points, Float32Array.of(0, 0, 1, 0, 0, 1, 1, 1));
   test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
   test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
 
 tape("Delaunay.from({length}, fx, fy)", test => {
   let delaunay = Delaunay.from({length: 4}, (d, i) => i & 1, (d, i) => (i >> 1) & 1);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  test.deepEqual(delaunay.points, Float32Array.of(0, 0, 1, 0, 0, 1, 1, 1));
   test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
   test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
@@ -197,4 +197,16 @@ tape("delaunay.renderHull(context) is closed", test => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
   let context = new Context;
   test.equal((delaunay.renderHull(context), context.toString()), `M0,1L1,1L1,0L0,0Z`);
+});
+
+tape("delaunay hull doesn't break on floating point precision", test => {
+  const points = [
+    [-537.7739674441619, -122.26130468750004],
+    [-495.533967444162, -183.39195703125006],
+    [-453.29396744416204, -244.5226093750001],
+    [-411.0539674441621, -305.6532617187501],
+    [-164, -122]
+  ];
+  test.deepEqual(Delaunay.from(points).hull, Uint32Array.from([2,0,4,3]));
+  test.deepEqual(Delaunay.from(new Set(points)).hull, Uint32Array.from([2,0,4,3]));
 });
