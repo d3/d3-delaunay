@@ -21,7 +21,7 @@ export default class Voronoi {
 
     // Compute circumcenters.
     const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
-    for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
+    for (let i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
       const t1 = triangles[i] * 2;
       const t2 = triangles[i + 1] * 2;
       const t3 = triangles[i + 2] * 2;
@@ -31,22 +31,31 @@ export default class Voronoi {
       const y2 = points[t2 + 1];
       const x3 = points[t3];
       const y3 = points[t3 + 1];
-      const a2 = x1 - x2;
-      const a3 = x1 - x3;
-      const b2 = y1 - y2;
-      const b3 = y1 - y3;
-      const d1 = x1 * x1 + y1 * y1;
-      const d2 = d1 - x2 * x2 - y2 * y2;
-      const d3 = d1 - x3 * x3 - y3 * y3;
-      const ab = (a3 * b2 - a2 * b3) * 2;
-      // degenerate case (2 points)
+
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const ex = x3 - x1;
+      const ey = y3 - y1;
+      const bl = dx * dx + dy * dy;
+      const cl = ex * ex + ey * ey;
+      const ab = (dx * ey - dy * ex) * 2;
+
       if (!ab) {
-        circumcenters[j] = (x1 + x3) / 2 + 1e8 * b3;
-        circumcenters[j + 1] = (y1 + y3) / 2 - 1e8 * a3;
-      } else {
-        circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
-        circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+        // degenerate case (collinear diagram)
+        x = (x1 + x3) / 2 - 1e8 * ey;
+        y = (y1 + y3) / 2 + 1e8 * ex;
       }
+      else if (Math.abs(ab) < 1e-8) {
+        // almost equal points (degenerate triangle)
+        x = (x1 + x3) / 2;
+        y = (y1 + y3) / 2;
+      } else {
+        const d = 1 / ab;
+        x = x1 + (ey * bl - dy * cl) * d;
+        y = y1 + (dx * cl - ex * bl) * d;
+      }
+      circumcenters[j] = x;
+      circumcenters[j + 1] = y;
     }
 
     // Compute exterior cell rays.
