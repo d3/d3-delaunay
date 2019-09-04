@@ -1,6 +1,6 @@
 {
   "name": "d3-delaunay",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "description": "Compute the Voronoi diagram of a set of two-dimensional points.",
   "keywords": [
     "voronoi",
