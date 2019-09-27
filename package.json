@@ -37,6 +37,7 @@
   "dependencies": {
     "delaunator": "4"
   },
+  "sideEffects": false,
   "devDependencies": {
     "@observablehq/tape": "~0.0.1",
     "eslint": "6",
