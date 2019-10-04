@@ -135,6 +135,18 @@ tape("delaunay.find(x, y) works with collinear points", test => {
   test.equal(points[delaunay.find(10, 10, 0)][1], 4);
 });
 
+tape("delaunay.find(x, y) works with collinear points 2", test => {
+  const points = Array.from({ length: 120 }, (_, i) => [i * 4, i / 3 + 100]);
+  const delaunay = Delaunay.from(points);
+  test.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
+});
+
+tape("delaunay.find(x, y) works with collinear points 3", test => {
+  const points = Array.from({ length: 120 }, (_, i) => [i * 4, i / 3 + 100]);
+  const delaunay = Delaunay.from(points);
+  test.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
+});
+
 tape("delaunay.find(x, y) works with collinear points (large)", test => {
   const points = Array.from({length: 2000}, (_,i) => [i**2,i**2]);
   const delaunay = Delaunay.from(points);
