@@ -13,20 +13,18 @@ function pointY(p) {
   return p[1];
 }
 
-function area(hull, points) {
-  let n = hull.length, x0, y0,
-      x1 = points[2 * hull[n - 1]],
-      y1 = points[2 * hull[n - 1] + 1],
-      area = 0;
-
-  for (let i = 0; i < n; i ++) {
-    x0 = x1, y0 = y1;
-    x1 = points[2 * hull[i]];
-    y1 = points[2 * hull[i] + 1];
-    area += y0 * x1 - x0 * y1;
+// A triangulation is collinear if all its triangles have a non-null area
+function collinear(d) {
+  const {triangles, coords} = d;
+  for (let i = 0; i < triangles.length; i += 3) {
+    const a = 2 * triangles[i],
+          b = 2 * triangles[i + 1],
+          c = 2 * triangles[i + 2],
+          cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1])
+                - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
+    if (cross > 1e-10) return false;
   }
-
-  return area / 2;
+  return true;
 }
 
 function jitter(x, y, r) {
@@ -50,7 +48,7 @@ export default class Delaunay {
     const d = this._delaunator, points = this.points;
 
     // check for collinear
-    if (d.hull && d.hull.length > 2 && area(d.hull, points) < 1e-10) {
+    if (d.hull && d.hull.length > 2 && collinear(d)) {
       this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
         .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
       const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
