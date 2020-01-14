@@ -165,6 +165,10 @@ The bounds of the viewport [*xmin*, *ymin*, *xmax*, *ymax*] for rendering the Vo
 
 Returns true if the cell with the specified index *i* contains the specified point ⟨*x*, *y*⟩. (This method is not affected by the associated Voronoi diagram’s viewport [bounds](#voronoi_xmin).)
 
+<a href="#voronoi_neighbors" name="voronoi_neighbors">#</a> <i>voronoi</i>.<b>neighbors</b>(<i>i</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
+
+Returns an iterable over the indexes of the cells that share a common edge with the specified cell *i*. Voronoi neighbors are always neighbors on the Delaunay graph, but the converse is false when the common edge has been clipped out by the Voronoi diagram’s viewport.
+
 <a href="#voronoi_render" name="voronoi_render">#</a> <i>voronoi</i>.<b>render</b>([<i>context</i>]) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 <img alt="voronoi.render" src="https://raw.githubusercontent.com/d3/d3-delaunay/master/img/voronoi-mesh.png">

@@ -51,6 +51,16 @@ tape("zero-length edges are removed", test => {
    test.deepEqual(voronoi2.cellPolygon(0), [[15, 20], [0, 20], [0, 0], [15, 0], [15, 20]]);
 });
 
+tape("voronoi neighbors are clipped", test => {
+   const voronoi = Delaunay.from([[300, 10], [200, 100], [300, 100], [10, 10], [350, 200], [350, 400]]).voronoi([0, 0, 500, 150]);
+   test.deepEqual([...voronoi.neighbors(0)].sort(), [1, 2]);
+   test.deepEqual([...voronoi.neighbors(1)].sort(), [0, 2]);
+   test.deepEqual([...voronoi.neighbors(2)].sort(), [0, 1, 4]);
+   test.deepEqual([...voronoi.neighbors(3)].sort(), []);
+   test.deepEqual([...voronoi.neighbors(4)].sort(), [2]);
+   test.deepEqual([...voronoi.neighbors(5)].sort(), []);
+});
+
 tape("unnecessary points on the corners are avoided (#88)", test => {
   for (const [points, lengths] of [
     [ [[289,25],[3,22],[93,165],[282,184],[65,89]], [ 6, 4, 6, 5, 6 ] ],
