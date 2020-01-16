@@ -96,13 +96,13 @@ export default class Delaunay {
     return new Voronoi(this, bounds);
   }
   *neighbors(i) {
-    const {inedges, hull, _hullIndex, halfedges, triangles} = this;
+    const {inedges, hull, _hullIndex, halfedges, triangles, collinear} = this;
 
     // degenerate case with several collinear points
-    if (this.collinear) {
-      const l = this.collinear.indexOf(i);
-      if (l > 0) yield this.collinear[l - 1];
-      if (l < this.collinear.length - 1) yield this.collinear[l + 1];
+    if (collinear) {
+      const l = collinear.indexOf(i);
+      if (l > 0) yield collinear[l - 1];
+      if (l < collinear.length - 1) yield collinear[l + 1];
       return;
     }
 
