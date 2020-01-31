@@ -31,7 +31,12 @@ function jitter(x, y, r) {
   return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
 }
 
-export default Object.assign(class Delaunay {
+export default class Delaunay {
+  static from(points, fx = pointX, fy = pointY, that) {
+    return new Delaunay("length" in points
+        ? flatArray(points, fx, fy, that)
+        : Float64Array.from(flatIterable(points, fx, fy, that)));
+  }
   constructor(points) {
     this._delaunator = new Delaunator(points);
     this.inedges = new Int32Array(points.length / 2);
@@ -216,13 +221,7 @@ export default Object.assign(class Delaunay {
     this.renderTriangle(i, polygon);
     return polygon.value();
   }
-}, {
-  from(points, fx = pointX, fy = pointY, that) {
-    return new Delaunay("length" in points
-        ? flatArray(points, fx, fy, that)
-        : Float64Array.from(flatIterable(points, fx, fy, that)));
-  }
-});
+}
 
 function flatArray(points, fx, fy, that) {
   const n = points.length;
