@@ -3,7 +3,7 @@ import Path from "./path.js";
 import Polygon from "./polygon.js";
 import Voronoi from "./voronoi.js";
 
-const tau = 2 * Math.PI;
+const tau = 2 * Math.PI, pow = Math.pow;
 
 function pointX(p) {
   return p[0];
@@ -58,7 +58,7 @@ export default class Delaunay {
         .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
       const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
         bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-        r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+        r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
       for (let i = 0, n = points.length / 2; i < n; ++i) {
         const p = jitter(points[2 * i], points[2 * i + 1], r);
         points[2 * i] = p[0];
@@ -137,12 +137,12 @@ export default class Delaunay {
     const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
     if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
     let c = i;
-    let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+    let dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2);
     const e0 = inedges[i];
     let e = e0;
     do {
       let t = triangles[e];
-      const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+      const dt = pow(x - points[t * 2], 2) + pow(y - points[t * 2 + 1], 2);
       if (dt < dc) dc = dt, c = t;
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
@@ -150,7 +150,7 @@ export default class Delaunay {
       if (e === -1) {
         e = hull[(_hullIndex[i] + 1) % hull.length];
         if (e !== t) {
-          if ((x - points[e * 2]) ** 2 + (y - points[e * 2 + 1]) ** 2 < dc) return e;
+          if (pow(x - points[e * 2], 2) + pow(y - points[e * 2 + 1], 2) < dc) return e;
         }
         break;
       }
