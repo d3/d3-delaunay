@@ -107,7 +107,7 @@ export default class Voronoi {
   renderCell(i, context) {
     const buffer = context == null ? context = new Path : undefined;
     const points = this._clip(i);
-    if (points === null) return;
+    if (points === null || !points.length) return;
     context.moveTo(points[0], points[1]);
     let n = points.length;
     while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
@@ -122,7 +122,7 @@ export default class Voronoi {
     const {delaunay: {points}} = this;
     for (let i = 0, n = points.length / 2; i < n; ++i) {
       const cell = this.cellPolygon(i);
-      if (cell) yield cell;
+      if (cell) cell.index = i, yield cell;
     }
   }
   cellPolygon(i) {

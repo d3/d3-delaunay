@@ -78,3 +78,12 @@ tape("a degenerate triangle is avoided", test => {
   const voronoi = Delaunay.from(pts).voronoi([10, 10, 960, 500]);
   test.equal(voronoi.cellPolygon(0).length, 4);
 });
+
+tape("cellPolygons filter out empty cells and have the cell index as a property", test => {
+  const pts = [[0, 0], [3, 3], [1, 1], [-3, -2]];
+  const voronoi = Delaunay.from(pts).voronoi([0, 0, 2, 2]);
+  test.deepEqual([...voronoi.cellPolygons()], [
+    Object.assign([[0, 0], [1, 0], [0, 1], [0, 0]], {index:0, }),
+    Object.assign([[0, 1], [1, 0], [2, 0], [2, 2], [0, 2], [0, 1]], { index: 2 })
+  ]);
+});
