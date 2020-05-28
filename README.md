@@ -189,7 +189,7 @@ Renders the cell with the specified index *i* to the specified *context*. The sp
 
 <a href="#voronoi_cellPolygons" name="voronoi_cellPolygons">#</a> <i>voronoi</i>.<b>cellPolygons</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
-Returns an iterable over the [polygons for each cell](#voronoi_cellPolygon), in order.
+Returns an iterable over the non-empty [polygons for each cell](#voronoi_cellPolygon), with the cell index as property.
 
 <a href="#voronoi_cellPolygon" name="voronoi_cellPolygon">#</a> <i>voronoi</i>.<b>cellPolygon</b>(<i>i</i>) [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
