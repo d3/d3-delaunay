@@ -39,16 +39,18 @@
   },
   "sideEffects": false,
   "devDependencies": {
-    "@observablehq/tape": "~0.0.1",
-    "eslint": "6",
+    "eslint": "7",
     "esm": "3",
-    "rollup": "1",
+    "rollup": "2",
     "rollup-plugin-node-resolve": "5",
-    "rollup-plugin-terser": "5"
+    "rollup-plugin-terser": "7",
+    "tape": "4",
+    "tape-await": "0.1"
   },
   "scripts": {
-    "test": "tape -r esm 'test/**/*-test.js' && eslint src test",
-    "prepublishOnly": "yarn test && rm -rf dist && rollup -c",
+    "pretest": "rollup -c",
+    "test": "./test/run.sh",
+    "prepublishOnly": "rm -rf dist && yarn test",
     "postpublish": "git push && git push --tags && zip -j dist/${npm_package_name}.zip -- LICENSE README.md dist/${npm_package_name}.js dist/${npm_package_name}.min.js"
   }
 }
