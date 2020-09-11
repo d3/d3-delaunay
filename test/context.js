@@ -1,4 +1,4 @@
-module.exports = class Context {
+export default class Context {
   constructor() {
     this._string = "";
   }

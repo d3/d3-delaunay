@@ -1,3 +1,3 @@
 #!/bin/bash
 
-tape ${@:-'test/**/*-test.js'} && eslint src
+tape -r esm ${@:-'test/**/*-test.js'} && eslint src

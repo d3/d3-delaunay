@@ -1,6 +1,6 @@
-const tape = require("tape-await");
-const {Delaunay} = require("../");
-const Context = require("./context.js");
+import tape from "tape-await";
+import Delaunay from "../src/delaunay.js"
+import Context from "./context.js";
 
 tape("Delaunay.from(array)", test => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);

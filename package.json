@@ -48,9 +48,8 @@
     "tape-await": "0.1"
   },
   "scripts": {
-    "pretest": "rollup -c",
     "test": "./test/run.sh",
-    "prepublishOnly": "rm -rf dist && yarn test",
+    "prepublishOnly": "yarn test && rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags && zip -j dist/${npm_package_name}.zip -- LICENSE README.md dist/${npm_package_name}.js dist/${npm_package_name}.min.js"
   }
 }
