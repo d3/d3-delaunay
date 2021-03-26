@@ -1,6 +1,7 @@
 {
   "name": "d3-delaunay",
   "version": "5.3.0",
+  "type": "module",
   "description": "Compute the Voronoi diagram of a set of two-dimensional points.",
   "keywords": [
     "voronoi",
@@ -35,7 +36,7 @@
   "unpkg": "dist/d3-delaunay.min.js",
   "module": "src/index.js",
   "dependencies": {
-    "delaunator": "4"
+    "delaunator": "mapbox/delaunator#v5"
   },
   "sideEffects": false,
   "devDependencies": {
@@ -47,7 +48,7 @@
     "rollup-plugin-terser": "5"
   },
   "scripts": {
-    "test": "tape -r esm 'test/**/*-test.js' && eslint src test",
+    "test": "node 'test/delaunay-test.js' && node 'test/voronoi-test.js' && eslint src test",
     "prepublishOnly": "yarn test && rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags && zip -j dist/${npm_package_name}.zip -- LICENSE README.md dist/${npm_package_name}.js dist/${npm_package_name}.min.js"
   }
