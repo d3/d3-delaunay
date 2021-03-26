@@ -40,15 +40,20 @@ export default class Voronoi {
       const cl = ex * ex + ey * ey;
       const ab = (dx * ey - dy * ex) * 2;
 
-      if (!ab) {
+      if (Math.abs(ab) < 1e-9) {
         // degenerate case (collinear diagram)
-        x = (x1 + x3) / 2 - 1e8 * ey;
-        y = (y1 + y3) / 2 + 1e8 * ex;
-      }
-      else if (Math.abs(ab) < 1e-8) {
         // almost equal points (degenerate triangle)
-        x = (x1 + x3) / 2;
-        y = (y1 + y3) / 2;
+        // the circumcenter is at the infinity, in a
+        // direction that is:
+        // 1. orthogonal to the halfedge.
+        let a = 1e9;
+        // 2. points away from the center; since the list of triangles starts
+        // in the center, the first point of the first triangle
+        // will be our reference
+        const r = triangles[0] * 2;
+        a *= Math.sign((points[r] - x1) * ey - (points[r + 1] - y1) * ex);
+        x = (x1 + x3) / 2 - a * ey;
+        y = (y1 + y3) / 2 + a * ex;
       } else {
         const d = 1 / ab;
         x = x1 + (ey * bl - dy * cl) * d;
