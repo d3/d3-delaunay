@@ -36,7 +36,7 @@
   "unpkg": "dist/d3-delaunay.min.js",
   "module": "src/index.js",
   "dependencies": {
-    "delaunator": "mapbox/delaunator#v5"
+    "delaunator": "5"
   },
   "sideEffects": false,
   "devDependencies": {
