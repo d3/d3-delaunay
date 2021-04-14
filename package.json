@@ -42,9 +42,9 @@
     "@observablehq/tape": "~0.0.1",
     "eslint": "6",
     "esm": "3",
-    "rollup": "1",
+    "rollup": "^2.45.2",
     "rollup-plugin-node-resolve": "5",
-    "rollup-plugin-terser": "5"
+    "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js' && eslint src test",
