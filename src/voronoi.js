@@ -36,8 +36,6 @@ export default class Voronoi {
       const dy = y2 - y1;
       const ex = x3 - x1;
       const ey = y3 - y1;
-      const bl = dx * dx + dy * dy;
-      const cl = ex * ex + ey * ey;
       const ab = (dx * ey - dy * ex) * 2;
 
       if (!ab) {
@@ -51,6 +49,8 @@ export default class Voronoi {
         y = (y1 + y3) / 2;
       } else {
         const d = 1 / ab;
+        const bl = dx * dx + dy * dy;
+        const cl = ex * ex + ey * ey;
         x = x1 + (ey * bl - dy * cl) * d;
         y = y1 + (dx * cl - ex * bl) * d;
       }
