@@ -13,7 +13,7 @@ If you use npm, `npm install d3-delaunay`. You can also download the [latest rel
 
 ```html
 <script type="module">
-import {delaunay} from "https://cdn.skypack.dev/d3-delaunay@6";
+import {Delaunay} from "https://cdn.skypack.dev/d3-delaunay@6";
 
 const points = [[0, 0], [0, 1], [1, 0], [1, 1]];
 const delaunay = Delaunay.from(points);
@@ -200,4 +200,3 @@ Returns the convex, closed polygon [[*x0*, *y0*], [*x1*, *y1*], …, [*x0*, *y0*
 <a href="#voronoi_update" name="voronoi_update">#</a> <i>voronoi</i>.<b>update</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 Updates the Voronoi diagram and underlying triangulation after the points have been modified in-place — useful for Lloyd’s relaxation.
-
