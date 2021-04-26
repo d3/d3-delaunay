@@ -278,6 +278,10 @@ export default class Voronoi {
         case 0b1001: e0 = 0b0001; continue; // bottom-left
         case 0b0001: e0 = 0b0101, x = this.xmin, y = this.ymin; break; // left
       }
+
+      // Implicit out of bounds checking.
+      // P[j] or P[j+1] may become undefined and the conditional statement will be
+      // executed.
       if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
         P.splice(j, 0, x, y), j += 2;
       }
