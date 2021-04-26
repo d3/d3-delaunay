@@ -21,6 +21,18 @@ const voronoi = delaunay.voronoi([0, 0, 960, 500]);
 </script>
 ```
 
+For legacy environments, you can load d3-delaunay’s UMD bundle from an npm-based CDN such as jsDelivr; a `d3` global is exported:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6"></script>
+<script>
+
+const delaunay = d3.Delaunay.from(points);
+
+</script>
+```
+
+
 ## API Reference
 
 ### Delaunay
