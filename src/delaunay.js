@@ -91,10 +91,12 @@ export default class Delaunay {
       this.triangles = new Int32Array(3).fill(-1);
       this.halfedges = new Int32Array(3).fill(-1);
       this.triangles[0] = hull[0];
-      this.triangles[1] = hull[1];
-      this.triangles[2] = hull[1];
       inedges[hull[0]] = 1;
-      if (hull.length === 2) inedges[hull[1]] = 0;
+      if (hull.length === 2) {
+        inedges[hull[1]] = 0;
+        this.triangles[1] = hull[1];
+        this.triangles[2] = hull[1];
+      }
     }
   }
   voronoi(bounds) {
