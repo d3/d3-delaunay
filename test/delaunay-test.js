@@ -1,164 +1,164 @@
-import tape from "@observablehq/tape";
+import assert from "assert";
 import Delaunay from "../src/delaunay.js";
 import Context from "./context.js";
 
-tape("Delaunay.from(array)", test => {
+it("Delaunay.from(array)", () => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
-  test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
-  test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
-  test.deepEqual(delaunay.inedges, Int32Array.of(2, 4, 0, 3));
-  test.deepEqual(Array.from(delaunay.neighbors(0)), [1, 2]);
-  test.deepEqual(Array.from(delaunay.neighbors(1)), [3, 2, 0]);
-  test.deepEqual(Array.from(delaunay.neighbors(2)), [0, 1, 3]);
-  test.deepEqual(Array.from(delaunay.neighbors(3)), [2, 1]);
+  assert.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  assert.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
+  assert.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
+  assert.deepEqual(delaunay.inedges, Int32Array.of(2, 4, 0, 3));
+  assert.deepEqual(Array.from(delaunay.neighbors(0)), [1, 2]);
+  assert.deepEqual(Array.from(delaunay.neighbors(1)), [3, 2, 0]);
+  assert.deepEqual(Array.from(delaunay.neighbors(2)), [0, 1, 3]);
+  assert.deepEqual(Array.from(delaunay.neighbors(3)), [2, 1]);
 });
 
-tape("Delaunay.from(array) handles coincident points", test => {
+it("Delaunay.from(array) handles coincident points", () => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]);
-  test.deepEqual(delaunay.inedges, Int32Array.of(2, 1, 0, -1));
-  test.deepEqual(Array.from(delaunay.neighbors(0)), [1, 2]);
-  test.deepEqual(Array.from(delaunay.neighbors(1)), [2, 0]);
-  test.deepEqual(Array.from(delaunay.neighbors(2)), [0, 1]);
-  test.deepEqual(Array.from(delaunay.neighbors(3)), []);
+  assert.deepEqual(delaunay.inedges, Int32Array.of(2, 1, 0, -1));
+  assert.deepEqual(Array.from(delaunay.neighbors(0)), [1, 2]);
+  assert.deepEqual(Array.from(delaunay.neighbors(1)), [2, 0]);
+  assert.deepEqual(Array.from(delaunay.neighbors(2)), [0, 1]);
+  assert.deepEqual(Array.from(delaunay.neighbors(3)), []);
 });
 
-tape("Delaunay.from(iterable)", test => {
+it("Delaunay.from(iterable)", () => {
   let delaunay = Delaunay.from((function*() {
     yield [0, 0];
     yield [1, 0];
     yield [0, 1];
     yield [1, 1];
   })());
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
-  test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
-  test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
+  assert.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  assert.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
+  assert.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
 
-tape("Delaunay.from(iterable, fx, fy)", test => {
+it("Delaunay.from(iterable, fx, fy)", () => {
   let delaunay = Delaunay.from((function*() {
     yield {x: 0, y: 0};
     yield {x: 1, y: 0};
     yield {x: 0, y: 1};
     yield {x: 1, y: 1};
   })(), d => d.x, d => d.y);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
-  test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
-  test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
+  assert.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  assert.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
+  assert.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
 
-tape("Delaunay.from({length}, fx, fy)", test => {
+it("Delaunay.from({length}, fx, fy)", () => {
   let delaunay = Delaunay.from({length: 4}, (d, i) => i & 1, (d, i) => (i >> 1) & 1);
-  test.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
-  test.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
-  test.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
+  assert.deepEqual(delaunay.points, Float64Array.of(0, 0, 1, 0, 0, 1, 1, 1));
+  assert.deepEqual(delaunay.triangles, Uint32Array.of(0, 2, 1, 2, 3, 1));
+  assert.deepEqual(delaunay.halfedges, Int32Array.of(-1, 5, -1, -1, -1, 1));
 });
 
-tape("delaunay.voronoi() uses the default bounds", test => {
+it("delaunay.voronoi() uses the default bounds", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi();
-  test.equal(voronoi.xmin, 0);
-  test.equal(voronoi.ymin, 0);
-  test.equal(voronoi.xmax, 960);
-  test.equal(voronoi.ymax, 500);
+  assert.equal(voronoi.xmin, 0);
+  assert.equal(voronoi.ymin, 0);
+  assert.equal(voronoi.xmax, 960);
+  assert.equal(voronoi.ymax, 500);
 });
 
-tape("delaunay.voronoi([xmin, ymin, xmax, ymax]) uses the specified bounds", test => {
+it("delaunay.voronoi([xmin, ymin, xmax, ymax]) uses the specified bounds", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi([-1, -1, 2, 2]);
-  test.equal(voronoi.xmin, -1);
-  test.equal(voronoi.ymin, -1);
-  test.equal(voronoi.xmax, 2);
-  test.equal(voronoi.ymax, 2);
+  assert.equal(voronoi.xmin, -1);
+  assert.equal(voronoi.ymin, -1);
+  assert.equal(voronoi.xmax, 2);
+  assert.equal(voronoi.ymax, 2);
 });
 
-tape("delaunay.voronoi() returns the expected diagram", test => {
+it("delaunay.voronoi() returns the expected diagram", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]).voronoi();
-  test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5, 0.5, 0.5));
-  test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, 1, 0));
+  assert.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5, 0.5, 0.5));
+  assert.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, 1, 0));
 });
 
-tape("delaunay.voronoi() skips cells for coincident points", test => {
+it("delaunay.voronoi() skips cells for coincident points", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
-  test.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5));
-  test.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, 0, 0, 0));
+  assert.deepEqual(voronoi.circumcenters, Float64Array.of(0.5, 0.5));
+  assert.deepEqual(voronoi.vectors, Float64Array.of(0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, 0, 0, 0));
 });
 
-tape("delaunay.voronoi() for zero point returns expected values", test => {
+it("delaunay.voronoi() for zero point returns expected values", () => {
   let voronoi = Delaunay.from([]).voronoi([-1, -1, 2, 2]);
-  test.equal(voronoi.render(), null);
+  assert.equal(voronoi.render(), null);
 });
 
-tape("delaunay.voronoi() for one point returns the bounding rectangle", test => {
+it("delaunay.voronoi() for one point returns the bounding rectangle", () => {
   let voronoi = Delaunay.from([[0, 0]]).voronoi([-1, -1, 2, 2]);
-  test.equal(voronoi.renderCell(0), "M2,-1L2,2L-1,2L-1,-1Z");
-  test.equal(voronoi.render(), null);
+  assert.equal(voronoi.renderCell(0), "M2,-1L2,2L-1,2L-1,-1Z");
+  assert.equal(voronoi.render(), null);
 });
 
-tape("delaunay.voronoi() for two points", test => {
+it("delaunay.voronoi() for two points", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [1, 0], [1, 0]]).voronoi([-1, -1, 2, 2]);
-  test.equal(voronoi.renderCell(0), "M-1,2L-1,-1L0.5,-1L0.5,2Z");
-  test.equal(voronoi.delaunay.find(-1,0), 0);
-  test.equal(voronoi.delaunay.find(2,0), 1);
+  assert.equal(voronoi.renderCell(0), "M-1,2L-1,-1L0.5,-1L0.5,2Z");
+  assert.equal(voronoi.delaunay.find(-1,0), 0);
+  assert.equal(voronoi.delaunay.find(2,0), 1);
 });
 
-tape("delaunay.voronoi() for collinear points", test => {
+it("delaunay.voronoi() for collinear points", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [-1, 0]]).voronoi([-1, -1, 2, 2]);
-  test.deepEqual(Array.from(voronoi.delaunay.neighbors(0)).sort(), [1, 2]);
-  test.deepEqual(Array.from(voronoi.delaunay.neighbors(1)), [0]);
-  test.deepEqual(Array.from(voronoi.delaunay.neighbors(2)), [0]);
+  assert.deepEqual(Array.from(voronoi.delaunay.neighbors(0)).sort(), [1, 2]);
+  assert.deepEqual(Array.from(voronoi.delaunay.neighbors(1)), [0]);
+  assert.deepEqual(Array.from(voronoi.delaunay.neighbors(2)), [0]);
 });
 
-tape("delaunay.find(x, y) returns the index of the cell that contains the specified point", test => {
+it("delaunay.find(x, y) returns the index of the cell that contains the specified point", () => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
-  test.equal(delaunay.find(49, 49), 0);
-  test.equal(delaunay.find(51, 51), 4);
+  assert.equal(delaunay.find(49, 49), 0);
+  assert.equal(delaunay.find(51, 51), 4);
 });
 
-tape("delaunay.find(x, y) works with one or two points", test => {
+it("delaunay.find(x, y) works with one or two points", () => {
   const points = [[0, 1], [0, 2]];
   const delaunay = Delaunay.from(points);
-  test.equal(points[delaunay.find(0, -1)][1], 1);
-  test.equal(points[delaunay.find(0, 2.2)][1], 2);
+  assert.equal(points[delaunay.find(0, -1)][1], 1);
+  assert.equal(points[delaunay.find(0, 2.2)][1], 2);
   delaunay.points.fill(0);
   delaunay.update();
-  test.equal(delaunay.find(0, -1), 0);
-  test.equal(delaunay.find(0, 1.2), 0);
+  assert.equal(delaunay.find(0, -1), 0);
+  assert.equal(delaunay.find(0, 1.2), 0);
 });
 
-tape("delaunay.find(x, y) works with collinear points", test => {
+it("delaunay.find(x, y) works with collinear points", () => {
   const points = [[0, 1], [0, 2], [0, 4], [0, 0], [0, 3], [0, 4], [0, 4]];
   const delaunay = Delaunay.from(points);
-  test.equal(points[delaunay.find(0, -1)][1], 0);
-  test.equal(points[delaunay.find(0, 1.2)][1], 1);
-  test.equal(points[delaunay.find(1, 1.9)][1], 2);
-  test.equal(points[delaunay.find(-1, 3.3)][1], 3);
-  test.equal(points[delaunay.find(10, 10)][1], 4);
-  test.equal(points[delaunay.find(10, 10, 0)][1], 4);
+  assert.equal(points[delaunay.find(0, -1)][1], 0);
+  assert.equal(points[delaunay.find(0, 1.2)][1], 1);
+  assert.equal(points[delaunay.find(1, 1.9)][1], 2);
+  assert.equal(points[delaunay.find(-1, 3.3)][1], 3);
+  assert.equal(points[delaunay.find(10, 10)][1], 4);
+  assert.equal(points[delaunay.find(10, 10, 0)][1], 4);
 });
 
-tape("delaunay.find(x, y) works with collinear points 2", test => {
+it("delaunay.find(x, y) works with collinear points 2", () => {
   const points = Array.from({ length: 120 }, (_, i) => [i * 4, i / 3 + 100]);
   const delaunay = Delaunay.from(points);
-  test.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
+  assert.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
 });
 
-tape("delaunay.find(x, y) works with collinear points 3", test => {
+it("delaunay.find(x, y) works with collinear points 3", () => {
   const points = Array.from({ length: 120 }, (_, i) => [i * 4, i / 3 + 100]);
   const delaunay = Delaunay.from(points);
-  test.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
+  assert.deepEqual([...delaunay.neighbors(2)], [ 1, 3 ]);
 });
 
-tape("delaunay.find(x, y) works with collinear points (large)", test => {
+it("delaunay.find(x, y) works with collinear points (large)", () => {
   const points = Array.from({length: 2000}, (_,i) => [i**2,i**2]);
   const delaunay = Delaunay.from(points);
-  test.equal(points[delaunay.find(0, -1)][1], 0);
-  test.equal(points[delaunay.find(0, 1.2)][1], 1);
-  test.equal(points[delaunay.find(3.9, 3.9)][1], 4);
-  test.equal(points[delaunay.find(10, 9.5)][1], 9);
-  test.equal(points[delaunay.find(10, 9.5, 0)][1], 9);
-  test.equal(points[delaunay.find(1e6, 1e6)][1], 1e6);
+  assert.equal(points[delaunay.find(0, -1)][1], 0);
+  assert.equal(points[delaunay.find(0, 1.2)][1], 1);
+  assert.equal(points[delaunay.find(3.9, 3.9)][1], 4);
+  assert.equal(points[delaunay.find(10, 9.5)][1], 9);
+  assert.equal(points[delaunay.find(10, 9.5, 0)][1], 9);
+  assert.equal(points[delaunay.find(1e6, 1e6)][1], 1e6);
 });
 
-tape("delaunay.update() allows fast updates", test => {
+it("delaunay.update() allows fast updates", () => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
   let circumcenters1 = delaunay.voronoi([-500, -500, 500, 500]).circumcenters;
   for (let i = 0; i < delaunay.points.length; i++) {
@@ -166,47 +166,47 @@ tape("delaunay.update() allows fast updates", test => {
   }
   delaunay.update();
   let circumcenters2 = delaunay.voronoi([-500, -500, 500, 500]).circumcenters;
-  test.deepEqual(circumcenters1, Float64Array.from([ 150, -50, -50, 150, 250, 150, 150, 250 ]));
-  test.deepEqual(circumcenters2, Float64Array.from([ -150, 50, -250, -150, 50, -150, -150, -250 ]));
+  assert.deepEqual(circumcenters1, Float64Array.from([ 150, -50, -50, 150, 250, 150, 150, 250 ]));
+  assert.deepEqual(circumcenters2, Float64Array.from([ -150, 50, -250, -150, 50, -150, -150, -250 ]));
 });
 
-tape("delaunay.update() updates collinear points", test => {
+it("delaunay.update() updates collinear points", () => {
   const delaunay = new Delaunay(Array.from({ length: 250 }).fill(0));
-  test.equal(delaunay.collinear, undefined);
+  assert.equal(delaunay.collinear, undefined);
   for (let i = 0; i < delaunay.points.length; i++)
     delaunay.points[i] = (i % 2) ? i : 0;
   delaunay.update();
-  test.equal(delaunay.collinear.length, 125);
+  assert.equal(delaunay.collinear.length, 125);
   for (let i = 0; i < delaunay.points.length; i++)
     delaunay.points[i] = Math.sin(i);
   delaunay.update();
-  test.equal(delaunay.collinear, undefined);
+  assert.equal(delaunay.collinear, undefined);
   for (let i = 0; i < delaunay.points.length; i++)
     delaunay.points[i] = (i % 2) ? i : 0;
   delaunay.update();
-  test.equal(delaunay.collinear.length, 125);
+  assert.equal(delaunay.collinear.length, 125);
   for (let i = 0; i < delaunay.points.length; i++)
     delaunay.points[i] = 0;
   delaunay.update();
-  test.equal(delaunay.collinear, undefined);
+  assert.equal(delaunay.collinear, undefined);
 });
 
-tape("delaunay.find(x, y) with coincident point", test => {
+it("delaunay.find(x, y) with coincident point", () => {
   let delaunay = Delaunay.from([[0, 0], [0, 0], [10,10], [10, -10]]);
-  test.equal(delaunay.find(100,100), 2);
-  test.ok(delaunay.find(0,0,1) > -1);
+  assert.equal(delaunay.find(100,100), 2);
+  assert(delaunay.find(0,0,1) > -1);
   delaunay = Delaunay.from(Array.from({length:1000}, () => [0, 0]).concat([[10,10], [10, -10]]));
-  test.ok(delaunay.find(0,0,1) > -1);
+  assert(delaunay.find(0,0,1) > -1);
 });
 
-tape("delaunay.find(x, y, i) traverses the convex hull", test => {
+it("delaunay.find(x, y, i) traverses the convex hull", () => {
   let delaunay = new Delaunay(Float64Array.of(509,253,426,240,426,292,567,272,355,356,413,392,319,408,374,285,327,303,381,215,475,319,301,352,247,426,532,334,234,366,479,375,251,302,340,170,160,377,626,317,177,296,322,243,195,422,241,232,585,358,666,406,689,343,172,198,527,401,766,350,444,432,117,316,267,170,580,412,754,425,117,231,725,300,700,222,438,165,703,168,558,221,475,211,491,125,216,166,240,108,783,266,640,258,184,77,387,90,162,125,621,162,296,78,532,154,763,199,132,165,422,343,312,128,125,77,450,95,635,106,803,415,714,63,529,87,388,152,575,126,573,64,726,381,773,143,787,67,690,117,813,203,811,319));
-  test.equal(delaunay.find(49, 311), 31);
-  test.equal(delaunay.find(49, 311, 22), 31);
+  assert.equal(delaunay.find(49, 311), 31);
+  assert.equal(delaunay.find(49, 311, 22), 31);
 });
 
-tape("delaunay.renderHull(context) is closed", test => {
+it("delaunay.renderHull(context) is closed", () => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
   let context = new Context;
-  test.equal((delaunay.renderHull(context), context.toString()), `M0,1L1,1L1,0L0,0Z`);
+  assert.equal((delaunay.renderHull(context), context.toString()), `M0,1L1,1L1,0L0,0Z`);
 });
