@@ -98,7 +98,6 @@ it("delaunay.renderPoints() accepts r", () => {
   assert.strictEqual(delaunay.renderPoints(null), 'M2,0A2,2,0,1,1,-2,0A2,2,0,1,1,2,0');
   const path = new Path();
   assert.strictEqual((delaunay.renderPoints(path, "3"), path.value()), 'M3,0A3,3,0,1,1,-3,0A3,3,0,1,1,3,0');
-
 });
 
 it("delaunay.voronoi() for one point returns the bounding rectangle", () => {
