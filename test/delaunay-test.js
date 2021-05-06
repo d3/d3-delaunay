@@ -87,6 +87,14 @@ it("delaunay.voronoi() for zero point returns expected values", () => {
   assert.strictEqual(voronoi.render(), null);
 });
 
+it("delaunay.renderPoints() accepts r", () => {
+  const delaunay = Delaunay.from([[0, 0]]);
+  assert.strictEqual(delaunay.renderPoints(), 'M2,0A2,2,0,1,1,-2,0A2,2,0,1,1,2,0');
+  assert.strictEqual(delaunay.renderPoints(5), 'M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0');
+  assert.strictEqual(delaunay.renderPoints("5"), 'M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0');
+  assert.strictEqual(delaunay.renderPoints(null, 5), 'M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0');
+});
+
 it("delaunay.voronoi() for one point returns the bounding rectangle", () => {
   let voronoi = Delaunay.from([[0, 0]]).voronoi([-1, -1, 2, 2]);
   assert.strictEqual(voronoi.renderCell(0), "M2,-1L2,2L-1,2L-1,-1Z");
