@@ -1,6 +1,7 @@
 import assert from "assert";
 import Delaunay from "../src/delaunay.js";
 import Context from "./context.js";
+import Path from "../src/path.js";
 
 it("Delaunay.from(array)", () => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
@@ -95,6 +96,9 @@ it("delaunay.renderPoints() accepts r", () => {
   assert.strictEqual(delaunay.renderPoints(null, 5), 'M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0');
   assert.strictEqual(delaunay.renderPoints(undefined), 'M2,0A2,2,0,1,1,-2,0A2,2,0,1,1,2,0');
   assert.strictEqual(delaunay.renderPoints(null), 'M2,0A2,2,0,1,1,-2,0A2,2,0,1,1,2,0');
+  const path = new Path();
+  assert.strictEqual((delaunay.renderPoints(path, "3"), path.value()), 'M3,0A3,3,0,1,1,-3,0A3,3,0,1,1,3,0');
+
 });
 
 it("delaunay.voronoi() for one point returns the bounding rectangle", () => {
