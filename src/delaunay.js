@@ -174,8 +174,8 @@ export default class Delaunay {
     return buffer && buffer.value();
   }
   renderPoints(context, r) {
-    if (r === undefined  && (!context || typeof context.moveTo !== "function")) r = context, context = null;
-    r = (r == null) ? 2 : +r;
+    if (r === undefined && (!context || typeof context.moveTo !== "function")) r = context, context = null;
+    r = r == undefined ? 2 : +r;
     const buffer = context == null ? context = new Path : undefined;
     const {points} = this;
     for (let i = 0, n = points.length; i < n; i += 2) {
