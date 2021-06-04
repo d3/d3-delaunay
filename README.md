@@ -9,15 +9,31 @@ For an interactive explanation of how this library works, see [The Delaunay’s 
 
 ## Installing
 
-To install, `npm install d3-delaunay` or `yarn add d3-delaunay`. You can also download the [latest release](https://github.com/d3/d3-delaunay/releases/latest) or load directly from [unpkg](https://unpkg.com/d3-delaunay/). AMD, CommonJS and ES6+ environments are supported. In vanilla, a `d3` global is exported.
+If you use npm, `npm install d3-delaunay`. You can also download the [latest release on GitHub](https://github.com/d3/d3-delaunay/releases/latest). For vanilla HTML in modern browsers, import d3-delaunay from Skypack:
 
-```js
-import {Delaunay} from "d3-delaunay";
+```html
+<script type="module">
+
+import {Delaunay} from "https://cdn.skypack.dev/d3-delaunay@6";
 
 const points = [[0, 0], [0, 1], [1, 0], [1, 1]];
 const delaunay = Delaunay.from(points);
 const voronoi = delaunay.voronoi([0, 0, 960, 500]);
+
+</script>
 ```
+
+For legacy environments, you can load d3-delaunay’s UMD bundle from an npm-based CDN such as jsDelivr; a `d3` global is exported:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6"></script>
+<script>
+
+const delaunay = d3.Delaunay.from(points);
+
+</script>
+```
+
 
 ## API Reference
 
@@ -198,4 +214,3 @@ Returns the convex, closed polygon [[*x0*, *y0*], [*x1*, *y1*], …, [*x0*, *y0*
 <a href="#voronoi_update" name="voronoi_update">#</a> <i>voronoi</i>.<b>update</b>() [<>](https://github.com/d3/d3-delaunay/blob/master/src/voronoi.js "Source")
 
 Updates the Voronoi diagram and underlying triangulation after the points have been modified in-place — useful for Lloyd’s relaxation.
-
