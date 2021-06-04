@@ -11,7 +11,7 @@ const config = {
     format: "umd",
     indent: false,
     extend: true,
-    banner: `// ${meta.homepage} v${meta.version} Copyright ${(new Date).getFullYear()} ${meta.author.name}
+    banner: `// ${meta.homepage} v${meta.version} Copyright 2018-2021 Observable, Inc.
 // https://github.com/mapbox/delaunator v${require("delaunator/package.json").version}. Copyright 2021 Mapbox`,
     globals: Object.assign({}, ...Object.keys(meta.dependencies || {}).filter(key => /^d3-/.test(key)).map(key => ({[key]: "d3"})))
   },
