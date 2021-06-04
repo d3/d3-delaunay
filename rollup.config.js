@@ -1,4 +1,4 @@
-import noderesolve from "rollup-plugin-node-resolve";
+import noderesolve from "@rollup/plugin-node-resolve";
 import {terser} from "rollup-plugin-terser";
 import * as meta from "./package.json";
 
@@ -12,7 +12,7 @@ const config = {
     indent: false,
     extend: true,
     banner: `// ${meta.homepage} v${meta.version} Copyright ${(new Date).getFullYear()} ${meta.author.name}
-// https://github.com/mapbox/delaunator v${require("delaunator/package.json").version}. Copyright 2019 Mapbox, Inc.`,
+// https://github.com/mapbox/delaunator v${require("delaunator/package.json").version}. Copyright 2021 Mapbox`,
     globals: Object.assign({}, ...Object.keys(meta.dependencies || {}).filter(key => /^d3-/.test(key)).map(key => ({[key]: "d3"})))
   },
   plugins: [

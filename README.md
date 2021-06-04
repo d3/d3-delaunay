@@ -13,11 +13,13 @@ If you use npm, `npm install d3-delaunay`. You can also download the [latest rel
 
 ```html
 <script type="module">
+
 import {Delaunay} from "https://cdn.skypack.dev/d3-delaunay@6";
 
 const points = [[0, 0], [0, 1], [1, 0], [1, 1]];
 const delaunay = Delaunay.from(points);
 const voronoi = delaunay.voronoi([0, 0, 960, 500]);
+
 </script>
 ```
 
