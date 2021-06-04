@@ -1,5 +1,5 @@
 import assert from "assert";
-import Delaunay from "../src/delaunay.js";
+import {Delaunay} from "../src/index.js";
 import Context from "./context.js";
 
 it("voronoi.renderCell(i, context) is a noop for coincident points", () => {

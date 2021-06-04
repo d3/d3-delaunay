@@ -1,7 +1,7 @@
 import assert from "assert";
-import Delaunay from "../src/delaunay.js";
-import Context from "./context.js";
+import {Delaunay} from "../src/index.js";
 import Path from "../src/path.js";
+import Context from "./context.js";
 
 it("Delaunay.from(array)", () => {
   let delaunay = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 1]]);
