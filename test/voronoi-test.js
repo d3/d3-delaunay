@@ -53,12 +53,7 @@ it("zero-length edges are removed", () => {
 
 it("voronoi neighbors are clipped", () => {
    const voronoi = Delaunay.from([[300, 10], [200, 100], [300, 100], [10, 10], [350, 200], [350, 400]]).voronoi([0, 0, 500, 150]);
-   assert.deepStrictEqual([...voronoi.neighbors(0)].sort(), [1, 2]);
-   assert.deepStrictEqual([...voronoi.neighbors(1)].sort(), [0, 2]);
-   assert.deepStrictEqual([...voronoi.neighbors(2)].sort(), [0, 1, 4]);
-   assert.deepStrictEqual([...voronoi.neighbors(3)].sort(), []);
-   assert.deepStrictEqual([...voronoi.neighbors(4)].sort(), [2]);
-   assert.deepStrictEqual([...voronoi.neighbors(5)].sort(), []);
+   assert.deepStrictEqual([0, 1, 2, 3, 4, 5].map(i => [...voronoi.neighbors(i)].sort()), [ [1, 2], [0, 2, 3], [0, 1, 4], [1], [2], []]);
 });
 
 it("unnecessary points on the corners are avoided (#88)", () => {
@@ -86,4 +81,10 @@ it("cellPolygons filter out empty cells and have the cell index as a property", 
     Object.assign([[0, 0], [1, 0], [0, 1], [0, 0]], {index:0, }),
     Object.assign([[0, 1], [1, 0], [2, 0], [2, 2], [0, 2], [0, 1]], { index: 2 })
   ]);
+});
+
+it("voronoi.neighbors returns the correct neighbors", () => {
+  const points = [[10, 10], [36, 27], [90, 19], [50, 75]];
+  const voronoi = Delaunay.from(points).voronoi([0, 0, 100, 90]);
+  assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
