@@ -152,17 +152,17 @@ export default class Voronoi {
     return this.delaunay._step(i, x, y) === i;
   }
   *neighbors(i) {
+    const epsilon = 1e-12;
     const ci = this._clip(i);
     if (ci) for (const j of this.delaunay.neighbors(i)) {
       const cj = this._clip(j);
       // find the common edge
       if (cj) loop: for (let ai = 0, li = ci.length; ai < li; ai += 2) {
         for (let aj = 0, lj = cj.length; aj < lj; aj += 2) {
-          if (ci[ai] == cj[aj]
-          && ci[ai + 1] == cj[aj + 1]
-          && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj]
-          && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj]
-          ) {
+          if (Math.abs(ci[ai] - cj[aj]) < epsilon
+              && Math.abs(ci[ai + 1] - cj[aj + 1]) < epsilon
+              && Math.abs(ci[(ai + 2) % li] - cj[(aj + lj - 2) % lj]) < epsilon
+              && Math.abs(ci[(ai + 3) % li] - cj[(aj + lj - 1) % lj]) < epsilon) {
             yield j;
             break loop;
           }
