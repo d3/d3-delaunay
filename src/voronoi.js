@@ -294,6 +294,11 @@ export default class Voronoi {
     }
     return j;
   }
+  // Returns the intercept of a line passing through (x0, y0) and (x1, y1)
+  // with the horizontal line y = ym. 
+  _intercept(x0, y0, x1, y1, ym) {
+    return (x0 * (y1 - ym) + x1 * (ym - y0)) / (y1 - y0);
+  }
   _project(x0, y0, vx, vy) {
     let t = Infinity, c, x, y;
     if (vy < 0) { // top
