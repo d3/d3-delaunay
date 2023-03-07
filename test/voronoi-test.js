@@ -88,3 +88,21 @@ it("voronoi.neighbors returns the correct neighbors", () => {
   const voronoi = Delaunay.from(points).voronoi([0, 0, 100, 90]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
+
+it("voronoi.neighbors returns the correct neighbors, flipped vertically", () => {
+  const points = [[10, -10], [36, -27], [90, -19], [50, -75]];
+  const voronoi = Delaunay.from(points).voronoi([0, -90, 100, 0]);
+  assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
+});
+
+it("voronoi.neighbors returns the correct neighbors, flipped horizontally", () => {
+  const points = [[-10, 10], [-36, 27], [-90, 19], [-50, 75]];
+  const voronoi = Delaunay.from(points).voronoi([-100, 0, 0, 90]);
+  assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
+});
+
+it("voronoi.neighbors returns the correct neighbors, rotated", () => {
+  const points = [[-10, -10], [-36, -27], [-90, -19], [-50, -75]];
+  const voronoi = Delaunay.from(points).voronoi([-100, -90, 0, 0]);
+  assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
+});
