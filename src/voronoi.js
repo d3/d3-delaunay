@@ -158,11 +158,10 @@ export default class Voronoi {
       // find the common edge
       if (cj) loop: for (let ai = 0, li = ci.length; ai < li; ai += 2) {
         for (let aj = 0, lj = cj.length; aj < lj; aj += 2) {
-          if (ci[ai] == cj[aj]
-            && ci[ai + 1] == cj[aj + 1]
-            && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj]
-            && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj]
-          ) {
+          if (ci[ai] === cj[aj]
+              && ci[ai + 1] === cj[aj + 1]
+              && ci[(ai + 2) % li] === cj[(aj + lj - 2) % lj]
+              && ci[(ai + 3) % li] === cj[(aj + lj - 1) % lj]) {
             yield j;
             break loop;
           }
