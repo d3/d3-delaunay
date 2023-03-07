@@ -240,16 +240,16 @@ export default class Voronoi {
   }
   _clipSegment(x0, y0, x1, y1, c0, c1) {
     // for more robustness, always consider the segment in the same order
-    const flip = y0 < y1 || (y0 === y1 && x0 < x1);
+    const flip = c0 < c1;
     if (flip) [x0, y0, x1, y1, c0, c1] = [x1, y1, x0, y0, c1, c0];
     while (true) {
       if (c0 === 0 && c1 === 0) return flip ? [x1, y1, x0, y0] : [x0, y0, x1, y1];
       if (c0 & c1) return null;
       let x, y, c = c0 || c1;
-      if (c & 0b1000) x  = this._intercept(x0, y0, x1, y1, y = this.ymax);
-      else if (c & 0b0100) x  = this._intercept(x0, y0, x1, y1, y = this.ymin);
-      else if (c & 0b0010) y = this._intercept(y0, x0, y1, x1, x = this.xmax);
-      else y = this._intercept(y0, x0, y1, x1, x = this.xmin);
+      if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
+      else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;
+      else if (c & 0b0010) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax;
+      else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin;
       if (c0) x0 = x, y0 = y, c0 = this._regioncode(x0, y0);
       else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
     }
@@ -296,11 +296,6 @@ export default class Voronoi {
       }
     }
     return j;
-  }
-  // Returns the intercept of a line passing through (x0, y0) and (x1, y1)
-  // with the horizontal line y = ym. 
-  _intercept(x0, y0, x1, y1, ym) {
-    return (x0 * (y1 - ym) + x1 * (ym - y0)) / (y1 - y0);
   }
   _project(x0, y0, vx, vy) {
     let t = Infinity, c, x, y;
