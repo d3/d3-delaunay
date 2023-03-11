@@ -79,7 +79,7 @@ it("cellPolygons filter out empty cells and have the cell index as a property", 
   const voronoi = Delaunay.from(pts).voronoi([0, 0, 2, 2]);
   assert.deepStrictEqual([...voronoi.cellPolygons()], [
     Object.assign([[0, 0], [1, 0], [0, 1], [0, 0]], {index:0, }),
-    Object.assign([[0, 1], [1, 0], [2, 0], [2, 2], [0, 2], [0, 1]], { index: 2 })
+    Object.assign([[2, 2], [0, 2], [0, 1], [1, 0], [2, 0], [2, 2]], { index: 2 })
   ]);
 });
 
@@ -105,4 +105,20 @@ it("voronoi.neighbors returns the correct neighbors, rotated", () => {
   const points = [[-10, -10], [-36, -27], [-90, -19], [-50, -75]];
   const voronoi = Delaunay.from(points).voronoi([-100, -90, 0, 0]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
+});
+
+it("voronoi returns the expected result (#136)", () => {
+  const points = [
+    [447.27981036477433, 698.9400262172304],
+    [485.27830313288746, 668.9946483670656],
+    [611.9525697080425, 397.71056371206487],
+    [491.44637766366105, 692.071157339428],
+    [697.553622336339, 692.071157339428],
+    [497.00778156318086, 667.1990851383492],
+    [691.9922184368191, 667.1990851383492],
+    [544.9897579870977, 407.0828550310619],
+    [543.1738215956482, 437.35879519252677]
+  ];
+  const voronoi = Delaunay.from(points).voronoi([0, 0, 1000, 1000]);
+  assert.strictEqual(voronoi.cellPolygon(3).length, 6);
 });

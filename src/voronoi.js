@@ -193,9 +193,9 @@ export default class Voronoi {
     if (points === null) return null;
     const {vectors: V} = this;
     const v = i * 4;
-    return V[v] || V[v + 1]
+    return this._simplify(V[v] || V[v + 1]
         ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3])
-        : this._clipFinite(i, points);
+        : this._clipFinite(i, points));
   }
   _clipFinite(i, points) {
     const n = points.length;
@@ -286,14 +286,6 @@ export default class Voronoi {
         P.splice(j, 0, x, y), j += 2;
       }
     }
-    if (P.length > 4) {
-      for (let i = 0; i < P.length; i+= 2) {
-        const j = (i + 2) % P.length, k = (i + 4) % P.length;
-        if (P[i] === P[j] && P[j] === P[k]
-        || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1])
-          P.splice(j, 2), i -= 2;
-      }
-    }
     return j;
   }
   _project(x0, y0, vx, vy) {
@@ -325,5 +317,17 @@ export default class Voronoi {
         : x > this.xmax ? 0b0010 : 0b0000)
         | (y < this.ymin ? 0b0100
         : y > this.ymax ? 0b1000 : 0b0000);
+  }
+  _simplify(P) {
+    if (P && P.length > 4) {
+      for (let i = 0; i < P.length; i+= 2) {
+        const j = (i + 2) % P.length, k = (i + 4) % P.length;
+        if (P[i] === P[j] && P[j] === P[k] || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1]) {
+          P.splice(j, 2), i -= 2;
+        }
+      }
+      if (!P.length) P = null;
+    }
+    return P;
   }
 }
