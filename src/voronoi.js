@@ -322,8 +322,7 @@ export default class Voronoi {
     if (P && P.length > 4) {
       for (let i = 0; i < P.length; i+= 2) {
         const j = (i + 2) % P.length, k = (i + 4) % P.length;
-        if (P[i] === P[j] && P[j] === P[k]
-        || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1]) {
+        if (P[i] === P[j] && P[j] === P[k] || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1]) {
           P.splice(j, 2), i -= 2;
         }
       }
