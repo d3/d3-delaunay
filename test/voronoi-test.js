@@ -122,3 +122,9 @@ it("voronoi returns the expected result (#136)", () => {
   const voronoi = Delaunay.from(points).voronoi([0, 0, 1000, 1000]);
   assert.strictEqual(voronoi.cellPolygon(3).length, 6);
 });
+
+it("voronoi returns the expected result (#141)", () => {
+  const points = [[10, 190]].concat(Array.from({ length: 7 }, (d, i) => [i * 80, (i * 50) / 7]));
+  const voronoi = Delaunay.from(points).voronoi([1, 1, 499, 199]);
+  assert.deepEqual(Array.from(voronoi.cellPolygons(), (d) => d.length), [7, 5, 5, 5, 6, 5, 5, 5]);
+});

@@ -18,6 +18,7 @@ export default class Voronoi {
   }
   _init() {
     const {delaunay: {points, hull, triangles}, vectors} = this;
+    let bx, by; // lazily computed barycenter of the hull
 
     // Compute circumcenters.
     const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
@@ -39,17 +40,15 @@ export default class Voronoi {
       const ab = (dx * ey - dy * ex) * 2;
 
       if (Math.abs(ab) < 1e-9) {
-        // degenerate case (collinear diagram)
-        // almost equal points (degenerate triangle)
-        // the circumcenter is at the infinity, in a
-        // direction that is:
-        // 1. orthogonal to the halfedge.
-        let a = 1e9;
-        // 2. points away from the center; since the list of triangles starts
-        // in the center, the first point of the first triangle
-        // will be our reference
-        const r = triangles[0] * 2;
-        a *= Math.sign((points[r] - x1) * ey - (points[r + 1] - y1) * ex);
+        // For a degenerate triangle, the circumcenter is at the infinity, in a
+        // direction orthogonal to the halfedge and away from the “center” of
+        // the diagram <bx, by>, defined as the hull’s barycenter.
+        if (bx === undefined) {
+          bx = by = 0;
+          for (const i of hull) bx += points[i * 2], by += points[i * 2 + 1];
+          bx /= hull.length, by /= hull.length;
+        }
+        const a = 1e9 * Math.sign((bx - x1) * ey - (by - y1) * ex);
         x = (x1 + x3) / 2 - a * ey;
         y = (y1 + y3) / 2 + a * ex;
       } else {
