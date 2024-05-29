@@ -138,6 +138,11 @@ it("delaunay.find(x, y) works with one or two points", () => {
   assert.strictEqual(delaunay.find(0, 1.2), 0);
 });
 
+it("delaunay.find(x, y) returns -1 for empty points array", () => {
+  const delaunay = Delaunay.from([]);
+  assert.strictEqual(delaunay.find(0, -1), -1);
+});
+
 it("delaunay.find(x, y) works with collinear points", () => {
   const points = [[0, 1], [0, 2], [0, 4], [0, 0], [0, 3], [0, 4], [0, 4]];
   const delaunay = Delaunay.from(points);
