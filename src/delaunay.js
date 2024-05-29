@@ -137,7 +137,10 @@ export default class Delaunay {
   }
   _step(i, x, y) {
     const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
-    if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
+    if (inedges[i] === -1 || !points.length) {
+      if (points.length <= 1) return -1;
+      return (i + 1) % (points.length >> 1);
+    }
     let c = i;
     let dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2);
     const e0 = inedges[i];
