@@ -127,15 +127,35 @@ it("delaunay.find(x, y) returns the index of the cell that contains the specifie
   assert.strictEqual(delaunay.find(51, 51), 4);
 });
 
-it("delaunay.find(x, y) works with one or two points", () => {
-  const points = [[0, 1], [0, 2]];
-  const delaunay = Delaunay.from(points);
-  assert.strictEqual(points[delaunay.find(0, -1)][1], 1);
-  assert.strictEqual(points[delaunay.find(0, 2.2)][1], 2);
+it("delaunay.find(x, y) works with one point", () => {
+  const delaunay = new Delaunay([0, 1]);
+  assert.strictEqual(delaunay.find(0, -1), 0);
+  assert.strictEqual(delaunay.find(0, 2.2), 0);
   delaunay.points.fill(0);
   delaunay.update();
   assert.strictEqual(delaunay.find(0, -1), 0);
   assert.strictEqual(delaunay.find(0, 1.2), 0);
+});
+
+it("delaunay.find(x, y) works with two points", () => {
+  const delaunay = new Delaunay([0, 1, 0, 2]);
+  assert.strictEqual(delaunay.find(0, -1), 0);
+  assert.strictEqual(delaunay.find(0, 2.2), 1);
+  delaunay.points.fill(0);
+  delaunay.update();
+  assert.strictEqual(delaunay.find(0, -1), 0);
+  assert.strictEqual(delaunay.find(0, 1.2), 0);
+});
+
+it("delaunay.find(x, y) returns -1 for empty points array", () => {
+  const delaunay = new Delaunay([]);
+  assert.strictEqual(delaunay.find(0, -1), -1);
+});
+
+it("delaunay.find(x, y) returns -1 for half a point", () => {
+  const delaunay = new Delaunay([0]); // invalid; considered empty
+  assert.strictEqual(delaunay.find(0, -1), -1);
+  assert.strictEqual(delaunay.find(0, 2.2), -1);
 });
 
 it("delaunay.find(x, y) works with collinear points", () => {
