@@ -54,7 +54,7 @@ export default class Delaunay {
 
     // check for collinear
     if (d.hull && d.hull.length > 2 && collinear(d)) {
-      this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
+      this.collinear = Int32Array.from({length: points.length / 2}, (_, i) => i)
         .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
       const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
         bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
@@ -137,10 +137,8 @@ export default class Delaunay {
   }
   _step(i, x, y) {
     const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
-    if (inedges[i] === -1 || !points.length) {
-      if (points.length <= 1) return -1;
-      return (i + 1) % (points.length >> 1);
-    }
+    if (points.length < 2) return -1;
+    if (inedges[i] === -1) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2);
     const e0 = inedges[i];
@@ -181,7 +179,7 @@ export default class Delaunay {
     r = r == undefined ? 2 : +r;
     const buffer = context == null ? context = new Path : undefined;
     const {points} = this;
-    for (let i = 0, n = points.length; i < n; i += 2) {
+    for (let i = 0, n = points.length & ~1; i < n; i += 2) { // round down if points has odd length
       const x = points[i], y = points[i + 1];
       context.moveTo(x + r, y);
       context.arc(x, y, r, 0, tau);
