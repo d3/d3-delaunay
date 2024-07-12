@@ -58,7 +58,7 @@ export default class Delaunay {
         .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
       const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
         bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-        r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
+        r = 1.5e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
       for (let i = 0, n = points.length / 2; i < n; ++i) {
         const p = jitter(points[2 * i], points[2 * i + 1], r);
         points[2 * i] = p[0];
