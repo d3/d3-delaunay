@@ -129,8 +129,8 @@ it("voronoi returns the expected result (#141)", () => {
   assert.deepEqual(Array.from(voronoi.cellPolygons(), (d) => d.length), [7, 5, 5, 5, 6, 5, 5, 5]);
 });
 
-it("voronoi returns the expected result (#146)", () => {
+it("voronoi returns the expected result for collinear points (#146)", () => {
   const points = [[25,20], [75,20], [125,20], [175,20], [225,20]];
   const voronoi = Delaunay.from(points).voronoi([0, 0, 250, 40]);
-  assert.deepStrictEqual(Array.from(voronoi.cellPolygons(), (d) => d.map((u) => u.map((d) => Math.round(d)))), [[[0,40],[0,0],[50,0],[50,40],[0,40]],[[100,0],[100,40],[50,40],[50,0],[100,0]],[[150,0],[150,40],[100,40],[100,0],[150,0]],[[200,0],[200,40],[150,40],[150,0],[200,0]],[[200,40],[200,0],[250,0],[250,40],[200,40]]]);
+  assert.deepStrictEqual(Array.from(voronoi.cellPolygons(), (d) => d.map((u) => u.map((d) => Math.round(d)))), [[[0,40],[0,0],[50,0],[50,40],[0,40]],[[100,0],[100,40],[50,40],[50,0],[100,0]],[[150,0],[150,40],[100,40],[100,0],[150,0]],[[150,40],[150,0],[200,0],[200,40],[150,40]],[[250,0],[250,40],[200,40],[200,0],[250,0]]]);
 });

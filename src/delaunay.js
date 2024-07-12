@@ -27,10 +27,6 @@ function collinear(d) {
   return true;
 }
 
-function jitter(x, y, r) {
-  return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
-}
-
 export default class Delaunay {
   static from(points, fx = pointX, fy = pointY, that) {
     return new Delaunay("length" in points
@@ -56,14 +52,9 @@ export default class Delaunay {
     if (d.hull && d.hull.length > 2 && collinear(d)) {
       this.collinear = Int32Array.from({length: points.length / 2}, (_, i) => i)
         .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
-      const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
-        bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-        r = 1.5e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
-      for (let i = 0, n = points.length / 2; i < n; ++i) {
-        const p = jitter(points[2 * i], points[2 * i + 1], r);
-        points[2 * i] = p[0];
-        points[2 * i + 1] = p[1];
-      }
+      const e = this.collinear[0] << 1, f = this.collinear[this.collinear.length - 1] << 1;
+      const r = 1e-9 * Math.hypot(points[f] - points[e], points[f + 1] - points[e + 1]);
+      for (let i = 0; i < points.length; ++i) points[i] += r * Math.sin(i + 0.5);
       this._delaunator = new Delaunator(points);
     } else {
       delete this.collinear;
