@@ -13,7 +13,7 @@ function pointY(p) {
   return p[1];
 }
 
-// A triangulation is collinear if all its triangles have a non-null area
+// A triangulation is collinear if all its triangles have a null area
 function collinear(d) {
   const {triangles, coords} = d;
   for (let i = 0; i < triangles.length; i += 3) {
