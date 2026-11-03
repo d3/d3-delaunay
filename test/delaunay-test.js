@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import {it} from "vitest";
-import {Delaunay} from "../src/index.js";
+import {Delaunay} from "d3-delaunay";
 import Path from "../src/path.js";
 import Context from "./context.js";
 
