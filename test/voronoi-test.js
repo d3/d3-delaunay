@@ -1,13 +1,14 @@
+import {test} from "vitest";
 import assert from "assert";
 import {Delaunay} from "../src/index.js";
 import Context from "./context.js";
 
-it("voronoi.renderCell(i, context) is a noop for coincident points", () => {
+test("voronoi.renderCell(i, context) is a noop for coincident points", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
   assert.strictEqual(voronoi.renderCell(3, {}), undefined);
 });
 
-it("voronoi.renderCell(i, context) handles midpoint coincident with circumcenter", () => {
+test("voronoi.renderCell(i, context) handles midpoint coincident with circumcenter", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1]]).voronoi([-1, -1, 2, 2]);
   let context = new Context;
   assert.strictEqual((voronoi.renderCell(0, context), context.toString()), `M-1,-1L0.5,-1L0.5,0.5L-1,0.5Z`);
@@ -15,13 +16,13 @@ it("voronoi.renderCell(i, context) handles midpoint coincident with circumcenter
   assert.strictEqual((voronoi.renderCell(2, context), context.toString()), `M-1,2L-1,0.5L0.5,0.5L2,2Z`);
 });
 
-it("voronoi.contains(i, x, y) is false for coincident points", () => {
+test("voronoi.contains(i, x, y) is false for coincident points", () => {
   let voronoi = Delaunay.from([[0, 0], [1, 0], [0, 1], [1, 0]]).voronoi([-1, -1, 2, 2]);
   assert.strictEqual(voronoi.contains(3, 1, 0), false);
   assert.strictEqual(voronoi.contains(1, 1, 0), true);
 });
 
-it("voronoi.update() updates the voronoi", () => {
+test("voronoi.update() updates the voronoi", () => {
   let delaunay = Delaunay.from([[0, 0], [300, 0], [0, 300], [300, 300], [100, 100]]);
   let voronoi = delaunay.voronoi([-500, -500, 500, 500]);
   for (let i = 0; i < delaunay.points.length; i++) {
@@ -31,7 +32,7 @@ it("voronoi.update() updates the voronoi", () => {
   assert.deepStrictEqual(p, [[-500, 500], [-500, -140], [-240, -140], [-140, 60], [-140, 500], [-500, 500]]);
 });
 
-it("voronoi.update() updates a degenerate voronoi", () => {
+test("voronoi.update() updates a degenerate voronoi", () => {
   const pts = [10, 10, -290, 10, 10, -290, -290, -290, -90, -90];
   let delaunay = new Delaunay(Array.from({length: pts.length}).fill(0));
   let voronoi = delaunay.voronoi([-500, -500, 500, 500]);
@@ -44,19 +45,19 @@ it("voronoi.update() updates a degenerate voronoi", () => {
   assert.deepStrictEqual(p, [[-500, 500], [-500, -140], [-240, -140], [-140, 60], [-140, 500], [-500, 500]]);
 });
 
-it("zero-length edges are removed", () => {
+test("zero-length edges are removed", () => {
    const voronoi1 = Delaunay.from([[50, 10], [10, 50], [10, 10], [200, 100]]).voronoi([40, 40, 440, 180]);
    assert.strictEqual(voronoi1.cellPolygon(0).length, 4);
    const voronoi2 = Delaunay.from([[10, 10], [20, 10]]).voronoi([0, 0, 30, 20]);
    assert.deepStrictEqual(voronoi2.cellPolygon(0), [[0, 20], [0, 0], [15, 0], [15, 20], [0, 20]]);
 });
 
-it("voronoi neighbors are clipped", () => {
+test("voronoi neighbors are clipped", () => {
    const voronoi = Delaunay.from([[300, 10], [200, 100], [300, 100], [10, 10], [350, 200], [350, 400]]).voronoi([0, 0, 500, 150]);
    assert.deepStrictEqual([0, 1, 2, 3, 4, 5].map(i => [...voronoi.neighbors(i)].sort()), [ [1, 2], [0, 2, 3], [0, 1, 4], [1], [2], []]);
 });
 
-it("unnecessary points on the corners are avoided (#88)", () => {
+test("unnecessary points on the corners are avoided (#88)", () => {
   for (const [points, lengths] of [
     [ [[289,25],[3,22],[93,165],[282,184],[65,89]], [ 6, 4, 6, 5, 6 ] ],
     [ [[189,13],[197,26],[47,133],[125,77],[288,15]], [ 4, 6, 5, 6, 5 ] ],
@@ -67,14 +68,14 @@ it("unnecessary points on the corners are avoided (#88)", () => {
   }
 });
 
-it("a degenerate triangle is avoided", () => {
+test("a degenerate triangle is avoided", () => {
   const pts = [[424.75, 253.75],[424.75, 253.74999999999997],[407.17640687119285, 296.17640687119285],[364.75, 313.75],[322.32359312880715, 296.17640687119285],[304.75, 253.75],[322.32359312880715, 211.32359312880715],[364.75, 193.75],[407.17640687119285, 211.32359312880715],[624.75, 253.75],[607.1764068711929, 296.17640687119285],[564.75, 313.75],[522.3235931288071, 296.17640687119285],[504.75, 253.75],[564.75, 193.75]
   ]
   const voronoi = Delaunay.from(pts).voronoi([10, 10, 960, 500]);
   assert.strictEqual(voronoi.cellPolygon(0).length, 4);
 });
 
-it("cellPolygons filter out empty cells and have the cell index as a property", () => {
+test("cellPolygons filter out empty cells and have the cell index as a property", () => {
   const pts = [[0, 0], [3, 3], [1, 1], [-3, -2]];
   const voronoi = Delaunay.from(pts).voronoi([0, 0, 2, 2]);
   assert.deepStrictEqual([...voronoi.cellPolygons()], [
@@ -83,31 +84,31 @@ it("cellPolygons filter out empty cells and have the cell index as a property", 
   ]);
 });
 
-it("voronoi.neighbors returns the correct neighbors", () => {
+test("voronoi.neighbors returns the correct neighbors", () => {
   const points = [[10, 10], [36, 27], [90, 19], [50, 75]];
   const voronoi = Delaunay.from(points).voronoi([0, 0, 100, 90]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
 
-it("voronoi.neighbors returns the correct neighbors, flipped vertically", () => {
+test("voronoi.neighbors returns the correct neighbors, flipped vertically", () => {
   const points = [[10, -10], [36, -27], [90, -19], [50, -75]];
   const voronoi = Delaunay.from(points).voronoi([0, -90, 100, 0]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
 
-it("voronoi.neighbors returns the correct neighbors, flipped horizontally", () => {
+test("voronoi.neighbors returns the correct neighbors, flipped horizontally", () => {
   const points = [[-10, 10], [-36, 27], [-90, 19], [-50, 75]];
   const voronoi = Delaunay.from(points).voronoi([-100, 0, 0, 90]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
 
-it("voronoi.neighbors returns the correct neighbors, rotated", () => {
+test("voronoi.neighbors returns the correct neighbors, rotated", () => {
   const points = [[-10, -10], [-36, -27], [-90, -19], [-50, -75]];
   const voronoi = Delaunay.from(points).voronoi([-100, -90, 0, 0]);
   assert.deepStrictEqual([0, 1, 2, 3].map(i => [...voronoi.neighbors(i)].sort()), [[1], [0, 2, 3], [1, 3], [1, 2]]);
 });
 
-it("voronoi returns the expected result (#136)", () => {
+test("voronoi returns the expected result (#136)", () => {
   const points = [
     [447.27981036477433, 698.9400262172304],
     [485.27830313288746, 668.9946483670656],
@@ -123,13 +124,13 @@ it("voronoi returns the expected result (#136)", () => {
   assert.strictEqual(voronoi.cellPolygon(3).length, 6);
 });
 
-it("voronoi returns the expected result (#141)", () => {
+test("voronoi returns the expected result (#141)", () => {
   const points = [[10, 190]].concat(Array.from({ length: 7 }, (d, i) => [i * 80, (i * 50) / 7]));
   const voronoi = Delaunay.from(points).voronoi([1, 1, 499, 199]);
   assert.deepEqual(Array.from(voronoi.cellPolygons(), (d) => d.length), [7, 5, 5, 5, 6, 5, 5, 5]);
 });
 
-it("voronoi returns the expected result for collinear points (#146)", () => {
+test("voronoi returns the expected result for collinear points (#146)", () => {
   const points = [[25,20], [75,20], [125,20], [175,20], [225,20]];
   const voronoi = Delaunay.from(points).voronoi([0, 0, 250, 40]);
   assert.deepStrictEqual(Array.from(voronoi.cellPolygons(), (d) => d.map((u) => u.map((d) => Math.round(d)))), [[[0,40],[0,0],[50,0],[50,40],[0,40]],[[100,0],[100,40],[50,40],[50,0],[100,0]],[[150,0],[150,40],[100,40],[100,0],[150,0]],[[150,40],[150,0],[200,0],[200,40],[150,40]],[[250,0],[250,40],[200,40],[200,0],[250,0]]]);
