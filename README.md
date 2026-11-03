@@ -7,6 +7,6 @@ This is a fast library for computing the [Voronoi diagram](https://en.wikipedia.
 ## Resources
 
 - [Documentation](https://d3js.org/d3-delaunay)
-- [Examples](https://observablehq.com/collection/@d3/d3-delaunay)
+- [Examples](https://observablehq.com/@d3/-/collection/d3-delaunay)
 - [Releases](https://github.com/d3/d3-delaunay/releases)
 - [Getting help](https://d3js.org/community)
