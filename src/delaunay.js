@@ -22,13 +22,10 @@ function collinear(d) {
           c = 2 * triangles[i + 2],
           cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1])
                 - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
-    if (cross > 1e-10) return false;
+    if (cross * 1e10 > pow(coords[b] - coords[a], 2) + pow(coords[b + 1] - coords[a + 1], 2)
+                     + pow(coords[c] - coords[a], 2) + pow(coords[c + 1] - coords[a + 1], 2)) return false;
   }
   return true;
-}
-
-function jitter(x, y, r) {
-  return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
 }
 
 export default class Delaunay {
@@ -54,17 +51,13 @@ export default class Delaunay {
 
     // check for collinear
     if (d.hull && d.hull.length > 2 && collinear(d)) {
+      let x0 = Infinity, y0 = x0, x1 = -x0, y1 = x1;
+      for (const i of d.hull) x0 = Math.min(x0, points[2 * i]), y0 = Math.min(y0, points[2 * i + 1]), x1 = Math.max(x1, points[2 * i]), y1 = Math.max(y1, points[2 * i + 1]);
+      const a = x1 - x0 >= y1 - y0 ? 0 : 1, b = 1 - a; // sort along the axis of largest extent
       this.collinear = Int32Array.from({length: points.length / 2}, (_, i) => i)
-        .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
-      const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
-        bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-        r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
-      for (let i = 0, n = points.length / 2; i < n; ++i) {
-        const p = jitter(points[2 * i], points[2 * i + 1], r);
-        points[2 * i] = p[0];
-        points[2 * i + 1] = p[1];
-      }
-      this._delaunator = new Delaunator(points);
+        .sort((i, j) => points[2 * i + a] - points[2 * j + a] || points[2 * i + b] - points[2 * j + b]); // for exact neighbors
+      d.hull = this.collinear.filter((i, k, c) => k === 0 || points[2 * i] !== points[2 * c[k - 1]] || points[2 * i + 1] !== points[2 * c[k - 1] + 1]);
+      d.triangles = new Uint32Array(0), d.halfedges = new Int32Array(0);
     } else {
       delete this.collinear;
     }
@@ -107,9 +100,9 @@ export default class Delaunay {
 
     // degenerate case with several collinear points
     if (collinear) {
-      const l = collinear.indexOf(i);
-      if (l > 0) yield collinear[l - 1];
-      if (l < collinear.length - 1) yield collinear[l + 1];
+      const l = _hullIndex[i];
+      if (l > 0) yield hull[l - 1];
+      if (l >= 0 && l < hull.length - 1) yield hull[l + 1];
       return;
     }
 
@@ -138,6 +131,12 @@ export default class Delaunay {
   _step(i, x, y) {
     const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
     if (points.length < 2) return -1;
+    if (this.collinear && _hullIndex[i] >= 0) { // walk along the line
+      const dist = (j) => pow(x - points[j * 2], 2) + pow(y - points[j * 2 + 1], 2);
+      let c = i;
+      for (const j of this.neighbors(i)) if (dist(j) < dist(c)) c = j;
+      return c;
+    }
     if (inedges[i] === -1) return (i + 1) % (points.length >> 1);
     let c = i;
     let dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2);

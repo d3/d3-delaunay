@@ -129,3 +129,40 @@ it("voronoi returns the expected result (#141)", () => {
   const voronoi = Delaunay.from(points).voronoi([1, 1, 499, 199]);
   assert.deepEqual(Array.from(voronoi.cellPolygons(), (d) => d.length), [7, 5, 5, 5, 6, 5, 5, 5]);
 });
+
+it("voronoi returns the expected result for collinear points (#146)", () => {
+  const points = [[25,20], [75,20], [125,20], [175,20], [225,20]];
+  const voronoi = Delaunay.from(points).voronoi([0, 0, 250, 40]);
+  assert.deepStrictEqual(Array.from(voronoi.cellPolygons(), (d) => d.map((u) => u.map((d) => Math.round(d)))), [[[50,0],[50,40],[0,40],[0,0],[50,0]],[[50,0],[100,0],[100,40],[50,40],[50,0]],[[100,0],[150,0],[150,40],[100,40],[100,0]],[[150,0],[200,0],[200,40],[150,40],[150,0]],[[200,0],[250,0],[250,40],[200,40],[200,0]]]);
+  assert.strictEqual(voronoi.render(), "M50,0L50,40M100,0L100,40M150,0L150,40M200,0L200,40");
+});
+
+// Places points at positions × step on a line through [x, y], and checks that each
+// distinct position gets the strip between its bisectors, and duplicates get no cell.
+function assertCollinearCells(x, y, angle, step) {
+  const positions = [8, 0, 3, 12, 8, 4, 20, 3, 7, 8], distinct = [...new Set(positions)].sort((a, b) => a - b);
+  const ux = Math.cos(angle), uy = Math.sin(angle), [x0, y0, x1, y1] = [x - 2 * step, y - 2 * step, x + (20 * ux + 2) * step, y + (20 * uy + 2) * step];
+  const points = positions.map((t) => [x + t * step * ux, y + t * step * uy]);
+  const cells = Array.from(Delaunay.from(points).voronoi([x0, y0, x1, y1]).cellPolygons());
+  const project = ([px, py]) => ((px - x) * ux + (py - y) * uy) / step;
+  assert.deepStrictEqual(cells.map((cell) => positions[cell.index]).sort((a, b) => a - b), distinct);
+  let area = 0;
+  for (const cell of cells) {
+    const t = positions[cell.index], k = distinct.indexOf(t), p = cell.map(project), a = Math.min(...p), b = Math.max(...p);
+    if (k > 0) assert(Math.abs(a - (distinct[k - 1] + t) / 2) < 1e-9, `cell ${cell.index} starts at ${a}`);
+    if (k < distinct.length - 1) assert(Math.abs(b - (t + distinct[k + 1]) / 2) < 1e-9, `cell ${cell.index} ends at ${b}`);
+    for (let i = 0; i < cell.length - 1; ++i) area += (cell[i][0] * cell[i + 1][1] - cell[i + 1][0] * cell[i][1]) / 2;
+  }
+  assert(Math.abs(Math.abs(area) / ((x1 - x0) * (y1 - y0)) - 1) < 1e-9, `total area ${Math.abs(area)} instead of ${(x1 - x0) * (y1 - y0)}`);
+}
+
+it("voronoi returns the exact cells for collinear points (horizontal, step 1e-6)", () => assertCollinearCells(3e-6, -7e-6, 0, 1e-6));
+it("voronoi returns the exact cells for collinear points (vertical, step 1e-3)", () => assertCollinearCells(-0.05, 0.02, Math.PI / 2, 1e-3));
+it("voronoi returns the exact cells for collinear points (30°, step 1)", () => assertCollinearCells(17, -5, Math.PI / 6, 1));
+it("voronoi returns the exact cells for collinear points (diagonal, step 1e3)", () => assertCollinearCells(-4e4, 9e3, Math.PI / 4, 1e3));
+it("voronoi returns the exact cells for collinear points (1 radian, step 1e6)", () => assertCollinearCells(2e7, 3e6, 1, 1e6));
+
+it("voronoi orders collinear points along the line despite rounding errors", () => {
+  const voronoi = Delaunay.from([[0.3, 0], [0.1 + 0.2, 1], [0.3, 2], [0.3, 3]]).voronoi([0, -1, 1, 4]);
+  assert.deepStrictEqual(Array.from(voronoi.cellPolygons(), (cell) => [Math.min(...cell.map(([, y]) => y)), Math.max(...cell.map(([, y]) => y))]), [[-1, 0.5], [0.5, 1.5], [1.5, 2.5], [2.5, 4]]);
+});
