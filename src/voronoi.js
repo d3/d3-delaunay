@@ -1,6 +1,16 @@
 import Path from "./path.js";
 import Polygon from "./polygon.js";
 
+// Clips P, a convex polygon with axis-aligned edges, to the half-plane (p - p0) · v >= 0
+function halfplane(P, x0, y0, vx, vy) {
+  const Q = [], f = (i) => Math.sign((P[i] - x0) * vx + (P[i + 1] - y0) * vy);
+  for (let n = P.length, i = n - 2, j = 0; j < n; i = j, j += 2) {
+    if (f(i) * f(j) < 0) Q.push(...P[i + 1] === P[j + 1] ? [x0 - (P[i + 1] - y0) * vy / vx, P[i + 1]] : [P[i], y0 - (P[i] - x0) * vx / vy]);
+    if (f(j) >= 0) Q.push(P[j], P[j + 1]);
+  }
+  return Q;
+}
+
 export default class Voronoi {
   constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
@@ -80,6 +90,15 @@ export default class Voronoi {
     const buffer = context == null ? context = new Path : undefined;
     const {delaunay: {halfedges, inedges, hull}, circumcenters, vectors} = this;
     if (hull.length <= 1) return null;
+    if (this.delaunay.collinear) { // bisectors of consecutive points along the line
+      const {points: p} = this.delaunay, e = 2 * hull[0], f = 2 * hull[hull.length - 1], dx = p[f] - p[e], dy = p[f + 1] - p[e + 1];
+      for (let k = 1; k < hull.length; ++k) {
+        const a = 2 * hull[k - 1], b = 2 * hull[k], x = (p[a] + p[b]) / 2, y = (p[a + 1] + p[b + 1]) / 2;
+        if (Math.abs(dx) >= Math.abs(dy)) this._renderSegment(x - (this.ymin - y) * dy / dx, this.ymin, x - (this.ymax - y) * dy / dx, this.ymax, context);
+        else this._renderSegment(this.xmin, y - (this.xmin - x) * dx / dy, this.xmax, y - (this.xmax - x) * dx / dy, context);
+      }
+      return buffer && buffer.value();
+    }
     for (let i = 0, n = halfedges.length; i < n; ++i) {
       const j = halfedges[i];
       if (j < i) continue;
@@ -187,6 +206,14 @@ export default class Voronoi {
     // degenerate case (1 valid point: return the box)
     if (i === 0 && this.delaunay.hull.length === 1) {
       return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+    }
+    if (this.delaunay.collinear) { // clip the box with the bisectors to the previous and next points along the line
+      const {hull, _hullIndex, points: p} = this.delaunay, l = _hullIndex[i], e = 2 * hull[0], f = 2 * hull[hull.length - 1], dx = p[f] - p[e], dy = p[f + 1] - p[e + 1];
+      const m = (j) => [(p[2 * i] + p[2 * j]) / 2, (p[2 * i + 1] + p[2 * j + 1]) / 2];
+      let P = l < 0 ? [] : [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin]; // coincident points have no cell
+      if (l > 0) P = halfplane(P, ...m(hull[l - 1]), dx, dy);
+      if (l >= 0 && l < hull.length - 1) P = halfplane(P, ...m(hull[l + 1]), -dx, -dy);
+      return P.length ? P : null;
     }
     const points = this._cell(i);
     if (points === null) return null;
